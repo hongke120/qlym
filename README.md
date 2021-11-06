@@ -1,7 +1,7 @@
 ﻿## 使用教程
 
 【拉库】
-ql reo 
+ql repo https://github.com/Yiov/wool.git "" "COOKIE" "ddgyCOOKIE|jdylCOOKIE"
 
 
 ### 特别声明
