@@ -22,3 +22,5 @@ ql reo
 
 * [@xl2101200](https://github.com/xl2101200/-/)「Tom」
 * [@YaphetS0903](https://github.com/YaphetS0903/JStest/)「YaphetS」
+* [@WindFgg](https://github.com/WindFgg/QuantumultX_Conf/)「WindFgg」
+* [@wx13069](https://github.com/wx13069/JD/)「wx13069」
