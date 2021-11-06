@@ -1,4 +1,4 @@
-﻿module.exports = {
+module.exports = {
     "id": "jdyl",
     "name": "捷达有礼",
     "keys": ["jdylheader","jdylheader2","jdylheader3","jdylheader4","jdylheader5"],
