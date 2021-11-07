@@ -1,4 +1,4 @@
-/*
+﻿/*
 软件名称:多福盒子
 更新时间：2021-10-11 @YaphetS0903
 官网下载：http://www.duofuhezi.com/
