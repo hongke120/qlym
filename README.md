@@ -24,3 +24,4 @@ ql repo https://github.com/Yiov/wool.git "" "COOKIE" "ddgyCOOKIE|jdylCOOKIE"
 * [@YaphetS0903](https://github.com/YaphetS0903/JStest/)「YaphetS」
 * [@WindFgg](https://github.com/WindFgg/QuantumultX_Conf/)「WindFgg」
 * [@wx13069](https://github.com/wx13069/JD/)「wx13069」
+* [@LubooC](https://github.com/LubooC/Script/)「萝卜」
