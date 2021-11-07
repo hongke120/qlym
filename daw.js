@@ -1,4 +1,4 @@
-/*
+﻿/*
 微信进链接下载：
 https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx592b7bf2a9f7f003&redirect_uri=https://v3.sdk.haowusong.com/api/auth/wechat/sharelogin&response_type=code&scope=snsapi_userinfo&state=AAABRBU8,dawbox-android#wechat_redirect
 
