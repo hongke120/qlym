@@ -1,10 +1,10 @@
 ﻿## 使用教程
 
 【拉库】
-ql repo https://github.com/Yiov/wool.git "" "COOKIE"
+    ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
 
-
+<br />
 ## 小米刷步 xmsb.py
 
 请第1次拉完库，自己新建一个py文件，不然每次都会覆盖！
@@ -20,8 +20,8 @@ ql repo https://github.com/Yiov/wool.git "" "COOKIE"
     要修改的步数，直接输入想要修改的步数值，留空为随机步数
     step = "23333"
 
-step = str(random.randint(20000, 21000))
-这个是随机的范围，自己改
+    step = str(random.randint(20000, 21000))
+    这个是随机的范围，自己改
 
 
 
