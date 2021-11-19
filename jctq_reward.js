@@ -8,8 +8,8 @@
 如果不想自动提现的，请不要捉提现body，或者新建环境变量jctqWithdrawFlag，写成0
 */
 
-const jsname = '晶彩天气任务签到'
-const $ = Env(jsname)
+
+const $ = new Env("晶彩天气任务签到")
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
 const logDebug = 0
 
