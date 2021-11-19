@@ -64,6 +64,8 @@ ddgyCOOKIE.js是CK文件，自己改
 
 ## 晶彩天气 jctq_daily.js
 
+每小时2到3次
+
 
 ### 转发页定时宝箱/时段转发/刷福利视频/抽奖5次
 
@@ -103,6 +105,8 @@ export jctqBubbleBody=''
 
 ## 晶彩天气 jctq_reward.js
 
+每天一次，放在其他脚本完成之后
+
 签到和翻倍，任务奖励领取，统计今日收益，自动提现
 
 https://tq.xunsl.com/v5/CommonReward/toGetReward.json -- 签到，和福利页任务奖励
@@ -119,6 +123,8 @@ export jctqSignDoubleBody=''
 
 ## 晶彩天气 jctq_kkz.js
 
+每天一到两次
+
 抓POST包，点开看看赚，刷新闻，获取body
 
 https://tq.xunsl.com/v5/nameless/adlickstart.json
@@ -133,6 +139,8 @@ export jctqLookStartbody=''
 
 
 ## 晶彩天气 jctq_read.js
+
+每天一到两次
 
 抓POST包，阅读文章或者看视频一段时间后可以获取到时长body
 
@@ -156,6 +164,20 @@ export jctqWzBody=''
 
 
 
+## 中青听歌 zq_music.js
+
+
+建议运行时间  19 10-18 * * *
+
+有的版本APP没有听歌
+
+抓POST包，点击音频就我能获取ck
+
+https://kandian.wkandian.com/V17/Ximalaya/setCompleteSec.json
+
+export zqmusic=''
+
+
 ## 特别鸣谢:
 
 
@@ -164,3 +186,5 @@ export jctqWzBody=''
 * [@WindFgg](https://github.com/WindFgg/QuantumultX_Conf/)「WindFgg」
 * [@wx13069](https://github.com/wx13069/JD/)「wx13069」
 * [@LubooC](https://github.com/LubooC/Script/)「萝卜」
+* [@leafxcy](https://github.com/leafxcy/JavaScript/)「leaf」
+* [@shaolin-kongfu](https://github.com/shaolin-kongfu/js_scripts/)「少林大佬」
