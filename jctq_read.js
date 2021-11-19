@@ -5,8 +5,8 @@
 阅读文章，浏览视频
 */
 
-const jsname = '晶彩天气文章视频'
-const $ = Env(jsname)
+
+const $ = new Env("晶彩天气文章视频")
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
 const logDebug = 0
 
