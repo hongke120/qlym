@@ -153,18 +153,7 @@ export jctqWzBody=''
 
 
 
-## 中青听歌 zq_music.js
 
-
-建议运行时间  19 10-18 * * *
-
-有的版本APP没有听歌
-
-抓POST包，点击音频就我能获取ck
-
-https://kandian.wkandian.com/V17/Ximalaya/setCompleteSec.json
-
-export zqmusic=''
 
 
 ## 特别鸣谢:
