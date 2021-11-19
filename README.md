@@ -46,17 +46,6 @@ step = str(random.randint(20000, 21000))
 
 
 
-
-## 捷达有礼 jdyl.js
-
-公众号：JETTA捷达品牌官方服务号
-
-jdylCOOKIE.js是CK文件，自己改
-
-
-
-
-
 ## 滴滴果园 ddgy.js
 
 ddgyCOOKIE.js是CK文件，自己改
