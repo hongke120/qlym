@@ -5,8 +5,7 @@
 领转发页定时宝箱，领福利页定时宝箱，领首页气泡红包，时段转发，刷福利视频，抽奖5次
 */
 
-
-const $ = Env("晶彩天气日常")
+const $ = new Env("晶彩天气日常")
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
 const logDebug = 0
 
