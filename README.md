@@ -7,6 +7,33 @@
 
 
 
+## 得间小说
+
+抓get包，进app-福利-看视频，获取数据
+
+https://dj.palmestore.com/zycl/gold/receive
+
+环境配置
+
+Cron：0 */1 * * *
+
+export djxsCookie='抓取的Cookie1@抓取的Cookie2'
+
+export djxsReferer='抓取的Referer1@抓取的Referer2'
+
+
+
+## 九章头条
+
+抓get包，进app-任务，抓取token值
+
+https://api.st615.com/v1/user/info
+
+
+填入jzttCOOKIE中
+
+
+
 ## 小米刷步 xmsb.py
 
 请第1次拉完库，自己新建一个py文件，不然每次都会覆盖！
@@ -62,7 +89,7 @@ ddgyCOOKIE.js是CK文件，自己改
 
 https://tq.xunsl.com/v17/NewTask/getTaskListByWeather.json
 
-链接转换：http://www.songluyi.com/ChangeHeaderToDict/
+https://tooltt.com/header2json/
 
 export jctqCookie=''
 
@@ -73,7 +100,7 @@ export jctqCookie=''
 
 https://tq.xunsl.com/v17/Weather/getBoxByweather.json
 
-链接转换：http://www.songluyi.com/ChangeHeaderToDict/
+链接转换：https://tooltt.com/header2json/
 
 export jctqGiveBoxBody=''
 
@@ -85,9 +112,7 @@ export jctqGiveBoxBody=''
 
 https://tq.xunsl.com/v5/weather/giveTimeInterval.json
 
-链接转换：http://www.songluyi.com/ChangeHeaderToDict/
-
-注：删除每个 : 后的空格后，再去转换。结尾处的User-Agent参数补完整，不然无效
+链接转换：https://tooltt.com/header2json/
 
 export jctqBubbleBody=''
 
@@ -118,9 +143,7 @@ export jctqSignDoubleBody=''
 
 https://tq.xunsl.com/v5/nameless/adlickstart.json
 
-链接转换：http://www.songluyi.com/ChangeHeaderToDict/
-
-注：删除每个 : 后的空格后，再去转换。结尾处的User-Agent参数补完整，不然无效
+链接转换：https://tooltt.com/header2json/
 
 export jctqLookStartbody=''
 
@@ -135,9 +158,7 @@ export jctqLookStartbody=''
 
 https://tq.xunsl.com/v5/user/stay.json
 
-链接转换：http://www.songluyi.com/ChangeHeaderToDict/
-
-注：删除每个 : 后的空格后，再去转换。结尾处的User-Agent参数补完整，不然无效
+链接转换：https://tooltt.com/header2json/
 
 export jctqTimeBody=''
 
@@ -147,7 +168,7 @@ https://tq.xunsl.com/v5/article/info.json
 
 https://tq.xunsl.com/v5/article/detail.json
 
-链接转换：http://www.songluyi.com/ChangeHeaderToDict/
+链接转换：https://tooltt.com/header2json/
 
 export jctqWzBody=''
 
