@@ -1,890 +1,852 @@
-﻿/*
-微信进链接下载：
-https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx592b7bf2a9f7f003&redirect_uri=https://v3.sdk.haowusong.com/api/auth/wechat/sharelogin&response_type=code&scope=snsapi_userinfo&state=AAABRBU8,dawbox-android#wechat_redirect
+/*
+IOS/安卓：都爱玩
 
-微信登录后，打开APP抓包
-方法：get包
-域名：v3.sdk.haowusong.com
-链接：https://v3.sdk.haowusong.com/api/channel/integral/pool?channel=dawbox
+炒个冷饭，之前有几位大佬已经写过了
+现在支持了苹果和安卓双端的任务，两边账户分红币独立，理论上收益可以翻倍，每天2块多到3块的样子，不过提现次数似乎两边共用
+支持多账户，可以并发看视频广告，减少运行时间，V2P跑有时会有code=400错误信息，忽略就好
+重写捉包只需要捉其中一端的账号即可，ck通用
+脚本内置了自动提现，默认提现到微信
+在【我的】页面可以花0.1购买普通会员，马上返1元可提现。会员每日可以积分兑换0.1-0.2的红包，聊胜于无吧，建议购买
+建议每天多跑几次，池子有额度就能投进去分红
 
-找出token值
-变量
-export dawck='token1的值@token2的值'
+青龙：
+捉取https://v3.sdk.haowusong.com/api/box/wallet/info的包里的token，写到环境变量dawToken里，多账户用@隔开
+export dawToken='account1@account2@account3'
 
-
-[rewrite_local]
+V2P重写：打开APP即可获取CK，没有的话点一下下面分红币页面，可以直接捉多账号
+[task_local]
 #都爱玩
-https://v3.sdk.haowusong.com/api/channel/integral/pool?channel=dawbox  重写地址  https://ghproxy.com/https://github.com/LubooC/Script/blob/main/daw.js
+15 0,1,8,15,20 * * * https://raw.githubusercontent.com/leafxcy/JavaScript/main/daw.js, tag=都爱玩, enabled=true
+[rewrite_local]
+https://v3.sdk.haowusong.com/api/box/wallet/info url script-request-header https://raw.githubusercontent.com/leafxcy/JavaScript/main/daw.js
 [MITM]
 hostname = v3.sdk.haowusong.com
 */
-// [task_local]
-//#都爱玩
-//3 0,9,17 * * * https://ghproxy.com/https://github.com/LubooC/Script/blob/main/daw.js, tag=都爱玩, enabled=true
 
-const _0x2aeb9e = _0x43b0;
-(function(_0x5f371e, _0x3f314f) {
-	const _0x4006fd = _0x43b0,
-		_0x1687aa = _0x5f371e();
-	while (!![]) {
-		try {
-			const _0x31528b = -parseInt(_0x4006fd(0x110)) / 0x1 + -parseInt(_0x4006fd(0xee)) / 0x2 + parseInt(_0x4006fd(0x186)) / 0x3 + -parseInt(_0x4006fd(0xe5)) / 0x4 + parseInt(_0x4006fd(0x182)) / 0x5 + parseInt(_0x4006fd(0xfb)) / 0x6 * (parseInt(_0x4006fd(0x190)) / 0x7) + parseInt(_0x4006fd(0xfe)) / 0x8;
-			if (_0x31528b === _0x3f314f) break;
-			else _0x1687aa['push'](_0x1687aa['shift']());
-		} catch (_0x463828) {
-			_0x1687aa['push'](_0x1687aa['shift']());
-		}
-	}
-}(_0x3cc8, 0xc3718));
-const $ = new Env(_0x2aeb9e(0xd3));
-let status;
-status = (status = $[_0x2aeb9e(0x12b)](_0x2aeb9e(0x16c)) || '1') > 0x1 ? '' + status : '';
-let slckArr = [],
-	dawck = $[_0x2aeb9e(0x115)]() ? process[_0x2aeb9e(0x13a)][_0x2aeb9e(0x183)] ? process[_0x2aeb9e(0x13a)]['dawck'] : '' : $[_0x2aeb9e(0x127)](_0x2aeb9e(0x183)) ? $[_0x2aeb9e(0x127)](_0x2aeb9e(0x183)) : '',
-	slcks = '';
+const $ = new Env('都爱玩');
+
+const logDebug = 0
+
+//0为关闭通知，1为打开通知，默认为1，可以在环境变量设置
+let notifyFlag = ($.isNode() ? process.env.dawNotify : $.getdata('dawNotify')) || 1;
+let notifyStr = ''
+const notify = $.isNode() ? require('./sendNotify') : '';
+
+let rndtime = "" //毫秒
+let httpResult //global buffer
+
+let userToken = ''
+let userIdx = 0
+let numBoxbody = 0
+
+let maxTryNum = 12
+let waitTime = 0
+let allCompFlag = 0
+
+let channelIdx = 0
+let channel = ['dawbox','dawbox-android']
+let channelStr = ['苹果端','安卓端']
+
+let dawToken = ($.isNode() ? process.env.dawToken : $.getdata('dawToken')) || '';
+let dawTokenArr = []
+
+let userName = ''
+let isVip = 0
+let vipLevel = 0
+
+///////////////////////////////////////////////////////////////////
+
 !(async () => {
-	const _0x2063b8 = _0x2aeb9e;
-	if (typeof $request !== _0x2063b8(0xe2)) Get_data();
-	else {
-		if (!$['isNode']()) {
-			slckArr[_0x2063b8(0xf5)]($[_0x2063b8(0x127)](_0x2063b8(0x183)));
-			let _0xa7f9a1 = $[_0x2063b8(0x12b)](_0x2063b8(0xfd)) || '1';
-			for (let _0x34c039 = 0x2; _0x34c039 <= _0xa7f9a1; _0x34c039++) {
-				slckArr[_0x2063b8(0xf5)]($[_0x2063b8(0x127)]('dawck' + _0x34c039));
-			}
-			console['log'](_0x2063b8(0x107) + slckArr[_0x2063b8(0xc8)] + '个账号-------------\x0a');
-			for (let _0x4397b0 = 0x0; _0x4397b0 < slckArr[_0x2063b8(0xc8)]; _0x4397b0++) {
-				slckArr[_0x4397b0] && (dawck = slckArr[_0x4397b0], $['index'] = _0x4397b0 + 0x1, console[_0x2063b8(0x10d)](_0x2063b8(0x143) + $[_0x2063b8(0xcc)] + '】'), await sign(), await dawbox(), await lottery(), await turntable(), await dawbox_put(), $[_0x2063b8(0x10d)](_0x2063b8(0x14a)));
-			}
-		} else {
-			process['env'][_0x2063b8(0x183)] && process[_0x2063b8(0x13a)][_0x2063b8(0x183)]['indexOf']('@') > -0x1 ? (slckArr = process[_0x2063b8(0x13a)][_0x2063b8(0x183)][_0x2063b8(0x133)]('@'), console[_0x2063b8(0x10d)](_0x2063b8(0x172))) : slcks = [process[_0x2063b8(0x13a)][_0x2063b8(0x183)]];;
-			Object['keys'](slcks)['forEach'](_0x2c87fa => {
-				const _0x30cb86 = _0x2063b8;
-				slcks[_0x2c87fa] && slckArr[_0x30cb86(0xf5)](slcks[_0x2c87fa]);
-			}), console[_0x2063b8(0x10d)]('共' + slckArr['length'] + _0x2063b8(0x181));
-			for (let _0x3cff21 = 0x0; _0x3cff21 < slckArr[_0x2063b8(0xc8)]; _0x3cff21++) {
-				$[_0x2063b8(0x14c)] = '', dawck = slckArr[_0x3cff21], $['index'] = _0x3cff21 + 0x1, console[_0x2063b8(0x10d)](_0x2063b8(0x143) + $[_0x2063b8(0xcc)] + '】'), await sign(), await dawbox(), await lottery(), await turntable(), await dawbox_put(), $[_0x2063b8(0x10d)](_0x2063b8(0x14a));
-			}
-		}
-	}
-})()[_0x2aeb9e(0x187)](_0x1e973a => $[_0x2aeb9e(0xfc)](_0x1e973a))[_0x2aeb9e(0x103)](() => $[_0x2aeb9e(0xeb)]());
 
-function _0x3cc8() {
-	const _0x4cea72 = ['@chavy_boxjs_userCfgs.httpapi_timeout', 'tasks', 'logSeparator', '积分，', 'https://v3.h5.haowusong.com/box/sdk/shop?channel=dawbox', 'replace', 'integral_num', 'https://v3.h5.haowusong.com', 'lodash_set', 'status', 'Cookie', 'vedio_task', 'post', 'length', 'name', 'slice', 'getTime', 'index', 'wait', '/v1/scripting/evaluate', 'box.dat', 'contribution_num', 'getHours', 'stringify', '萝卜都爱玩', 'writedata', 'exec', 'error', 'got', 'toObj', 'stack', 'http://', '{\x22channel\x22\x20:\x20\x22dawbox\x22,\x20\x22task_id\x22\x20:\x20\x2254\x22,\x20\x22type\x22\x20:\x201\x20}', 'msg', '\x20投分红币】:\x20', 'ckjar', 'keep-alive', 'call', 'CookieJar', 'undefined', 'isArray', 'utf-8', '5528272mKArEQ', 'isLoon', 'readFileSync', 'integral_min_put_num', 'send', 'indexOf', 'done', 'write', 'token', '245596wEjGDW', 'isQuanX', 'can_lottery_num', '等待30秒冷却~', 'GET', 'pool', 'substr', 'push', 'resolve', '剩余抽奖次数：', 'test', 'https://v3.sdk.haowusong.com/api/channel/integral/turntable/receive', 'headers', '90AWCJVK', 'logErr', 'slcount', '13656200wALnjt', 'Mozilla/5.0\x20(iPhone;\x20CPU\x20iPhone\x20OS\x2014_2\x20like\x20Mac\x20OS\x20X)\x20AppleWebKit/605.1.15\x20(KHTML,\x20like\x20Gecko)\x20Mobile/15E148\x20MicroMessenger/8.0.3(0x1800032c)\x20NetType/4G\x20Language/zh_CN', 'isMuteLog', 'data', 'url', 'finally', 'https://v3.sdk.haowusong.com/api/box/lottery/addnum', 'timeout', 'assign', '-------------共', '.$1', 'body', 'isNeedRewrite', 'existsSync', 'https://v3.sdk.haowusong.com/api/channel/integral/turntable/config?channel=dawbox&task_id=54', 'log', 'opts', 'toString', '1433452giQFIh', ']\x20获取dawcookie请求:\x20成功,dawck:\x20', '{\x22task_id\x22:12,\x22channel\x22:\x22dawbox\x22}', 'application/x-www-form-urlencoded', 'parse', 'isNode', '去看视频翻10倍奖励~', '看视频加抽奖次数剩余：', '\x0a【账号\x20', 'abs', 'object', '任务成功', '\x20用户状态】:\x20\x0a---我的DBA数量：', '{\x22channel\x22:\x22dawbox\x22,\x22task_id\x22:\x2254\x22}', '签到成功,账户总积分：', 'writeFileSync', 'max_video_num', 'use_video_num', '现金。', 'can_video_num', 'getScript', 'https://v3.sdk.haowusong.com/api/channel/integral/turntable/video/receive', 'decode', 'getdata', 'getMonth', 'valueForKey', 'dataFile', 'getval', 'openUrl', 'can_num', 'then', 'https://v3.sdk.haowusong.com/api/box/lottery/config', 'cookieJar', 'time', 'https://v3.sdk.haowusong.com/api/box/sign/post', 'split', '去看视频~', 'rawBody', 'https://v3.sdk.haowusong.com/api/channel/integral/put?channel=dawbox&num=', 'getDate', 'null', 'get', 'env', 'tough-cookie', 'setValueForKey', 'setjson', 'fetch', 'encoding', 'getMilliseconds', '等待30秒~', 'api', '\x0a开始【都爱玩\x20', 'https://v3.h5.haowusong.com/box/sdk/fenhongcoin?channel=dawbox', 'https://servicewechat.com/wxa916993deb35d85d/12/page-', 'https://servicewechat.com/wxa916993deb35d85d/12/page-frame.html', 'iconv-lite', 'description', ',\x20开始!', '------------------任务结束------------------', 'complete_num', 'message', 'method', 'https://v3.sdk.haowusong.com/api/channel/integral/pool?channel=dawbox', 'gzip,compress,br,deflate', 'lottery_num', 'cron', 'code', 'application/json', 'cwd', 'set-cookie', '去看抽奖~', 'open-url', 'trim', 'loaddata', 'Mozilla/5.0\x20(iPhone;\x20CPU\x20iPhone\x20OS\x2014_2\x20like\x20Mac\x20OS\x20X)\x20AppleWebKit/605.1.15\x20(KHTML,\x20like\x20Gecko)\x20Mobile/15E148', 'Content-Type', '获得奖励：', 'lodash_get', 'startTime', 'v3.sdk.haowusong.com', '任务失败:', 'toLocaleLowerCase', 'cktough', 'isShadowrocket', 'application/json,\x20text/plain,\x20*/*', 'statusCode', 'initGotEnv', 'gzip,\x20deflate,\x20br', '开始看视频~', 'setdata', 'mediaUrl', 'Content-Length', 'dawckstatus', 'zh-cn', 'player', 'exports', '@chavy_boxjs_userCfgs.httpapi', 'isSurge', '您选择的是用\x22@\x22隔开\x0a', 'https://v3.sdk.haowusong.com/api/box/lottery/receive', '当前进度：', 'join', 'box_credit_num', 'media-url', 'isMute', '\x20投分红币】:\x20投入\x20', 'title', 'money', ',\x20错误!', '{\x22channel\x22\x20:\x20\x22dawbox\x22,\x20\x22task_id\x22\x20:\x20\x2254\x22}', 'floor', 'setval', 'getSeconds', '个账号', '2474220dHeiEr', 'dawck', '【积分现金抽奖】\x0a当前资产：', 'https://v3.sdk.haowusong.com/api/channel/integral/task/receive', '3253350CxHVTC', 'catch', 'POST', 'redirect', 'getMinutes', 'getjson', 'https://v3.sdk.haowusong.com/api/box/lottery/start', 'path', 'logs', '{\x22video\x22:1}', '211183KDhcWG'];
-	_0x3cc8 = function() {
-		return _0x4cea72;
-	};
-	return _0x3cc8();
-}
+    if(typeof $request !== "undefined")
+    {
+        await GetRewrite()
+    }
+    else
+    {
+        await CheckEnv()
+        
+        numBoxbody = dawTokenArr.length
+        console.log(`找到${numBoxbody}个账户，脚本会同时做IOS和安卓端任务\n`)
+        
+        for(channelIdx=0; channelIdx<channel.length; channelIdx++) {
+            for(userIdx=0; userIdx<numBoxbody; userIdx++) {
+                if(await QueryVipInfo()) {
+                    await $.wait(100)
+                    await QueryWarehouse()
+                }
+            }
+        }
+        
+        for(channelIdx=0; channelIdx<channel.length; channelIdx++) {
+            console.log(`\n先每个账号并发看广告和抽奖，开始${channelStr[channelIdx]}任务`)
+            for(let i=0; i<maxTryNum; i++) {
+                console.log(`\n============= 第${i+1}轮看视频抽奖 =============`)
+                allCompFlag = 1
+                waitTime = 65*1000
+                
+                for(userIdx=0; userIdx<numBoxbody; userIdx++) {
+                    if(await QueryVipInfo()) {
+                        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName}：`)
+                        await QueryCoinInfo(1)
+                    }
+                }
+                
+                if(allCompFlag) {
+                    console.log(`所有账号已完成看广告和抽奖任务`)
+                    break
+                } else if (i < maxTryNum-1){
+                    if(waitTime > 0) {
+                        console.log(`等待${waitTime}ms 进行下一轮看视频抽奖\n`)
+                        await $.wait(waitTime)
+                    }
+                }
+            }
+        }
+        
+        console.log(`\n开始签到，领取任务奖励，兑换红包和提现`)
+        for(channelIdx=0; channelIdx<channel.length; channelIdx++) {
+            for(userIdx=0; userIdx<numBoxbody; userIdx++) {
+                if(await QueryVipInfo()) {
+                    console.log(`\n============= 账户${userIdx+1}${channelStr[channelIdx]}： ${userName} =============`)
+                    notifyStr += `\n============= 账户${userIdx+1}${channelStr[channelIdx]}： ${userName} =============\n`
+                    
+                    await $.wait(100)
+                    await QuerySignList()
+                    
+                    await $.wait(100)
+                    await QueryTaskList()
+                    
+                    await $.wait(100)
+                    await QueryMallExchange(0)
+                    
+                    await $.wait(100)
+                    await QueryWithdrawIntegral(1)
+                    
+                    await $.wait(100)
+                    await QueryWithdrawBox(1)
+                    
+                    await $.wait(100)
+                    await QueryCoinInfo(0)
+                    
+                    await $.wait(100)
+                    await QueryWalletInfo(0)
+                    
+                    await $.wait(100)
+                    await QueryCoinInfo(2)
+                }
+            }
+        }
+        
+        await Showmsg()
+    }
+  
 
-function _0x43b0(_0x527824, _0x5dcaf4) {
-	const _0x3cc8a7 = _0x3cc8();
-	return _0x43b0 = function(_0x43b0b3, _0x3ee5bf) {
-		_0x43b0b3 = _0x43b0b3 - 0xbb;
-		let _0x2a3e7a = _0x3cc8a7[_0x43b0b3];
-		return _0x2a3e7a;
-	}, _0x43b0(_0x527824, _0x5dcaf4);
-}
+})()
+.catch((e) => $.logErr(e))
+.finally(() => $.done())
 
-function Get_data() {
-	const _0x2dfdfe = _0x2aeb9e;
-	if ($request[_0x2dfdfe(0x102)][_0x2dfdfe(0xea)](_0x2dfdfe(0x142)) > -0x1) {
-		const _0x3df492 = $request[_0x2dfdfe(0xfa)][_0x2dfdfe(0xed)];
-		if (_0x3df492) $[_0x2dfdfe(0x169)](_0x3df492, _0x2dfdfe(0x183) + status);
-		$[_0x2dfdfe(0xdc)]($['name'], '', '都爱玩' + status + '数据获取成功'), $[_0x2dfdfe(0x10d)]('[' + $['name'] + _0x2dfdfe(0x111) + _0x3df492);
-	}
-}
+//通知
+async function Showmsg() {
+    
+    notifyBody = jsname + "运行通知\n\n" + notifyStr
+    
+    if (notifyFlag != 1) {
+        console.log(notifyBody);
+    }
 
-function sign() {
-	return new Promise(_0x39e72a => {
-		const _0x4d9567 = _0x43b0;
-		let _0x3e85b3 = {
-			'url': _0x4d9567(0x132),
-			'headers': {
-				'Host': _0x4d9567(0x15f),
-				'Origin': _0x4d9567(0xc2),
-				'Accept-Encoding': _0x4d9567(0x167),
-				'Connection': 'keep-alive',
-				'Accept': _0x4d9567(0x164),
-				'User-Agent': _0x4d9567(0x15a),
-				'Accept-Language': _0x4d9567(0x16d),
-				'Referer': 'https://v3.h5.haowusong.com/box/sdk/shop?channel=dawbox',
-				'token': dawck
-			}
-		};
-		$[_0x4d9567(0xc7)](_0x3e85b3, async (_0x38af0d, _0x936496, _0x4d4a2a) => {
-			const _0x4f4532 = _0x4d9567;
-			try {
-				let _0x106d0f = JSON[_0x4f4532(0x114)](_0x4d4a2a);
-				_0x106d0f['code'] == 0xc8 ? $['log'](_0x4f4532(0x11e) + _0x106d0f[_0x4f4532(0x101)]['total_credit_num']) : $[_0x4f4532(0x10d)](_0x106d0f[_0x4f4532(0xd6)]);
-			} catch (_0x140139) {
-				$[_0x4f4532(0xfc)](_0x140139, _0x936496);
-			} finally {
-				_0x39e72a();
-			}
-		}, 0x0);
-	});
-}
-async function dawbox() {
-	return new Promise(_0x28308f => {
-		const _0x51ba1d = _0x43b0;
-		let _0x51b18a = {
-			'url': _0x51ba1d(0x14e),
-			'headers': {
-				'Host': _0x51ba1d(0x15f),
-				'Origin': 'https://v3.h5.haowusong.com',
-				'Accept-Encoding': _0x51ba1d(0x167),
-				'Connection': _0x51ba1d(0xdf),
-				'Accept': _0x51ba1d(0x164),
-				'User-Agent': _0x51ba1d(0x15a),
-				'Accept-Language': _0x51ba1d(0x16d),
-				'Referer': _0x51ba1d(0xbf),
-				'token': dawck
-			}
-		};
-		$[_0x51ba1d(0x139)](_0x51b18a, async (_0x4a800e, _0x2c271b, _0x5720d3) => {
-			const _0x3c7dc6 = _0x51ba1d;
-			try {
-				let _0x576633 = JSON[_0x3c7dc6(0x114)](_0x5720d3);
-				if (_0x576633[_0x3c7dc6(0x152)] == 0xc8) {
-					let _0x5c43e2 = _0x576633[_0x3c7dc6(0x101)][_0x3c7dc6(0xbc)][_0x3c7dc6(0xc6)][0x0];
-					$[_0x3c7dc6(0x10d)]('任务--' + _0x5c43e2[_0x3c7dc6(0x148)]), $[_0x3c7dc6(0x10d)](_0x3c7dc6(0x174) + _0x5c43e2[_0x3c7dc6(0x14b)] + '/' + _0x5c43e2[_0x3c7dc6(0xd0)]);
-					if (_0x5c43e2[_0x3c7dc6(0x14b)] < _0x5c43e2['contribution_num']) {
-						console['log']('去完成');
-						let _0x2fc5c9 = _0x5c43e2['contribution_num'] - _0x5c43e2[_0x3c7dc6(0x14b)],
-							_0x180a60 = 0x0;
-						do {
-							console[_0x3c7dc6(0x10d)](_0x3c7dc6(0x168)), _0x180a60 != 0x0 && (console[_0x3c7dc6(0x10d)]('等待60秒看视频~'), await $[_0x3c7dc6(0xcd)](0xee48)), await vedioTask(_0x5c43e2['task_id']), console[_0x3c7dc6(0x10d)]('等待60秒冷却时间~'), await $[_0x3c7dc6(0xcd)](0xee48), _0x180a60++;
-						} while (_0x180a60 < _0x2fc5c9);
-					}
-				} else $[_0x3c7dc6(0x10d)](_0x576633['error']);
-			} catch (_0x34cfaf) {
-				$['logErr'](_0x34cfaf, _0x2c271b);
-			} finally {
-				_0x28308f();
-			}
-		}, 0x0);
-	});
+    if (notifyFlag == 1) {
+        $.msg(notifyBody);
+        if ($.isNode()){await notify.sendNotify($.name, notifyBody );}
+    }
 }
 
-function vedioTask(_0x4a77e1) {
-	return new Promise(_0x3ccffe => {
-		const _0x305049 = _0x43b0;
-		let _0x3d42a9 = {
-			'url': _0x305049(0x185),
-			'body': _0x305049(0x112),
-			'headers': {
-				'Host': _0x305049(0x15f),
-				'Content-Type': _0x305049(0x153),
-				'Origin': _0x305049(0xc2),
-				'Accept-Language': _0x305049(0x16d),
-				'Accept-Encoding': _0x305049(0x167),
-				'Connection': 'keep-alive',
-				'Accept': '*/*',
-				'User-Agent': _0x305049(0x15a),
-				'Referer': _0x305049(0x144),
-				'token': dawck,
-				'Content-Length': '33'
-			}
-		};
-		$[_0x305049(0xc7)](_0x3d42a9, async (_0x2d8224, _0x3d6683, _0x2380f2) => {
-			const _0xd3fa41 = _0x305049;
-			try {
-				let _0x214948 = JSON[_0xd3fa41(0x114)](_0x2380f2);
-				_0x214948['code'] == 0xc8 ? console[_0xd3fa41(0x10d)]('任务成功') : console[_0xd3fa41(0x10d)]('任务失败:' + _0x214948['error']);
-			} catch (_0xa0c58) {
-				$[_0xd3fa41(0xfc)](_0xa0c58, _0x3d6683);
-			} finally {
-				_0x3ccffe();
-			}
-		}, 0x0);
-	});
+async function GetRewrite() {
+    
+    if($request.url.indexOf('api/box/wallet/info') > -1) {
+        let headers = $request.headers
+        let token = headers['token'] ? headers['token'] : ''
+        
+        if(!token) return;
+        
+        if(dawToken) {
+            if(dawToken.indexOf(token) > -1) {
+                $.msg(jsname+` 此dawToken已存在`)
+            } else {
+                dawToken = dawToken + '@' + token
+                $.setdata(dawToken, 'dawToken');
+                ckList = dawToken.split('@')
+                $.msg(jsname+` 获取第${ckList.length}个dawToken成功`)
+            }
+        } else {
+            $.setdata(token, 'dawToken');
+            $.msg(jsname+` 获取第1个dawToken成功`)
+        }
+    }
 }
 
-function turntable() {
-	return new Promise(_0x222904 => {
-		const _0x408d9b = _0x43b0;
-		let _0x1dfe40 = {
-			'url': _0x408d9b(0x10c),
-			'headers': {
-				'Host': 'v3.sdk.haowusong.com',
-				'Connection': _0x408d9b(0xdf),
-				'token': dawck,
-				'content-type': _0x408d9b(0x153),
-				'Accept-Encoding': _0x408d9b(0x14f),
-				'User-Agent': 'Mozilla/5.0\x20(iPhone;\x20CPU\x20iPhone\x20OS\x2014_2\x20like\x20Mac\x20OS\x20X)\x20AppleWebKit/605.1.15\x20(KHTML,\x20like\x20Gecko)\x20Mobile/15E148\x20MicroMessenger/8.0.3(0x1800032c)\x20NetType/4G\x20Language/zh_CN',
-				'Referer': _0x408d9b(0x146)
-			}
-		};
-		$['get'](_0x1dfe40, async (_0x356ee7, _0x50febb, _0x21a5fe) => {
-			const _0x4da710 = _0x408d9b;
-			try {
-				let _0x14e890 = JSON['parse'](_0x21a5fe);
-				if (_0x14e890[_0x4da710(0x152)] == 0xc8) {
-					console[_0x4da710(0x10d)]('【转盘游戏】');
-					let _0x71fd59 = 0x5 - _0x14e890['data'][_0x4da710(0x150)][_0x4da710(0x123)];
-					console[_0x4da710(0x10d)](_0x4da710(0x117) + _0x71fd59);
-					0x5 > _0x14e890['data'][_0x4da710(0x150)][_0x4da710(0x123)] && (console[_0x4da710(0x10d)](_0x4da710(0x134)), await turntable_vedio(), console['log'](_0x4da710(0x141)), await $[_0x4da710(0xcd)](0x7530));
-					let _0x213241 = 0xa - _0x14e890['data'][_0x4da710(0x150)]['can_lottery_num'];
-					console[_0x4da710(0x10d)](_0x4da710(0xf7) + _0x213241), _0x14e890[_0x4da710(0x101)][_0x4da710(0x150)]['can_lottery_num'] < 0xa && (console['log']('去看抽奖~'), await turntable_start(), console['log'](_0x4da710(0x116)), console['log']('等待30秒冷却~'), await $[_0x4da710(0xcd)](0x7530), await turntable_receive(), await $[_0x4da710(0xcd)](0xbb8), await turntable());
-				} else console['log'](_0x4da710(0x160) + _0x14e890[_0x4da710(0xd6)]);
-			} catch (_0x7ebe8d) {
-				$[_0x4da710(0xfc)](_0x7ebe8d, _0x50febb);
-			} finally {
-				_0x222904();
-			}
-		}, 0x0);
-	});
+async function CheckEnv() {
+    if(dawToken) {
+        if(dawToken.indexOf('@') > -1) {
+            let dawTokens = dawToken.split('@')
+            for(let i=0; i<dawTokens.length; i++) {
+                dawTokenArr.push(dawTokens[i])
+            }
+        } else {
+            
+            dawTokenArr.push(dawToken)
+        }
+    }
 }
 
-function turntable_start() {
-	return new Promise(_0x2a8bdc => {
-		const _0xfe5e12 = _0x43b0;
-		let _0x4aedca = {
-			'url': 'https://v3.sdk.haowusong.com/api/channel/integral/turntable/result',
-			'rawBody': _0xfe5e12(0x17d),
-			'headers': {
-				'Host': _0xfe5e12(0x15f),
-				'Connection': _0xfe5e12(0xdf),
-				'token': dawck,
-				'Content-Type': _0xfe5e12(0x153),
-				'Accept-Encoding': _0xfe5e12(0x14f),
-				'User-Agent': _0xfe5e12(0xff),
-				'Referer': _0xfe5e12(0x146)
-			},
-			'body': _0xfe5e12(0x17d)
-		};
-		$['post'](_0x4aedca, async (_0x56a779, _0x4292ea, _0x418220) => {
-			const _0x129557 = _0xfe5e12;
-			try {
-				let _0x5d3773 = JSON[_0x129557(0x114)](_0x418220);
-				_0x5d3773[_0x129557(0x152)] == 0xc8 ? console['log'](_0x129557(0x15c) + _0x5d3773[_0x129557(0x101)]['title']) : console[_0x129557(0x10d)]('任务失败:' + _0x5d3773[_0x129557(0xd6)]);
-			} catch (_0x36d0df) {
-				$[_0x129557(0xfc)](_0x36d0df, _0x4292ea);
-			} finally {
-				_0x2a8bdc();
-			}
-		}, 0x0);
-	});
+///////////////////////////////////////////////////////////////////
+
+//用户名，VIP等级查询
+async function QueryVipInfo() {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/vip/v2`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return false
+    
+    if(result.code == 200) {
+        userName = result.data.nickname ? result.data.nickname : ''
+        isVip = result.data.is_vip ? result.data.is_vip : 0
+        vipLevel = result.data.vip_level ? result.data.vip_level : 0
+    } else {
+        console.log(`\n账户查询失败：${result.error}`)
+        return false
+    }
+    
+    return true
 }
 
-function turntable_receive() {
-	return new Promise(_0x456bf6 => {
-		const _0x4b63e6 = _0x43b0;
-		let _0xd92ed3 = {
-			'url': _0x4b63e6(0xf9),
-			'body': _0x4b63e6(0xdb),
-			'headers': {
-				'Host': _0x4b63e6(0x15f),
-				'Connection': _0x4b63e6(0xdf),
-				'token': dawck,
-				'Content-Type': _0x4b63e6(0x153),
-				'Accept-Encoding': _0x4b63e6(0x14f),
-				'User-Agent': _0x4b63e6(0xff),
-				'Referer': _0x4b63e6(0x146)
-			}
-		};
-		$[_0x4b63e6(0xc7)](_0xd92ed3, async (_0x269273, _0x5948ec, _0x35d8c2) => {
-			const _0x418879 = _0x4b63e6;
-			try {
-				let _0x4f268a = JSON[_0x418879(0x114)](_0x35d8c2);
-				_0x4f268a[_0x418879(0x152)] == 0xc8 ? console[_0x418879(0x10d)](_0x418879(0x11b)) : console['log']('任务失败:' + _0x4f268a['error']);
-			} catch (_0x3b14b0) {
-				$['logErr'](_0x3b14b0, _0x5948ec);
-			} finally {
-				_0x456bf6();
-			}
-		}, 0x0);
-	});
+//仓库容量查询
+async function QueryWarehouse() {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/warehouse?channel=${channel[channelIdx]}`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        let integral_num = result.data.info.integral_num ? result.data.info.integral_num : 0
+        let warehouse_num = result.data.info.warehouse_num ? result.data.info.warehouse_num : 0
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName}：现在有${integral_num}币，仓库容量${warehouse_num}币`)
+        if(result.data.tasks && Array.isArray(result.data.tasks)) {
+            for(let i=0; i<result.data.tasks.length; i++) {
+                let taskItem = result.data.tasks[i]
+                if(taskItem.status == 1) {
+                    await $.wait(100)
+                    await ReceiveWarehouse(taskItem)
+                }
+            }
+        }
+    } else {
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName}：查询仓库容量失败：${result.error}`)
+    }
 }
 
-function turntable_vedio() {
-	return new Promise(_0x32d8d9 => {
-		const _0x26f7fe = _0x43b0;
-		let _0x5aac63 = {
-			'url': _0x26f7fe(0x125),
-			'body': _0x26f7fe(0x11d),
-			'headers': {
-				'Host': _0x26f7fe(0x15f),
-				'Connection': _0x26f7fe(0xdf),
-				'Content-Length': '35',
-				'token': dawck,
-				'Content-Type': _0x26f7fe(0x153),
-				'Accept-Encoding': 'gzip,compress,br,deflate',
-				'User-Agent': _0x26f7fe(0xff),
-				'Referer': _0x26f7fe(0x146)
-			},
-			'rawBody': '{\x22channel\x22:\x22dawbox\x22,\x22task_id\x22:\x2254\x22}'
-		};
-		$['post'](_0x5aac63, async (_0x3d5198, _0x1f827f, _0x2cffcb) => {
-			const _0x11ee88 = _0x26f7fe;
-			try {
-				let _0x4b5cd9 = JSON[_0x11ee88(0x114)](_0x2cffcb);
-				_0x4b5cd9[_0x11ee88(0x152)] == 0xc8 ? console[_0x11ee88(0x10d)](_0x11ee88(0x11b)) : console[_0x11ee88(0x10d)](_0x11ee88(0x160) + _0x4b5cd9[_0x11ee88(0xd6)]);
-			} catch (_0x3bb103) {
-				$[_0x11ee88(0xfc)](_0x3bb103, _0x1f827f);
-			} finally {
-				_0x32d8d9();
-			}
-		}, 0x0);
-	});
+//仓库容量领取
+async function ReceiveWarehouse(taskItem) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/warehouse/receive?channel=${channel[channelIdx]}&task_id=${taskItem.task_id}`
+    let urlObject = PopulateGetUrl(url)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return false
+    
+    if(result.code == 200) {
+        console.log(`--领取任务【${taskItem.title}】奖励成功，获得${taskItem.warehouse_num}仓库容量`)
+    } else {
+        console.log(`--领取任务【${taskItem.title}】奖励失败：${result.error}`)
+    }
 }
 
-function lottery() {
-	return new Promise(_0x37343d => {
-		const _0x551d2c = _0x43b0;
-		let _0xdc2dc6 = {
-			'url': _0x551d2c(0x12f),
-			'headers': {
-				'Host': 'v3.sdk.haowusong.com',
-				'Connection': _0x551d2c(0xdf),
-				'token': dawck,
-				'Content-Type': _0x551d2c(0x153),
-				'Accept-Encoding': _0x551d2c(0x14f),
-				'User-Agent': _0x551d2c(0xff),
-				'Referer': _0x551d2c(0x146)
-			}
-		};
-		$[_0x551d2c(0x139)](_0xdc2dc6, async (_0x304541, _0x3cff35, _0x5afb73) => {
-			const _0x117598 = _0x551d2c;
-			try {
-				let _0x2fabf0 = JSON['parse'](_0x5afb73);
-				if (_0x2fabf0[_0x117598(0x152)] == 0xc8) {
-					console['log'](_0x117598(0x184) + _0x2fabf0[_0x117598(0x101)][_0x117598(0x16e)][_0x117598(0x176)] + _0x117598(0xbe) + _0x2fabf0['data'][_0x117598(0x16e)]['money'] + _0x117598(0x122));
-					let _0x5bcf55 = _0x2fabf0[_0x117598(0x101)]['lottery_num']['max_video_num'] - _0x2fabf0['data']['lottery_num']['use_video_num'];
-					console[_0x117598(0x10d)]('看视频加抽奖次数剩余：' + _0x5bcf55), _0x2fabf0[_0x117598(0x101)][_0x117598(0x150)][_0x117598(0x120)] - _0x2fabf0[_0x117598(0x101)][_0x117598(0x150)][_0x117598(0x121)] > 0x0 && (console[_0x117598(0x10d)](_0x117598(0x134)), await lottery_vedio(), console['log']('等待30秒~'), await $[_0x117598(0xcd)](0x7530)), console[_0x117598(0x10d)](_0x117598(0xf7) + _0x2fabf0['data'][_0x117598(0x150)][_0x117598(0xf0)]), _0x2fabf0[_0x117598(0x101)][_0x117598(0x150)][_0x117598(0xf0)] > 0x0 && (console[_0x117598(0x10d)](_0x117598(0x156)), await lottery_start(), console[_0x117598(0x10d)]('去看视频翻10倍奖励~'), console['log'](_0x117598(0xf1)), await $['wait'](0x7530), await lottery_receive(), await $[_0x117598(0xcd)](0xbb8), await lottery());
-				} else console[_0x117598(0x10d)](_0x117598(0x160) + _0x2fabf0[_0x117598(0xd6)]);
-			} catch (_0x591892) {
-				$[_0x117598(0xfc)](_0x591892, _0x3cff35);
-			} finally {
-				_0x37343d();
-			}
-		}, 0x0);
-	});
+//积分和红包余额查询
+async function QueryWalletInfo() {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/wallet/info`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        let box_credit_num = result.data.box_credit_num ? result.data.box_credit_num : 0
+        let box_platform_money = result.data.box_platform_money ? result.data.box_platform_money : 0
+        console.log(`\n账户信息：`)
+        console.log(`【积分】：${box_credit_num}`)
+        console.log(`【红包余额】：${box_platform_money}`)
+        notifyStr += `\n账户信息：\n`
+        notifyStr += `【积分】：${box_credit_num}\n`
+        notifyStr += `【红包余额】：${box_platform_money}\n`
+    } else {
+        console.log(`\n查询积分和红包余额失败：${result.error}`)
+    }
 }
 
-function lottery_start() {
-	return new Promise(_0xc78944 => {
-		const _0x5570fc = _0x43b0;
-		let _0xec6f6 = {
-			'url': _0x5570fc(0x18c),
-			'body': '{}',
-			'headers': {
-				'Host': 'v3.sdk.haowusong.com',
-				'Connection': _0x5570fc(0xdf),
-				'token': dawck,
-				'Content-Type': _0x5570fc(0x153),
-				'Accept-Encoding': _0x5570fc(0x14f),
-				'User-Agent': _0x5570fc(0xff),
-				'Referer': _0x5570fc(0x145)
-			}
-		};
-		$[_0x5570fc(0xc7)](_0xec6f6, async (_0xfb64a7, _0x428bef, _0xf0a06) => {
-			const _0x11522c = _0x5570fc;
-			try {
-				let _0x430ad3 = JSON[_0x11522c(0x114)](_0xf0a06);
-				_0x430ad3[_0x11522c(0x152)] == 0xc8 ? console[_0x11522c(0x10d)]('获得奖励：' + _0x430ad3[_0x11522c(0x101)][_0x11522c(0x17a)]) : console['log'](_0x11522c(0x160) + _0x430ad3[_0x11522c(0xd6)]);
-			} catch (_0x41f072) {
-				$['logErr'](_0x41f072, _0x428bef);
-			} finally {
-				_0xc78944();
-			}
-		}, 0x0);
-	});
+//领币和瓜分池查询
+//type -- 0: 投入瓜分池，1：做领币任务，2：查询余额
+async function QueryCoinInfo(type) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/pool?channel=${channel[channelIdx]}`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        if(type == 0) {
+            let integral_num = result.data.player.integral_num ? result.data.player.integral_num : 0
+            let can_num = result.data.player.can_num ? result.data.player.can_num : 0
+            let use_integral_num = result.data.player.use_integral_num ? result.data.player.use_integral_num : 0
+            let integral_min_put_num = result.data.pool.integral_min_put_num ? result.data.pool.integral_min_put_num : 0
+            let can_put_num = result.data.pool.can_put_num ? result.data.pool.can_put_num : 0
+            console.log(`\n现在有${integral_num}币，已投入${use_integral_num}币，今日可投入次数为${can_num}，当前池子可投入${can_put_num}币`)
+            if(can_num > 0) {
+                if(integral_num >= integral_min_put_num && can_put_num >= integral_min_put_num) {
+                    let putNum = (integral_num>can_put_num) ? can_put_num : integral_num
+                    await $.wait(100)
+                    await PutInPool(putNum,1)
+                }
+            }
+        } else if(type == 1) {
+            if(result.data.tasks.vedio_task && Array.isArray(result.data.tasks.vedio_task)) {
+                for(let i=0; i<result.data.tasks.vedio_task.length; i++) {
+                    let taskItem = result.data.tasks.vedio_task[i]
+                    if(taskItem.title.indexOf('看广告') > -1) {
+                        if(taskItem.complete_num < taskItem.contribution_num) {
+                            allCompFlag = 0
+                            await $.wait(100)
+                            waitTime -= 100
+                            await ReceiveCoin(taskItem)
+                        }
+                    }
+                }
+            }
+            if(result.data.tasks.game_task && Array.isArray(result.data.tasks.game_task)) {
+                for(let i=0; i<result.data.tasks.game_task.length; i++) {
+                    let taskItem = result.data.tasks.game_task[i]
+                    if(taskItem.title.indexOf('转盘游戏') > -1) {
+                        if(taskItem.complete_num < taskItem.contribution_num) {
+                            allCompFlag = 0
+                            await $.wait(100)
+                            waitTime -= 100
+                            await QueryTurntable(taskItem)
+                        }
+                    }
+                }
+            }
+        } else if(type == 2) {
+            let integral_num = result.data.player.integral_num ? result.data.player.integral_num : 0
+            let use_integral_num = result.data.player.use_integral_num ? result.data.player.use_integral_num : 0
+            let money = result.data.player.money ? result.data.player.money : 0
+            console.log(`【DAB币】：${integral_num}`)
+            console.log(`【今日已投】：${use_integral_num}`)
+            console.log(`【分红余额】：${money}`)
+            notifyStr += `【DAB币】：${integral_num}\n`
+            notifyStr += `【今日已投】：${use_integral_num}\n`
+            notifyStr += `【分红余额】：${money}\n`
+        }
+    } else {
+        console.log(`\n查询信息失败：${result.error}`)
+    }
 }
 
-function lottery_receive() {
-	return new Promise(_0x32971b => {
-		const _0x13f9ce = _0x43b0;
-		let _0x53815f = {
-			'url': _0x13f9ce(0x173),
-			'body': _0x13f9ce(0x18f),
-			'headers': {
-				'Host': 'v3.sdk.haowusong.com',
-				'Connection': _0x13f9ce(0xdf),
-				'token': dawck,
-				'Content-Type': 'application/json',
-				'Accept-Encoding': 'gzip,compress,br,deflate',
-				'User-Agent': _0x13f9ce(0xff),
-				'Referer': _0x13f9ce(0x145)
-			}
-		};
-		$['post'](_0x53815f, async (_0x5a4f77, _0x2a9061, _0x36cab1) => {
-			const _0x214318 = _0x13f9ce;
-			try {
-				let _0x4256d3 = JSON['parse'](_0x36cab1);
-				_0x4256d3[_0x214318(0x152)] == 0xc8 ? console[_0x214318(0x10d)](_0x214318(0x11b)) : console[_0x214318(0x10d)]('任务失败:' + _0x4256d3[_0x214318(0xd6)]);
-			} catch (_0x5e3bfd) {
-				$[_0x214318(0xfc)](_0x5e3bfd, _0x2a9061);
-			} finally {
-				_0x32971b();
-			}
-		}, 0x0);
-	});
+//领币任务奖励
+async function ReceiveCoin(taskItem) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/task/receive`
+    let reqBody = `{"task_id":${taskItem.task_id},"channel":"${channel[channelIdx]}"}`
+    let urlObject = PopulatePostUrl(url,reqBody)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        console.log(`完成任务【${taskItem.title}】，领取DAB币成功`)
+    } else {
+        console.log(`完成任务【${taskItem.title}】失败：${result.error}`)
+    }
 }
 
-function lottery_vedio() {
-	return new Promise(_0x4629fe => {
-		const _0x7b749e = _0x43b0;
-		let _0x59f146 = {
-			'url': _0x7b749e(0x104),
-			'body': '{}',
-			'headers': {
-				'Host': 'v3.sdk.haowusong.com',
-				'Connection': _0x7b749e(0xdf),
-				'Content-Length': '2',
-				'token': dawck,
-				'Content-Type': 'application/json',
-				'Accept-Encoding': _0x7b749e(0x14f),
-				'User-Agent': _0x7b749e(0xff),
-				'Referer': _0x7b749e(0x145)
-			}
-		};
-		$[_0x7b749e(0xc7)](_0x59f146, async (_0x1e57a4, _0x59747b, _0x313e64) => {
-			const _0x384d46 = _0x7b749e;
-			try {
-				let _0x2cacf8 = JSON[_0x384d46(0x114)](_0x313e64);
-				_0x2cacf8[_0x384d46(0x152)] == 0xc8 ? console[_0x384d46(0x10d)](_0x384d46(0x11b)) : console['log']('任务失败:' + _0x2cacf8[_0x384d46(0xd6)]);
-			} catch (_0x542789) {
-				$[_0x384d46(0xfc)](_0x542789, _0x59747b);
-			} finally {
-				_0x4629fe();
-			}
-		}, 0x0);
-	});
-}
-async function dawbox_put() {
-	return new Promise(_0x29c7b9 => {
-		const _0x42346d = _0x43b0;
-		let _0x41391e = {
-			'url': _0x42346d(0x14e),
-			'headers': {
-				'Host': _0x42346d(0x15f),
-				'Origin': _0x42346d(0xc2),
-				'Accept-Encoding': _0x42346d(0x167),
-				'Connection': 'keep-alive',
-				'Accept': 'application/json,\x20text/plain,\x20*/*',
-				'User-Agent': _0x42346d(0x15a),
-				'Accept-Language': _0x42346d(0x16d),
-				'Referer': _0x42346d(0xbf),
-				'token': dawck
-			}
-		};
-		$[_0x42346d(0x139)](_0x41391e, async (_0x1d494d, _0x1eceda, _0x350b7d) => {
-			const _0x36a519 = _0x42346d;
-			try {
-				let _0x5527ff = JSON[_0x36a519(0x114)](_0x350b7d);
-				if (_0x5527ff[_0x36a519(0x152)] == 0xc8) {
-					console[_0x36a519(0x10d)](_0x36a519(0x118) + $[_0x36a519(0xcc)] + _0x36a519(0x11c) + _0x5527ff['data'][_0x36a519(0x16e)]['integral_num'] + '\x0a---可提现金额：' + _0x5527ff[_0x36a519(0x101)]['player'][_0x36a519(0x17b)]), can_num = _0x5527ff[_0x36a519(0x101)]['player'][_0x36a519(0x12d)];
-					if (can_num == 0x1) {
-						integral_num = _0x5527ff[_0x36a519(0x101)][_0x36a519(0xf3)][_0x36a519(0xe8)];
-						let _0x32e9f9 = Math[_0x36a519(0x17e)](_0x5527ff[_0x36a519(0x101)][_0x36a519(0x16e)][_0x36a519(0xc1)] / integral_num) * integral_num;
-						await soy_daw_put(_0x32e9f9);
-					};
-				} else $[_0x36a519(0x10d)](_0x5527ff[_0x36a519(0xd6)]);
-			} catch (_0x4a11c8) {
-				$[_0x36a519(0xfc)](_0x4a11c8, _0x1eceda);
-			} finally {
-				_0x29c7b9();
-			}
-		}, 0x0);
-	});
+//转盘次数查询
+async function QueryTurntable(taskItem) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/turntable/config?channel=${channel[channelIdx]}&task_id=${taskItem.task_id}`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return false
+    
+    if(result.code == 200) {
+        let can_video_num = result.data.lottery_num.can_video_num ? result.data.lottery_num.can_video_num : 0
+        let max_video_num = result.data.lottery_num.max_video_num ? result.data.lottery_num.max_video_num : 0
+        let can_lottery_num = result.data.lottery_num.can_lottery_num ? result.data.lottery_num.can_lottery_num : 0
+        let max_lottery_num = result.data.lottery_num.max_lottery_num ? result.data.lottery_num.max_lottery_num : 0
+        if(can_video_num < max_video_num) {
+            //先看视频领次数
+            await $.wait(100)
+            waitTime -= 100
+            await ReceiveVideoReward(taskItem)
+        } else if(can_lottery_num < max_lottery_num) {
+            //已看完视频，直接抽奖
+            await $.wait(100)
+            waitTime -= 100
+            await Turntable(taskItem)
+        }
+    } else {
+        console.log(`\n获取转盘次数失败：${result.error}`)
+        return false
+    }
+    
+    return true
 }
 
-function soy_daw_put(_0x4e8ac6) {
-	return new Promise((_0x19c1ca, _0x4afd49) => {
-		const _0x4e9376 = _0x43b0;
-		$[_0x4e9376(0xc7)]({
-			'url': _0x4e9376(0x136) + _0x4e8ac6,
-			'headers': {
-				'Host': 'v3.sdk.haowusong.com',
-				'Origin': 'https://v3.h5.haowusong.com',
-				'Accept-Encoding': _0x4e9376(0x167),
-				'Connection': _0x4e9376(0xdf),
-				'Accept': _0x4e9376(0x164),
-				'User-Agent': _0x4e9376(0x15a),
-				'Accept-Language': _0x4e9376(0x16d),
-				'Referer': _0x4e9376(0xbf),
-				'token': dawck
-			},
-			'body': ''
-		}, async (_0x5b1dee, _0x44cf51, _0x109bc2) => {
-			const _0x366da8 = _0x4e9376;
-			try {
-				let _0x338e61 = JSON[_0x366da8(0x114)](_0x109bc2);
-				_0x338e61['code'] == 0xc8 ? console[_0x366da8(0x10d)](_0x366da8(0x118) + $[_0x366da8(0xcc)] + _0x366da8(0x179) + mun + '\x20DAB币成功~') : console[_0x366da8(0x10d)](_0x366da8(0x118) + $['index'] + _0x366da8(0xdd) + _0x338e61[_0x366da8(0xd6)]);
-			} catch (_0x47055f) {
-				console[_0x366da8(0x10d)](_0x47055f);
-			} finally {
-				_0x19c1ca();
-			}
-		});
-	});
+//看视频领抽奖次数
+async function ReceiveVideoReward(taskItem) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/turntable/video/receive`
+    let reqBody = `{"channel":"${channel[channelIdx]}","task_id":"${taskItem.task_id}"}`
+    let urlObject = PopulatePostUrl(url,reqBody)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        console.log(`看视频获得了一次抽奖机会`)
+        await $.wait(100)
+        waitTime -= 100
+        await Turntable(taskItem)
+    } else {
+        console.log(`看视频得抽奖机会失败：${result.error}`)
+    }
 }
 
-function Env(_0x270e6b, _0x5989b0) {
-	const _0x489453 = _0x2aeb9e;
-	class _0x260299 {
-		constructor(_0x590078) {
-			const _0x4fc546 = _0x43b0;
-			this[_0x4fc546(0x13a)] = _0x590078;
-		} [_0x489453(0xe9)](_0x4758d5, _0xbc0951 = _0x489453(0xf2)) {
-			const _0x359cdc = _0x489453;
-			_0x4758d5 = 'string' == typeof _0x4758d5 ? {
-				'url': _0x4758d5
-			} : _0x4758d5;
-			let _0x1d4dc3 = this['get'];
-			return _0x359cdc(0x188) === _0xbc0951 && (_0x1d4dc3 = this[_0x359cdc(0xc7)]), new Promise((_0x592a6a, _0x4d32bb) => {
-				const _0x35f3b2 = _0x359cdc;
-				_0x1d4dc3[_0x35f3b2(0xe0)](this, _0x4758d5, (_0x4b342f, _0x24c2dd, _0x51ee55) => {
-					_0x4b342f ? _0x4d32bb(_0x4b342f) : _0x592a6a(_0x24c2dd);
-				});
-			});
-		} [_0x489453(0x139)](_0x39dd5a) {
-			const _0x447a7d = _0x489453;
-			return this[_0x447a7d(0xe9)][_0x447a7d(0xe0)](this['env'], _0x39dd5a);
-		} [_0x489453(0xc7)](_0x4194f1) {
-			const _0x13e5e7 = _0x489453;
-			return this[_0x13e5e7(0xe9)][_0x13e5e7(0xe0)](this[_0x13e5e7(0x13a)], _0x4194f1, _0x13e5e7(0x188));
-		}
-	}
-	return new class {
-		constructor(_0x585e53, _0xbd80ca) {
-			const _0x46a07a = _0x489453;
-			this[_0x46a07a(0xc9)] = _0x585e53, this['http'] = new _0x260299(this), this['data'] = null, this[_0x46a07a(0x12a)] = _0x46a07a(0xcf), this[_0x46a07a(0x18e)] = [], this[_0x46a07a(0x178)] = !0x1, this[_0x46a07a(0x10a)] = !0x1, this[_0x46a07a(0xbd)] = '\x0a', this[_0x46a07a(0x13f)] = _0x46a07a(0xe4), this['startTime'] = new Date()['getTime'](), Object['assign'](this, _0xbd80ca), this['log']('', '🔔' + this[_0x46a07a(0xc9)] + _0x46a07a(0x149));
-		} [_0x489453(0x115)]() {
-			const _0x52d5fc = _0x489453;
-			return _0x52d5fc(0xe2) != typeof module && !!module[_0x52d5fc(0x16f)];
-		} [_0x489453(0xef)]() {
-			return 'undefined' != typeof $task;
-		} ['isSurge']() {
-			const _0x176c24 = _0x489453;
-			return _0x176c24(0xe2) != typeof $httpClient && _0x176c24(0xe2) == typeof $loon;
-		} [_0x489453(0xe6)]() {
-			const _0x481647 = _0x489453;
-			return _0x481647(0xe2) != typeof $loon;
-		} [_0x489453(0x163)]() {
-			return 'undefined' != typeof $rocket;
-		} [_0x489453(0xd8)](_0x557add, _0x38aa7b = null) {
-			const _0x3130ca = _0x489453;
-			try {
-				return JSON[_0x3130ca(0x114)](_0x557add);
-			} catch {
-				return _0x38aa7b;
-			}
-		} ['toStr'](_0x5f00eb, _0xd7ffa8 = null) {
-			try {
-				return JSON['stringify'](_0x5f00eb);
-			} catch {
-				return _0xd7ffa8;
-			}
-		} [_0x489453(0x18b)](_0x190771, _0x3b36bd) {
-			const _0x277a49 = _0x489453;
-			let _0x121068 = _0x3b36bd;
-			const _0x5a35dc = this[_0x277a49(0x127)](_0x190771);
-			if (_0x5a35dc) try {
-				_0x121068 = JSON[_0x277a49(0x114)](this[_0x277a49(0x127)](_0x190771));
-			} catch {}
-			return _0x121068;
-		} [_0x489453(0x13d)](_0x46b1ea, _0x4f0a1d) {
-			const _0x5c5031 = _0x489453;
-			try {
-				return this[_0x5c5031(0x169)](JSON[_0x5c5031(0xd2)](_0x46b1ea), _0x4f0a1d);
-			} catch {
-				return !0x1;
-			}
-		} [_0x489453(0x124)](_0x57e80b) {
-			return new Promise(_0x18ad9e => {
-				this['get']({
-					'url': _0x57e80b
-				}, (_0x2d016c, _0x2a9392, _0x1c4d72) => _0x18ad9e(_0x1c4d72));
-			});
-		} ['runScript'](_0x28f2a9, _0x51cbf3) {
-			const _0x15f746 = _0x489453;
-			return new Promise(_0x1cd8fb => {
-				const _0x4cbaed = _0x43b0;
-				let _0xe48380 = this[_0x4cbaed(0x127)](_0x4cbaed(0x170));
-				_0xe48380 = _0xe48380 ? _0xe48380[_0x4cbaed(0xc0)](/\n/g, '')[_0x4cbaed(0x158)]() : _0xe48380;
-				let _0x43a19b = this['getdata'](_0x4cbaed(0xbb));
-				_0x43a19b = _0x43a19b ? 0x1 * _0x43a19b : 0x14, _0x43a19b = _0x51cbf3 && _0x51cbf3['timeout'] ? _0x51cbf3[_0x4cbaed(0x105)] : _0x43a19b;
-				const [_0x51c11a, _0x34519d] = _0xe48380[_0x4cbaed(0x133)]('@'), _0x4cde87 = {
-					'url': _0x4cbaed(0xda) + _0x34519d + _0x4cbaed(0xce),
-					'body': {
-						'script_text': _0x28f2a9,
-						'mock_type': _0x4cbaed(0x151),
-						'timeout': _0x43a19b
-					},
-					'headers': {
-						'X-Key': _0x51c11a,
-						'Accept': '*/*'
-					}
-				};
-				this[_0x4cbaed(0xc7)](_0x4cde87, (_0x3b9d60, _0x64b0ca, _0x1ac0d8) => _0x1cd8fb(_0x1ac0d8));
-			})[_0x15f746(0x187)](_0x58d4da => this[_0x15f746(0xfc)](_0x58d4da));
-		} ['loaddata']() {
-			const _0x480c16 = _0x489453;
-			if (!this[_0x480c16(0x115)]()) return {}; {
-				this['fs'] = this['fs'] ? this['fs'] : require('fs'), this[_0x480c16(0x18d)] = this['path'] ? this['path'] : require(_0x480c16(0x18d));
-				const _0x557e9a = this[_0x480c16(0x18d)][_0x480c16(0xf6)](this[_0x480c16(0x12a)]),
-					_0x426077 = this[_0x480c16(0x18d)][_0x480c16(0xf6)](process[_0x480c16(0x154)](), this['dataFile']),
-					_0x550664 = this['fs'][_0x480c16(0x10b)](_0x557e9a),
-					_0x244f87 = !_0x550664 && this['fs'][_0x480c16(0x10b)](_0x426077);
-				if (!_0x550664 && !_0x244f87) return {}; {
-					const _0x3d9612 = _0x550664 ? _0x557e9a : _0x426077;
-					try {
-						return JSON[_0x480c16(0x114)](this['fs'][_0x480c16(0xe7)](_0x3d9612));
-					} catch (_0x35ff53) {
-						return {};
-					}
-				}
-			}
-		} [_0x489453(0xd4)]() {
-			const _0x21a875 = _0x489453;
-			if (this[_0x21a875(0x115)]()) {
-				this['fs'] = this['fs'] ? this['fs'] : require('fs'), this[_0x21a875(0x18d)] = this['path'] ? this[_0x21a875(0x18d)] : require('path');
-				const _0x56bee2 = this[_0x21a875(0x18d)]['resolve'](this[_0x21a875(0x12a)]),
-					_0x420e6d = this[_0x21a875(0x18d)][_0x21a875(0xf6)](process['cwd'](), this[_0x21a875(0x12a)]),
-					_0x14ccb5 = this['fs']['existsSync'](_0x56bee2),
-					_0x20969f = !_0x14ccb5 && this['fs'][_0x21a875(0x10b)](_0x420e6d),
-					_0x3c0e04 = JSON['stringify'](this[_0x21a875(0x101)]);
-				_0x14ccb5 ? this['fs'][_0x21a875(0x11f)](_0x56bee2, _0x3c0e04) : _0x20969f ? this['fs']['writeFileSync'](_0x420e6d, _0x3c0e04) : this['fs'][_0x21a875(0x11f)](_0x56bee2, _0x3c0e04);
-			}
-		} [_0x489453(0x15d)](_0x405d85, _0x4aff8d, _0x2cf782) {
-			const _0xd0ca29 = _0x489453,
-				_0x410949 = _0x4aff8d['replace'](/\[(\d+)\]/g, _0xd0ca29(0x108))[_0xd0ca29(0x133)]('.');
-			let _0x3b3af4 = _0x405d85;
-			for (const _0xf30183 of _0x410949)
-				if (_0x3b3af4 = Object(_0x3b3af4)[_0xf30183], void 0x0 === _0x3b3af4) return _0x2cf782;
-			return _0x3b3af4;
-		} [_0x489453(0xc3)](_0xf32c82, _0x264ccc, _0x1f35f8) {
-			const _0x5b0360 = _0x489453;
-			return Object(_0xf32c82) !== _0xf32c82 ? _0xf32c82 : (Array[_0x5b0360(0xe3)](_0x264ccc) || (_0x264ccc = _0x264ccc[_0x5b0360(0x10f)]()['match'](/[^.[\]]+/g) || []), _0x264ccc[_0x5b0360(0xca)](0x0, -0x1)['reduce']((_0x11844e, _0x3eea5d, _0x56bbfd) => Object(_0x11844e[_0x3eea5d]) === _0x11844e[_0x3eea5d] ? _0x11844e[_0x3eea5d] : _0x11844e[_0x3eea5d] = Math[_0x5b0360(0x119)](_0x264ccc[_0x56bbfd + 0x1]) >> 0x0 == +_0x264ccc[_0x56bbfd + 0x1] ? [] : {}, _0xf32c82)[_0x264ccc[_0x264ccc[_0x5b0360(0xc8)] - 0x1]] = _0x1f35f8, _0xf32c82);
-		} [_0x489453(0x127)](_0x540a4c) {
-			const _0x4dc673 = _0x489453;
-			let _0x45bd13 = this[_0x4dc673(0x12b)](_0x540a4c);
-			if (/^@/ [_0x4dc673(0xf8)](_0x540a4c)) {
-				const [, _0x4b919e, _0x28dc79] = /^@(.*?)\.(.*?)$/ [_0x4dc673(0xd5)](_0x540a4c), _0x471029 = _0x4b919e ? this[_0x4dc673(0x12b)](_0x4b919e) : '';
-				if (_0x471029) try {
-					const _0x2b235d = JSON[_0x4dc673(0x114)](_0x471029);
-					_0x45bd13 = _0x2b235d ? this[_0x4dc673(0x15d)](_0x2b235d, _0x28dc79, '') : _0x45bd13;
-				} catch (_0x5674e2) {
-					_0x45bd13 = '';
-				}
-			}
-			return _0x45bd13;
-		} [_0x489453(0x169)](_0x10e6bd, _0x5dbc8c) {
-			const _0x203a2a = _0x489453;
-			let _0x4b1c86 = !0x1;
-			if (/^@/ [_0x203a2a(0xf8)](_0x5dbc8c)) {
-				const [, _0x2c404d, _0x57ff25] = /^@(.*?)\.(.*?)$/ [_0x203a2a(0xd5)](_0x5dbc8c), _0x29c2ee = this[_0x203a2a(0x12b)](_0x2c404d), _0x59cdf8 = _0x2c404d ? _0x203a2a(0x138) === _0x29c2ee ? null : _0x29c2ee || '{}' : '{}';
-				try {
-					const _0x3276eb = JSON[_0x203a2a(0x114)](_0x59cdf8);
-					this[_0x203a2a(0xc3)](_0x3276eb, _0x57ff25, _0x10e6bd), _0x4b1c86 = this[_0x203a2a(0x17f)](JSON[_0x203a2a(0xd2)](_0x3276eb), _0x2c404d);
-				} catch (_0x384f80) {
-					const _0x108ff6 = {};
-					this[_0x203a2a(0xc3)](_0x108ff6, _0x57ff25, _0x10e6bd), _0x4b1c86 = this['setval'](JSON['stringify'](_0x108ff6), _0x2c404d);
-				}
-			} else _0x4b1c86 = this[_0x203a2a(0x17f)](_0x10e6bd, _0x5dbc8c);
-			return _0x4b1c86;
-		} ['getval'](_0x329f47) {
-			const _0x14d5da = _0x489453;
-			return this[_0x14d5da(0x171)]() || this['isLoon']() ? $persistentStore['read'](_0x329f47) : this['isQuanX']() ? $prefs[_0x14d5da(0x129)](_0x329f47) : this[_0x14d5da(0x115)]() ? (this[_0x14d5da(0x101)] = this[_0x14d5da(0x159)](), this[_0x14d5da(0x101)][_0x329f47]) : this[_0x14d5da(0x101)] && this[_0x14d5da(0x101)][_0x329f47] || null;
-		} [_0x489453(0x17f)](_0x4d7939, _0x31c8bb) {
-			const _0x30e7c4 = _0x489453;
-			return this[_0x30e7c4(0x171)]() || this[_0x30e7c4(0xe6)]() ? $persistentStore[_0x30e7c4(0xec)](_0x4d7939, _0x31c8bb) : this['isQuanX']() ? $prefs[_0x30e7c4(0x13c)](_0x4d7939, _0x31c8bb) : this[_0x30e7c4(0x115)]() ? (this[_0x30e7c4(0x101)] = this[_0x30e7c4(0x159)](), this[_0x30e7c4(0x101)][_0x31c8bb] = _0x4d7939, this[_0x30e7c4(0xd4)](), !0x0) : this[_0x30e7c4(0x101)] && this[_0x30e7c4(0x101)][_0x31c8bb] || null;
-		} [_0x489453(0x166)](_0x3375af) {
-			const _0x48383e = _0x489453;
-			this[_0x48383e(0xd7)] = this['got'] ? this['got'] : require('got'), this[_0x48383e(0x162)] = this[_0x48383e(0x162)] ? this[_0x48383e(0x162)] : require(_0x48383e(0x13b)), this[_0x48383e(0xde)] = this[_0x48383e(0xde)] ? this[_0x48383e(0xde)] : new this[(_0x48383e(0x162))][(_0x48383e(0xe1))](), _0x3375af && (_0x3375af[_0x48383e(0xfa)] = _0x3375af['headers'] ? _0x3375af[_0x48383e(0xfa)] : {}, void 0x0 === _0x3375af['headers'][_0x48383e(0xc5)] && void 0x0 === _0x3375af[_0x48383e(0x130)] && (_0x3375af[_0x48383e(0x130)] = this['ckjar']));
-		} [_0x489453(0x139)](_0x42663b, _0x118da9 = () => {}) {
-			const _0x59c0c9 = _0x489453;
-			if (_0x42663b['headers'] && (delete _0x42663b[_0x59c0c9(0xfa)][_0x59c0c9(0x15b)], delete _0x42663b['headers']['Content-Length']), this[_0x59c0c9(0x171)]() || this[_0x59c0c9(0xe6)]()) this[_0x59c0c9(0x171)]() && this[_0x59c0c9(0x10a)] && (_0x42663b[_0x59c0c9(0xfa)] = _0x42663b[_0x59c0c9(0xfa)] || {}, Object[_0x59c0c9(0x106)](_0x42663b[_0x59c0c9(0xfa)], {
-				'X-Surge-Skip-Scripting': !0x1
-			})), $httpClient[_0x59c0c9(0x139)](_0x42663b, (_0x41525, _0x5ee1c3, _0xd0d6b) => {
-				const _0x2cd506 = _0x59c0c9;
-				!_0x41525 && _0x5ee1c3 && (_0x5ee1c3[_0x2cd506(0x109)] = _0xd0d6b, _0x5ee1c3[_0x2cd506(0x165)] = _0x5ee1c3[_0x2cd506(0xc4)]), _0x118da9(_0x41525, _0x5ee1c3, _0xd0d6b);
-			});
-			else {
-				if (this[_0x59c0c9(0xef)]()) this[_0x59c0c9(0x10a)] && (_0x42663b[_0x59c0c9(0x10e)] = _0x42663b[_0x59c0c9(0x10e)] || {}, Object[_0x59c0c9(0x106)](_0x42663b[_0x59c0c9(0x10e)], {
-					'hints': !0x1
-				})), $task[_0x59c0c9(0x13e)](_0x42663b)[_0x59c0c9(0x12e)](_0x144180 => {
-					const {
-						statusCode: _0x1b7c9c,
-						statusCode: _0x18feff,
-						headers: _0x57f80b,
-						body: _0x2f8a8a
-					} = _0x144180;
-					_0x118da9(null, {
-						'status': _0x1b7c9c,
-						'statusCode': _0x18feff,
-						'headers': _0x57f80b,
-						'body': _0x2f8a8a
-					}, _0x2f8a8a);
-				}, _0x38e76c => _0x118da9(_0x38e76c));
-				else {
-					if (this['isNode']()) {
-						let _0x59f403 = require(_0x59c0c9(0x147));
-						this[_0x59c0c9(0x166)](_0x42663b), this['got'](_0x42663b)['on'](_0x59c0c9(0x189), (_0x382cfd, _0x2fed08) => {
-							const _0x131eb9 = _0x59c0c9;
-							try {
-								if (_0x382cfd[_0x131eb9(0xfa)][_0x131eb9(0x155)]) {
-									const _0x2849b4 = _0x382cfd[_0x131eb9(0xfa)][_0x131eb9(0x155)]['map'](this[_0x131eb9(0x162)][_0x131eb9(0xc5)][_0x131eb9(0x114)])['toString']();
-									_0x2849b4 && this[_0x131eb9(0xde)]['setCookieSync'](_0x2849b4, null), _0x2fed08[_0x131eb9(0x130)] = this['ckjar'];
-								}
-							} catch (_0x4e72d6) {
-								this[_0x131eb9(0xfc)](_0x4e72d6);
-							}
-						})[_0x59c0c9(0x12e)](_0x34226f => {
-							const _0x2ec20a = _0x59c0c9,
-								{
-									statusCode: _0x4f712a,
-									statusCode: _0x252910,
-									headers: _0x1e7f31,
-									rawBody: _0x59eaef
-								} = _0x34226f;
-							_0x118da9(null, {
-								'status': _0x4f712a,
-								'statusCode': _0x252910,
-								'headers': _0x1e7f31,
-								'rawBody': _0x59eaef
-							}, _0x59f403[_0x2ec20a(0x126)](_0x59eaef, this['encoding']));
-						}, _0x1a5b19 => {
-							const _0x4feed2 = _0x59c0c9,
-								{
-									message: _0x3abc4c,
-									response: _0x6f788a
-								} = _0x1a5b19;
-							_0x118da9(_0x3abc4c, _0x6f788a, _0x6f788a && _0x59f403[_0x4feed2(0x126)](_0x6f788a[_0x4feed2(0x135)], this['encoding']));
-						});
-					}
-				}
-			}
-		} [_0x489453(0xc7)](_0x7d03e9, _0x20b96f = () => {}) {
-			const _0x1d782e = _0x489453,
-				_0xf04105 = _0x7d03e9[_0x1d782e(0x14d)] ? _0x7d03e9[_0x1d782e(0x14d)][_0x1d782e(0x161)]() : _0x1d782e(0xc7);
-			if (_0x7d03e9[_0x1d782e(0x109)] && _0x7d03e9['headers'] && !_0x7d03e9[_0x1d782e(0xfa)][_0x1d782e(0x15b)] && (_0x7d03e9[_0x1d782e(0xfa)]['Content-Type'] = _0x1d782e(0x113)), _0x7d03e9[_0x1d782e(0xfa)] && delete _0x7d03e9['headers'][_0x1d782e(0x16b)], this[_0x1d782e(0x171)]() || this[_0x1d782e(0xe6)]()) this[_0x1d782e(0x171)]() && this['isNeedRewrite'] && (_0x7d03e9[_0x1d782e(0xfa)] = _0x7d03e9[_0x1d782e(0xfa)] || {}, Object['assign'](_0x7d03e9[_0x1d782e(0xfa)], {
-				'X-Surge-Skip-Scripting': !0x1
-			})), $httpClient[_0xf04105](_0x7d03e9, (_0x5e8df5, _0x3f449b, _0x338f7e) => {
-				const _0x9251bd = _0x1d782e;
-				!_0x5e8df5 && _0x3f449b && (_0x3f449b['body'] = _0x338f7e, _0x3f449b['statusCode'] = _0x3f449b[_0x9251bd(0xc4)]), _0x20b96f(_0x5e8df5, _0x3f449b, _0x338f7e);
-			});
-			else {
-				if (this['isQuanX']()) _0x7d03e9[_0x1d782e(0x14d)] = _0xf04105, this[_0x1d782e(0x10a)] && (_0x7d03e9[_0x1d782e(0x10e)] = _0x7d03e9[_0x1d782e(0x10e)] || {}, Object[_0x1d782e(0x106)](_0x7d03e9[_0x1d782e(0x10e)], {
-					'hints': !0x1
-				})), $task[_0x1d782e(0x13e)](_0x7d03e9)[_0x1d782e(0x12e)](_0x59df7a => {
-					const {
-						statusCode: _0x50b00b,
-						statusCode: _0x34af0d,
-						headers: _0x5b6b72,
-						body: _0x304e1b
-					} = _0x59df7a;
-					_0x20b96f(null, {
-						'status': _0x50b00b,
-						'statusCode': _0x34af0d,
-						'headers': _0x5b6b72,
-						'body': _0x304e1b
-					}, _0x304e1b);
-				}, _0x4ff237 => _0x20b96f(_0x4ff237));
-				else {
-					if (this[_0x1d782e(0x115)]()) {
-						let _0xf6b6d8 = require(_0x1d782e(0x147));
-						this[_0x1d782e(0x166)](_0x7d03e9);
-						const {
-							url: _0x376275,
-							..._0x43aa92
-						} = _0x7d03e9;
-						this['got'][_0xf04105](_0x376275, _0x43aa92)['then'](_0x3fcb1f => {
-							const _0x37cbb2 = _0x1d782e,
-								{
-									statusCode: _0x89fccc,
-									statusCode: _0xdde6bd,
-									headers: _0x282c04,
-									rawBody: _0x3720e2
-								} = _0x3fcb1f;
-							_0x20b96f(null, {
-								'status': _0x89fccc,
-								'statusCode': _0xdde6bd,
-								'headers': _0x282c04,
-								'rawBody': _0x3720e2
-							}, _0xf6b6d8[_0x37cbb2(0x126)](_0x3720e2, this[_0x37cbb2(0x13f)]));
-						}, _0x27f6a7 => {
-							const _0x49e8e0 = _0x1d782e,
-								{
-									message: _0x233710,
-									response: _0x27390b
-								} = _0x27f6a7;
-							_0x20b96f(_0x233710, _0x27390b, _0x27390b && _0xf6b6d8[_0x49e8e0(0x126)](_0x27390b[_0x49e8e0(0x135)], this['encoding']));
-						});
-					}
-				}
-			}
-		} [_0x489453(0x131)](_0x48dd61, _0xa199ab = null) {
-			const _0x473115 = _0x489453,
-				_0x17397d = _0xa199ab ? new Date(_0xa199ab) : new Date();
-			let _0x2b5a4b = {
-				'M+': _0x17397d[_0x473115(0x128)]() + 0x1,
-				'd+': _0x17397d[_0x473115(0x137)](),
-				'H+': _0x17397d[_0x473115(0xd1)](),
-				'm+': _0x17397d[_0x473115(0x18a)](),
-				's+': _0x17397d[_0x473115(0x180)](),
-				'q+': Math[_0x473115(0x17e)]((_0x17397d['getMonth']() + 0x3) / 0x3),
-				'S': _0x17397d[_0x473115(0x140)]()
-			};
-			/(y+)/ [_0x473115(0xf8)](_0x48dd61) && (_0x48dd61 = _0x48dd61[_0x473115(0xc0)](RegExp['$1'], (_0x17397d['getFullYear']() + '')[_0x473115(0xf4)](0x4 - RegExp['$1']['length'])));
-			for (let _0x5a609a in _0x2b5a4b) new RegExp('(' + _0x5a609a + ')')[_0x473115(0xf8)](_0x48dd61) && (_0x48dd61 = _0x48dd61['replace'](RegExp['$1'], 0x1 == RegExp['$1'][_0x473115(0xc8)] ? _0x2b5a4b[_0x5a609a] : ('00' + _0x2b5a4b[_0x5a609a])[_0x473115(0xf4)](('' + _0x2b5a4b[_0x5a609a])[_0x473115(0xc8)])));
-			return _0x48dd61;
-		} [_0x489453(0xdc)](_0x1b94eb = _0x270e6b, _0xf603dc = '', _0x49c59e = '', _0xe030e1) {
-			const _0x306a9e = _0x489453,
-				_0x1a85eb = _0x4d6443 => {
-					const _0x37986e = _0x43b0;
-					if (!_0x4d6443) return _0x4d6443;
-					if ('string' == typeof _0x4d6443) return this[_0x37986e(0xe6)]() ? _0x4d6443 : this[_0x37986e(0xef)]() ? {
-						'open-url': _0x4d6443
-					} : this[_0x37986e(0x171)]() ? {
-						'url': _0x4d6443
-					} : void 0x0;
-					if (_0x37986e(0x11a) == typeof _0x4d6443) {
-						if (this[_0x37986e(0xe6)]()) {
-							let _0x1130ae = _0x4d6443[_0x37986e(0x12c)] || _0x4d6443[_0x37986e(0x102)] || _0x4d6443['open-url'],
-								_0x4ca9bb = _0x4d6443[_0x37986e(0x16a)] || _0x4d6443[_0x37986e(0x177)];
-							return {
-								'openUrl': _0x1130ae,
-								'mediaUrl': _0x4ca9bb
-							};
-						}
-						if (this[_0x37986e(0xef)]()) {
-							let _0xe1903c = _0x4d6443[_0x37986e(0x157)] || _0x4d6443[_0x37986e(0x102)] || _0x4d6443[_0x37986e(0x12c)],
-								_0x30074d = _0x4d6443[_0x37986e(0x177)] || _0x4d6443[_0x37986e(0x16a)];
-							return {
-								'open-url': _0xe1903c,
-								'media-url': _0x30074d
-							};
-						}
-						if (this[_0x37986e(0x171)]()) {
-							let _0x5caf1c = _0x4d6443['url'] || _0x4d6443[_0x37986e(0x12c)] || _0x4d6443[_0x37986e(0x157)];
-							return {
-								'url': _0x5caf1c
-							};
-						}
-					}
-				};
-			if (this[_0x306a9e(0x178)] || (this['isSurge']() || this[_0x306a9e(0xe6)]() ? $notification[_0x306a9e(0xc7)](_0x1b94eb, _0xf603dc, _0x49c59e, _0x1a85eb(_0xe030e1)) : this[_0x306a9e(0xef)]() && $notify(_0x1b94eb, _0xf603dc, _0x49c59e, _0x1a85eb(_0xe030e1))), !this[_0x306a9e(0x100)]) {
-				let _0x35cf01 = ['', '==============📣系统通知📣=============='];
-				_0x35cf01[_0x306a9e(0xf5)](_0x1b94eb), _0xf603dc && _0x35cf01[_0x306a9e(0xf5)](_0xf603dc), _0x49c59e && _0x35cf01[_0x306a9e(0xf5)](_0x49c59e), console[_0x306a9e(0x10d)](_0x35cf01[_0x306a9e(0x175)]('\x0a')), this[_0x306a9e(0x18e)] = this[_0x306a9e(0x18e)]['concat'](_0x35cf01);
-			}
-		} ['log'](..._0xcd75f0) {
-			const _0x6d0150 = _0x489453;
-			_0xcd75f0[_0x6d0150(0xc8)] > 0x0 && (this[_0x6d0150(0x18e)] = [...this['logs'], ..._0xcd75f0]), console[_0x6d0150(0x10d)](_0xcd75f0[_0x6d0150(0x175)](this[_0x6d0150(0xbd)]));
-		} ['logErr'](_0x1339ca, _0x348915) {
-			const _0x4fd588 = _0x489453,
-				_0x2f7f13 = !this['isSurge']() && !this['isQuanX']() && !this['isLoon']();
-			_0x2f7f13 ? this[_0x4fd588(0x10d)]('', '❗️' + this['name'] + _0x4fd588(0x17c), _0x1339ca[_0x4fd588(0xd9)]) : this[_0x4fd588(0x10d)]('', '❗️' + this[_0x4fd588(0xc9)] + _0x4fd588(0x17c), _0x1339ca);
-		} [_0x489453(0xcd)](_0x7e91cf) {
-			return new Promise(_0x5450df => setTimeout(_0x5450df, _0x7e91cf));
-		} [_0x489453(0xeb)](_0xbb482 = {}) {
-			const _0x43de8a = _0x489453,
-				_0x15f775 = new Date()[_0x43de8a(0xcb)](),
-				_0x3b25c4 = (_0x15f775 - this[_0x43de8a(0x15e)]) / 0x3e8;
-			this[_0x43de8a(0x10d)]('', '🔔' + this[_0x43de8a(0xc9)] + ',\x20结束!\x20🕛\x20' + _0x3b25c4 + '\x20秒'), this[_0x43de8a(0x10d)](), (this['isSurge']() || this['isQuanX']() || this[_0x43de8a(0xe6)]()) && $done(_0xbb482);
-		}
-	}(_0x270e6b, _0x5989b0);
+//转盘抽奖
+async function Turntable(taskItem) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/turntable/result`
+    let reqBody = `{"channel":"${channel[channelIdx]}","task_id":"${taskItem.task_id}"}`
+    let urlObject = PopulatePostUrl(url,reqBody)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        let reward = result.data.title ? result.data.title : '【？】'
+        console.log(`抽奖成功，获得了${reward}`)
+        await $.wait(100)
+        waitTime -= 100
+        await ReceiveTurntable(taskItem)
+    } else {
+        console.log(`抽奖失败：${result.error}`)
+    }
 }
+
+//转盘抽奖奖励翻倍领取
+async function ReceiveTurntable(taskItem) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/turntable/receive`
+    let reqBody = `{"channel":"${channel[channelIdx]}","task_id":"${taskItem.task_id}","type":1}`
+    let urlObject = PopulatePostUrl(url,reqBody)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        console.log(`看视频获得抽奖翻倍奖励成功`)
+    } else {
+        console.log(`看视频获得抽奖翻倍奖励失败：${result.error}`)
+    }
+}
+
+//瓜分池投入
+async function PutInPool(num,pool_lv) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/put?channel=${channel[channelIdx]}&num=${num}&pool_lv=${pool_lv}`
+    let urlObject = PopulateGetUrl(url)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return false
+    
+    if(result.code == 200) {
+        console.log(`投入瓜分池${num}币成功`)
+        notifyStr += `投入瓜分池${num}币成功\n`
+    } else {
+        console.log(`投入瓜分池${num}币失败：${result.error}`)
+    }
+}
+
+//签到信息查询
+async function QuerySignList() {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/sign/list`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        if(result.data.today_sign_status == 0) {
+            await $.wait(100)
+            await SignToday()
+        } else {
+            console.log(`\n今日已签到`)
+        }   
+    } else {
+        console.log(`\n获取签到信息失败：${result.error}`)
+    }
+}
+
+//签到
+async function SignToday() {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/sign/post`
+    let urlObject = PopulateGetUrl(url)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        console.log(`\n签到成功，获得${result.data.total_credit_num}积分`)
+    } else {
+        console.log(`\n签到失败：${result.error}`)
+    }
+}
+
+//积分任务列表查询
+async function QueryTaskList() {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/task/list`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return false
+    
+    if(result.code == 200) {
+        if(result.data && Array.isArray(result.data)) {
+            for(let i=0; i<result.data.length; i++) {
+                let taskItem = result.data[i]
+                if(taskItem.status == 1) {
+                    await $.wait(100)
+                    await TaskReceiveReward(taskItem)
+                }
+            }
+        }
+    } else {
+        console.log(`\n获取积分任务列表失败：${result.error}`)
+        return false
+    }
+    
+    return true
+}
+
+//积分任务奖励
+async function TaskReceiveReward(taskItem) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/task/receive`
+    let reqBody = `{"task_id":${taskItem.id}}`
+    let urlObject = PopulatePostUrl(url,reqBody)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        let credit_num = result.data.credit_num ? `获得${result.data.credit_num}积分` : ''
+        console.log(`完成任务【${taskItem.title}】成功 ${credit_num}`)
+        return true
+    } else {
+        console.log(`完成任务【${taskItem.title}】失败：${result.error}`)
+    }
+}
+
+//积分红包兑换列表查询
+async function QueryMallExchange(page) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/mall/list?shopType=2&page=${page}`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        if(result.data && Array.isArray(result.data)) {
+            for(let i=0; i<result.data.length; i++) {
+                let exchangeItem = result.data[i]
+                if(exchangeItem.today_ex_num > 0 && vipLevel >= exchangeItem.vip_level) {
+                    await $.wait(100)
+                    await MallExchange(exchangeItem,exchangeItem.today_ex_num)
+                }
+            }
+        }
+    } else {
+        console.log(`\n获取积分红包兑换列表失败：${result.error}`)
+    }
+}
+
+//积分红包兑换
+async function MallExchange(exchangeItem,num) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/mall/exchange`
+    let reqBody = `{"mall_id":${exchangeItem.id},"num":${num}}`
+    let urlObject = PopulatePostUrl(url,reqBody)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        console.log(`兑换【${exchangeItem.title}】成功`)
+    } else {
+        console.log(`兑换【${exchangeItem.title}】失败：${result.error}`)
+    }
+}
+
+//积分红包提现列表查询
+async function QueryWithdrawBox(page) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/withdraw/platform/config?channel=${channel[channelIdx]}&page=${page}&page_count=10`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        let money = result.data.money ? result.data.money : 0
+        let is_bind_alipay = result.data.is_bind_alipay ? result.data.is_bind_alipay : 0
+        let is_bind_wechat = result.data.is_bind_wechat ? result.data.is_bind_wechat : 0
+        let payType = ''
+        if(is_bind_alipay==1) payType += ' 支付宝'
+        if(is_bind_wechat==1) payType += ' 微信'
+        if(!payType) payType += '无'
+        console.log(`\n积分红包余额：${result.data.money}，已绑定支付方式：${payType}`)
+        let withList = []
+        if(result.data.withdraw_config && Array.isArray(result.data.withdraw_config)) {
+            for(let i=0; i<result.data.withdraw_config.length; i++) {
+                let withItem = result.data.withdraw_config[i]
+                if(money >= withItem.money) {
+                    withList.push(withItem)
+                }
+            }
+            if(withList.length == 0) {
+                console.log(`积分红包余额不足，暂时无法提现`)
+                return
+            }
+            let sortList = withList.sort(function(a,b){return b["money"]-a["money"]});
+            for(let i=0; i<sortList.length; i++) {
+                let withItem = sortList[i]
+                if(is_bind_wechat == 1 && withItem.is_wechat == 1) {
+                    await $.wait(100)
+                    if(await WithdrawBox(withItem,1)) break;
+                } else if(is_bind_alipay == 1 && withItem.is_alipay == 1) {
+                    await $.wait(100)
+                    if(await WithdrawBox(withItem,0)) break;
+                }
+            }
+        } else {
+            console.log(`获取积分红包提现列表失败`)
+        }
+    } else {
+        console.log(`\n获取积分红包提现列表失败：${result.error}`)
+    }
+}
+
+//积分红包提现
+async function WithdrawBox(withItem,pay_type) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/box/withdraw/platform/apply?config_id=${withItem.id}&channel=${channel[channelIdx]}&pay_type=${pay_type}`
+    let urlObject = PopulateGetUrl(url)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) {
+        console.log(`提现积分红包${withItem.money}元失败：服务器无响应`)
+        return false
+    }
+    
+    if(result.code == 200) {
+        console.log(`提现积分红包${withItem.money}元成功`)
+        notifyStr += `提现积分红包${withItem.money}元成功\n`
+        return true
+    } else {
+        console.log(`提现积分红包${withItem.money}元失败：${result.error}`)
+        if(result.error.indexOf('今日提现次数超出限制') > -1) {
+            return true
+        }
+    }
+    return false
+}
+
+//分红提现列表查询
+async function QueryWithdrawIntegral(page) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/withdraw/config?channel=${channel[channelIdx]}&page=${page}&page_count=10`
+    let urlObject = PopulateGetUrl(url)
+    await HttpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.code == 200) {
+        let money = result.data.money ? result.data.money : 0
+        let is_bind_alipay = result.data.is_bind_alipay ? result.data.is_bind_alipay : 0
+        let is_bind_wechat = result.data.is_bind_wechat ? result.data.is_bind_wechat : 0
+        let payType = ''
+        if(is_bind_alipay==1) payType += ' 支付宝'
+        if(is_bind_wechat==1) payType += ' 微信'
+        if(!payType) payType += '无'
+        console.log(`\n分红余额：${result.data.money}，已绑定支付方式：${payType}`)
+        let withList = []
+        if(result.data.withdraw_config && Array.isArray(result.data.withdraw_config)) {
+            for(let i=0; i<result.data.withdraw_config.length; i++) {
+                let withItem = result.data.withdraw_config[i]
+                if(money >= withItem.money) {
+                    withList.push(withItem)
+                }
+            }
+            if(withList.length == 0) {
+                console.log(`分红余额不足，暂时无法提现`)
+                return
+            }
+            let sortList = withList.sort(function(a,b){return b["money"]-a["money"]});
+            for(let i=0; i<sortList.length; i++) {
+                let withItem = sortList[i]
+                if(is_bind_wechat == 1 && withItem.is_wechat == 1) {
+                    await $.wait(100)
+                    if(await WithdrawIntegral(withItem,1)) break;
+                } else if(is_bind_alipay == 1 && withItem.is_alipay == 1) {
+                    await $.wait(100)
+                    if(await WithdrawIntegral(withItem,0)) break;
+                }
+            }
+        } else {
+            console.log(`获取分红余额提现列表失败`)
+        }
+    } else {
+        console.log(`\n获取分红余额提现列表失败：${result.error}`)
+    }
+}
+
+//分红提现
+async function WithdrawIntegral(withItem,pay_type) {
+    let caller = PrintCaller()
+    let url = `https://v3.sdk.haowusong.com/api/channel/integral/withdraw/apply?config_id=${withItem.id}&channel=${channel[channelIdx]}&pay_type=${pay_type}`
+    let urlObject = PopulateGetUrl(url)
+    await HttpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) {
+        console.log(`提现分红${withItem.money}元失败：服务器无响应`)
+        return false
+    }
+    
+    if(result.code == 200) {
+        console.log(`提现分红${withItem.money}元成功`)
+        notifyStr += `提现分红${withItem.money}元成功\n`
+        return true
+    } else {
+        console.log(`提现分红${withItem.money}元失败：${result.error}`)
+        if(result.error.indexOf('今日提现次数超出限制') > -1) {
+            return true
+        }
+    }
+    return false
+}
+
+////////////////////////////////////////////////////////////////////
+function PopulatePostUrl(url,reqBody){
+    let urlObject = {
+        url: url,
+        headers: {
+            'Host' : 'v3.sdk.haowusong.com',
+            'Origin' : 'https://v3.h5.haowusong.com',
+            'Content-Type' : 'application/json',
+            'Accept-Encoding' : 'gzip, deflate, br',
+            'Connection' : 'keep-alive',
+            'Accept' : 'application/json, text/plain, */*',
+            'User-Agent' : 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+            'Accept-Language' : 'zh-CN,zh-Hans;q=0.9',
+            'Referer' : 'https://v3.h5.haowusong.com/',
+            'token' : dawTokenArr[userIdx],
+        },
+        body: reqBody,
+    }
+    return urlObject;
+}
+
+function PopulateGetUrl(url){
+    let urlObject = {
+        url: url,
+        headers: {
+            'Host' : 'v3.sdk.haowusong.com',
+            'Origin' : 'https://v3.h5.haowusong.com',
+            'Content-Type' : 'application/json',
+            'Accept-Encoding' : 'gzip, deflate, br',
+            'Connection' : 'keep-alive',
+            'Accept' : 'application/json, text/plain, */*',
+            'User-Agent' : 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+            'Accept-Language' : 'zh-CN,zh-Hans;q=0.9',
+            'Referer' : 'https://v3.h5.haowusong.com/',
+            'token' : dawTokenArr[userIdx],
+        }
+    }
+    return urlObject;
+}
+
+async function HttpPost(url,caller) {
+    httpResult = null
+    return new Promise((resolve) => {
+        $.post(url, async (err, resp, data) => {
+            try {
+                if (SafeGet(data,caller)) {
+                    httpResult = JSON.parse(data);
+                    if(logDebug) console.log(httpResult);
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
+
+async function HttpGet(url,caller) {
+    httpResult = null
+    return new Promise((resolve) => {
+        $.get(url, async (err, resp, data) => {
+            try {
+                if (SafeGet(data,caller)) {
+                    httpResult = JSON.parse(data);
+                    if(logDebug) console.log(httpResult);
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
+
+function SafeGet(data,caller) {
+    try {
+        if (typeof JSON.parse(data) == "object") {
+            return true;
+        } else {
+            console.log(`Function ${caller}: 未知错误`);
+            console.log(data)
+        }
+    } catch (e) {
+        console.log(e);
+        console.log(data)
+        console.log(`Function ${caller}: 服务器访问数据为空，请检查自身设备网络情况`);
+        return false;
+    }
+}
+
+function PrintCaller(){
+    return (new Error()).stack.split("\n")[2].trim().split(" ")[1]
+}
+
+function Env(t, e) { class s { constructor(t) { this.env = t } send(t, e = "GET") { t = "string" == typeof t ? { url: t } : t; let s = this.get; return "POST" === e && (s = this.post), new Promise((e, i) => { s.call(this, t, (t, s, r) => { t ? i(t) : e(s) }) }) } get(t) { return this.send.call(this.env, t) } post(t) { return this.send.call(this.env, t, "POST") } } return new class { constructor(t, e) { this.name = t, this.http = new s(this), this.data = null, this.dataFile = "box.dat", this.logs = [], this.isMute = !1, this.isNeedRewrite = !1, this.logSeparator = "\n", this.startTime = (new Date).getTime(), Object.assign(this, e), this.log("", `\ud83d\udd14${this.name}, \u5f00\u59cb!`) } isNode() { return "undefined" != typeof module && !!module.exports } isQuanX() { return "undefined" != typeof $task } isSurge() { return "undefined" != typeof $httpClient && "undefined" == typeof $loon } isLoon() { return "undefined" != typeof $loon } toObj(t, e = null) { try { return JSON.parse(t) } catch { return e } } toStr(t, e = null) { try { return JSON.stringify(t) } catch { return e } } getjson(t, e) { let s = e; const i = this.getdata(t); if (i) try { s = JSON.parse(this.getdata(t)) } catch { } return s } setjson(t, e) { try { return this.setdata(JSON.stringify(t), e) } catch { return !1 } } getScript(t) { return new Promise(e => { this.get({ url: t }, (t, s, i) => e(i)) }) } runScript(t, e) { return new Promise(s => { let i = this.getdata("@chavy_boxjs_userCfgs.httpapi"); i = i ? i.replace(/\n/g, "").trim() : i; let r = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout"); r = r ? 1 * r : 20, r = e && e.timeout ? e.timeout : r; const [o, h] = i.split("@"), a = { url: `http://${h}/v1/scripting/evaluate`, body: { script_text: t, mock_type: "cron", timeout: r }, headers: { "X-Key": o, Accept: "*/*" } }; this.post(a, (t, e, i) => s(i)) }).catch(t => this.logErr(t)) } loaddata() { if (!this.isNode()) return {}; { this.fs = this.fs ? this.fs : require("fs"), this.path = this.path ? this.path : require("path"); const t = this.path.resolve(this.dataFile), e = this.path.resolve(process.cwd(), this.dataFile), s = this.fs.existsSync(t), i = !s && this.fs.existsSync(e); if (!s && !i) return {}; { const i = s ? t : e; try { return JSON.parse(this.fs.readFileSync(i)) } catch (t) { return {} } } } } writedata() { if (this.isNode()) { this.fs = this.fs ? this.fs : require("fs"), this.path = this.path ? this.path : require("path"); const t = this.path.resolve(this.dataFile), e = this.path.resolve(process.cwd(), this.dataFile), s = this.fs.existsSync(t), i = !s && this.fs.existsSync(e), r = JSON.stringify(this.data); s ? this.fs.writeFileSync(t, r) : i ? this.fs.writeFileSync(e, r) : this.fs.writeFileSync(t, r) } } lodash_get(t, e, s) { const i = e.replace(/\[(\d+)\]/g, ".$1").split("."); let r = t; for (const t of i) if (r = Object(r)[t], void 0 === r) return s; return r } lodash_set(t, e, s) { return Object(t) !== t ? t : (Array.isArray(e) || (e = e.toString().match(/[^.[\]]+/g) || []), e.slice(0, -1).reduce((t, s, i) => Object(t[s]) === t[s] ? t[s] : t[s] = Math.abs(e[i + 1]) >> 0 == +e[i + 1] ? [] : {}, t)[e[e.length - 1]] = s, t) } getdata(t) { let e = this.getval(t); if (/^@/.test(t)) { const [, s, i] = /^@(.*?)\.(.*?)$/.exec(t), r = s ? this.getval(s) : ""; if (r) try { const t = JSON.parse(r); e = t ? this.lodash_get(t, i, "") : e } catch (t) { e = "" } } return e } setdata(t, e) { let s = !1; if (/^@/.test(e)) { const [, i, r] = /^@(.*?)\.(.*?)$/.exec(e), o = this.getval(i), h = i ? "null" === o ? null : o || "{}" : "{}"; try { const e = JSON.parse(h); this.lodash_set(e, r, t), s = this.setval(JSON.stringify(e), i) } catch (e) { const o = {}; this.lodash_set(o, r, t), s = this.setval(JSON.stringify(o), i) } } else s = this.setval(t, e); return s } getval(t) { return this.isSurge() || this.isLoon() ? $persistentStore.read(t) : this.isQuanX() ? $prefs.valueForKey(t) : this.isNode() ? (this.data = this.loaddata(), this.data[t]) : this.data && this.data[t] || null } setval(t, e) { return this.isSurge() || this.isLoon() ? $persistentStore.write(t, e) : this.isQuanX() ? $prefs.setValueForKey(t, e) : this.isNode() ? (this.data = this.loaddata(), this.data[e] = t, this.writedata(), !0) : this.data && this.data[e] || null } initGotEnv(t) { this.got = this.got ? this.got : require("got"), this.cktough = this.cktough ? this.cktough : require("tough-cookie"), this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar, t && (t.headers = t.headers ? t.headers : {}, void 0 === t.headers.Cookie && void 0 === t.cookieJar && (t.cookieJar = this.ckjar)) } get(t, e = (() => { })) { t.headers && (delete t.headers["Content-Type"], delete t.headers["Content-Length"]), this.isSurge() || this.isLoon() ? (this.isSurge() && this.isNeedRewrite && (t.headers = t.headers || {}, Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })), $httpClient.get(t, (t, s, i) => { !t && s && (s.body = i, s.statusCode = s.status), e(t, s, i) })) : this.isQuanX() ? (this.isNeedRewrite && (t.opts = t.opts || {}, Object.assign(t.opts, { hints: !1 })), $task.fetch(t).then(t => { const { statusCode: s, statusCode: i, headers: r, body: o } = t; e(null, { status: s, statusCode: i, headers: r, body: o }, o) }, t => e(t))) : this.isNode() && (this.initGotEnv(t), this.got(t).on("redirect", (t, e) => { try { if (t.headers["set-cookie"]) { const s = t.headers["set-cookie"].map(this.cktough.Cookie.parse).toString(); this.ckjar.setCookieSync(s, null), e.cookieJar = this.ckjar } } catch (t) { this.logErr(t) } }).then(t => { const { statusCode: s, statusCode: i, headers: r, body: o } = t; e(null, { status: s, statusCode: i, headers: r, body: o }, o) }, t => { const { message: s, response: i } = t; e(s, i, i && i.body) })) } post(t, e = (() => { })) { if (t.body && t.headers && !t.headers["Content-Type"] && (t.headers["Content-Type"] = "application/x-www-form-urlencoded"), t.headers && delete t.headers["Content-Length"], this.isSurge() || this.isLoon()) this.isSurge() && this.isNeedRewrite && (t.headers = t.headers || {}, Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })), $httpClient.post(t, (t, s, i) => { !t && s && (s.body = i, s.statusCode = s.status), e(t, s, i) }); else if (this.isQuanX()) t.method = "POST", this.isNeedRewrite && (t.opts = t.opts || {}, Object.assign(t.opts, { hints: !1 })), $task.fetch(t).then(t => { const { statusCode: s, statusCode: i, headers: r, body: o } = t; e(null, { status: s, statusCode: i, headers: r, body: o }, o) }, t => e(t)); else if (this.isNode()) { this.initGotEnv(t); const { url: s, ...i } = t; this.got.post(s, i).then(t => { const { statusCode: s, statusCode: i, headers: r, body: o } = t; e(null, { status: s, statusCode: i, headers: r, body: o }, o) }, t => { const { message: s, response: i } = t; e(s, i, i && i.body) }) } } time(t) { let e = { "M+": (new Date).getMonth() + 1, "d+": (new Date).getDate(), "H+": (new Date).getHours(), "m+": (new Date).getMinutes(), "s+": (new Date).getSeconds(), "q+": Math.floor(((new Date).getMonth() + 3) / 3), S: (new Date).getMilliseconds() }; /(y+)/.test(t) && (t = t.replace(RegExp.$1, ((new Date).getFullYear() + "").substr(4 - RegExp.$1.length))); for (let s in e) new RegExp("(" + s + ")").test(t) && (t = t.replace(RegExp.$1, 1 == RegExp.$1.length ? e[s] : ("00" + e[s]).substr(("" + e[s]).length))); return t } msg(e = t, s = "", i = "", r) { const o = t => { if (!t) return t; if ("string" == typeof t) return this.isLoon() ? t : this.isQuanX() ? { "open-url": t } : this.isSurge() ? { url: t } : void 0; if ("object" == typeof t) { if (this.isLoon()) { let e = t.openUrl || t.url || t["open-url"], s = t.mediaUrl || t["media-url"]; return { openUrl: e, mediaUrl: s } } if (this.isQuanX()) { let e = t["open-url"] || t.url || t.openUrl, s = t["media-url"] || t.mediaUrl; return { "open-url": e, "media-url": s } } if (this.isSurge()) { let e = t.url || t.openUrl || t["open-url"]; return { url: e } } } }; this.isMute || (this.isSurge() || this.isLoon() ? $notification.post(e, s, i, o(r)) : this.isQuanX() && $notify(e, s, i, o(r))); let h = ["", "==============\ud83d\udce3\u7cfb\u7edf\u901a\u77e5\ud83d\udce3=============="]; h.push(e), s && h.push(s), i && h.push(i), console.log(h.join("\n")), this.logs = this.logs.concat(h) } log(...t) { t.length > 0 && (this.logs = [...this.logs, ...t]), console.log(t.join(this.logSeparator)) } logErr(t, e) { const s = !this.isSurge() && !this.isQuanX() && !this.isLoon(); s ? this.log("", `\u2757\ufe0f${this.name}, \u9519\u8bef!`, t.stack) : this.log("", `\u2757\ufe0f${this.name}, \u9519\u8bef!`, t) } wait(t) { return new Promise(e => setTimeout(e, t)) } done(t = {}) { const e = (new Date).getTime(), s = (e - this.startTime) / 1e3; this.log("", `\ud83d\udd14${this.name}, \u7ed3\u675f! \ud83d\udd5b ${s} \u79d2`), this.log(), (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(t) } }(t, e) }
