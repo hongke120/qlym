@@ -5,6 +5,20 @@
     ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
 
+## 都爱玩 Leaf版 daw_leaf.js
+
+抓POST包，进分红币页面获取token
+
+https://v3.sdk.haowusong.com/api/box/wallet/info
+
+找不到这个链接的，只要有token值就行
+
+环境变量，多账户用@隔开
+
+Cron：15 0,1,8,15,20 * * *
+
+export dawToken='account1@account2@account3'
+
 
 
 ## 得间小说
@@ -29,8 +43,11 @@ export djxsReferer='抓取的Referer1@抓取的Referer2'
 
 https://api.st615.com/v1/user/info
 
+Cron：0 1-23 * * *
 
-填入jzttCOOKIE中
+填入jzttCOOKIE.js中
+
+说明：讲txtx的val值改成100，默认按从大到小的提现
 
 
 
