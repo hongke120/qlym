@@ -51,6 +51,20 @@ Cron：0 1-23 * * *
 
 
 
+## 睡觉宝
+
+抓POST包，打开APP即可获取ua
+
+https://mapi.shuijiaobao.cn/login/code
+
+Cron : 0,30 6,12,13,18,21 * * *
+
+填入sjbCOOKIE.js中
+
+
+
+
+
 ## 小米刷步 xmsb.py
 
 请第1次拉完库，自己新建一个py文件，不然每次都会覆盖！
