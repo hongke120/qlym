@@ -76,6 +76,8 @@ export qqck='PHPSESSID=***'
 
 export qqaot='***'
 
+Cron : */10 * * * *
+
 
 
 ## 小米刷步 xmsb.py
