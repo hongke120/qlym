@@ -21,7 +21,7 @@ export dawToken='account1@account2@account3'
 
 
 
-## 得间小说
+## 得间小说 djxs.js
 
 抓get包，进app-福利-看视频，获取数据
 
@@ -37,7 +37,7 @@ export djxsReferer='抓取的Referer1@抓取的Referer2'
 
 
 
-## 九章头条
+## 九章头条 jztt.js
 
 抓get包，进app-任务，抓取token值
 
@@ -51,7 +51,7 @@ Cron：0 1-23 * * *
 
 
 
-## 睡觉宝
+## 睡觉宝 sjb.js
 
 抓POST包，打开APP即可获取ua
 
@@ -62,6 +62,19 @@ Cron : 0,30 6,12,13,18,21 * * *
 填入sjbCOOKIE.js中
 
 
+
+## 琪琪的果园 qqdgy.js
+
+
+只支持青龙，打开微信小程序后抓POST包
+
+www.weiju123.com/wxqqgy/public/index.php/user/myIndex
+
+获取Cookie和请求数据body中的aot参数
+
+export qqck='PHPSESSID=***'
+
+export qqaot='***'
 
 
 
