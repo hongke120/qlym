@@ -225,7 +225,7 @@ export jctqWzBody=''
 
 ## 特别鸣谢:
 
-
+* [@whyour](https://github.com/whyour/qinglong)「青龙」
 * [@xl2101200](https://github.com/xl2101200/-/)「Tom」
 * [@YaphetS0903](https://github.com/YaphetS0903/JStest/)「YaphetS」
 * [@WindFgg](https://github.com/WindFgg/QuantumultX_Conf/)「WindFgg」
