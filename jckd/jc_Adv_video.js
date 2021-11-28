@@ -44,7 +44,7 @@ if (!jc_cookie) {
                 time1 = time1.substr(0,10);
                 jc_cookie1= time1 + '&' + bodyVal
                 //待处理cookie
-                console.log(`${jc_cookie1}`)
+                //console.log(`${jc_cookie1}`)
                 console.log(`--------第 ${k + 1} 个账号观看福利视频中--------\n`)
 		for (let j =0; j<5;j++){
 			console.log(`--------第 ${j + 1} 次观看福利视频中--------\n`)
