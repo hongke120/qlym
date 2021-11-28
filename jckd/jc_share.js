@@ -2,9 +2,7 @@
 shaolin-kongfu
 
 软件名称：晶彩看点
-赞赏:邀请码54870223
 
-万分感谢！！
 
 [rewrite_local]
 
