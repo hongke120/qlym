@@ -39,7 +39,7 @@ if (typeof $request !== "undefined") {
     for (let k = 0; k < jcboxbodyArr.length; k++) {
         // $.message = ""
         jcboxbody1 = jcboxbodyArr[k];
-        console.log(`${jcboxbody1}`)
+        //console.log(`${jcboxbody1}`)
         console.log(`--------第 ${k + 1} 次宝箱奖励执行中--------\n`)
         let jcboxheader = {
             'device-platform': 'android',
