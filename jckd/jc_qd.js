@@ -47,7 +47,7 @@ const qdheader={
 	        for (let k = 0; k < qdbodyArr.length; k++) {
             $.message = ""
             qdbody1 = qdbodyArr[k];
-            console.log(`${qdbody1}`)
+            //console.log(`${qdbody1}`)
             console.log(`--------账号 ${k+1} 签到任务执行中--------\n`)
             await jcqd()
                 await $.wait(1000);
