@@ -1,8 +1,7 @@
 /*
 shaolin-kongfu
 软件名称：晶彩看点
-赞赏:邀请码54870223
-万分感谢！！
+
 [rewrite_local]
 #晶彩看点每日收益查询
 https://ant.xunsl.com/v17/NewTask/getTaskList.json 重写目标 https://raw.githubusercontent.com/shaolin-kongfu/js_scripts/main/jc_today_score.js
@@ -60,7 +59,7 @@ if (!jc_cookie) {
              jc_cookie1 = cookie_id + '&' + bodyVal
              jc_cookie2 = 'uid='+jc_cookieArr[k].split('&uid=')[1] + '&'+ bodyVal
              //待处理cookie
-             console.log(`${jc_cookie1}`)
+             //console.log(`${jc_cookie1}`)
              console.log(`--------第 ${k + 1} 个账号收益查询中--------\n`)
              await nickname(jc_cookie2)
              if ($.message.length != 0) {
