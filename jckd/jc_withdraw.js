@@ -2,8 +2,6 @@
 晶彩自动提现 jc_withdraw.js，
 调用jc_cookie,jc_withdraw,jc_cash
 
-脚本地址：
-https://raw.githubusercontent.com/shaolin-kongfu/js_scripts/main/jc_withdraw.js
 定时确保在每日首次火爆转发之后（jc_share.js），一天一次
 ***************************************************************************
 v2p食用说明：
