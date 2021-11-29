@@ -16,6 +16,20 @@
 
 
 
+
+## 5/60分钟领奖  Jc_5_60.js
+
+cron：20 23 * * *
+
+领取的时候抓，我是没抓，现在好像没5分钟了
+
+https://ant.xunsl.com/v17/Ad/getReward.json 
+
+    export jcerciboxbody='p=***'
+
+
+
+
 ## 福利视频 jc_Adv_video.js
 
 
@@ -26,6 +40,7 @@ cron：20 21 * * *
 https://ant.xunsl.com/V17/NewTask/recordNum.json?
 
     export jc_cookie='zqkey=***&zqkey_id=***&uid=***'
+
 
 
 
