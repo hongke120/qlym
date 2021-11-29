@@ -7,8 +7,12 @@
 
 ## 更新时间
 
-2021-11-28
+2021-11-29
 
+
+## 晶彩cookie适用
+
+福利视频/看看赚/转盘抽奖/火山爆发/每日收益/看看赚，都是通用的，抓一次即可
 
 
 
@@ -21,7 +25,7 @@ cron：20 21 * * *
 
 https://ant.xunsl.com/V17/NewTask/recordNum.json?
 
-    export jc_cookie='access=****'
+    export jc_cookie='zqkey=***&zqkey_id=***&uid=***'
 
 
 
@@ -32,14 +36,14 @@ https://ant.xunsl.com/V17/NewTask/recordNum.json?
 
 cron：15 22 * * *
 
-抓post包，有2个地方，首页右上角、赚钱页漂浮奖励
+抓post包，有2个地方，首页右上角、赚钱页漂浮奖励，其他用@隔开
 
 （注意看相应是否为任务奖励）
 
 https://ant.xunsl.com/v5/CommonReward/toGetReward.json
 
 
-    export jcboxbody='p=***'
+    export jcboxbody='p=***@p=***'
 
 
 
@@ -55,11 +59,11 @@ https://ant.xunsl.com/v17/NewTask/getTaskList.josn
 
     export jc_cookie='zqkey=***&zqkey_id=***&uid=***'
 
-随便看一个文章，抓POST包，获取body，一个新闻一个项目ID，请挨个抓
+抓POST包，一个新闻一个body，请挨个抓，其他用@隔开
 
 https://ant.xunsl.com/v5/nameless/adlickstart/
 
-    export lookStartbody='p=***'
+    export lookStartbody='p=***@p=***'
 
 
 
@@ -94,7 +98,7 @@ cron：34 22 * * *
 
 https://ant.xunsl.com/html/rotaryTable/index.html?
 
-    export jc_cookie='keyword_wyq=***'
+    export jc_cookie='zqkey=***&zqkey_id=***&uid=***'
 
 
 
@@ -124,7 +128,7 @@ cron：15 23 * * *
 
 https://ant.xunsl.com/wap/user/balance?
 
-    export jc_cookie='keyword_wyq=***'
+    export jc_cookie='zqkey=***&zqkey_id=***&uid=***'
 
 
 
@@ -152,21 +156,21 @@ https://ant.xunsl.com/v5/wechat/withdraw2.json
 
 cron：30 7,12,18 * * *
 
-抓get包，打开app-资讯，看完即可获取
+抓get包，打开app-资讯，一个新闻一个body，请挨个抓，其他用@隔开
 
 文章：https://ant.xunsl.com/v5/article/info.json
 
-    export wzbody='p=***'
+    export wzbody='p=***@p=***'
 
 视频：https://ant.xunsl.com/v5/article/detail.json
 
-    export wzbody='p=***'
+    export wzbody='p=***@p=***'
 
-时长必须抓，不然黑号，抓post包，打开app-资讯，看完1分钟后即可获取
+时长必须抓，不然黑号，抓post包，打开app-资讯，看完1分钟后即可获取，一个新闻一个body，请挨个抓，其他用@隔开
 
 https://ant.xunsl.com/v5/user/stay.json
 
-    export jc_timebody='p=***'
+    export jc_timebody='p=***@p=***'
 
 
 
