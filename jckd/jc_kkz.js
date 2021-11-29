@@ -77,15 +77,15 @@ if (!lookStartbody) {
      });
      $.done()
  }
- else if (lookStartbody.indexOf("&") == -1) {
+ else if (lookStartbody.indexOf("@") == -1) {
             lookStartbodyArr.push(lookStartbody)
  }
- else if (lookStartbody.indexOf("&") > -1) {
-            lookStartbodys = lookStartbody.split("&")
+ else if (lookStartbody.indexOf("@") > -1) {
+            lookStartbodys = lookStartbody.split("@")
  }
- else if (process.env.lookStartbody && process.env.lookStartbody.indexOf('&') > -1) {
-            lookStartbodyArr = process.env.lookStartbody.split('&');
-            console.log(`您选择的是用"&"隔开\n`)
+ else if (process.env.lookStartbody && process.env.lookStartbody.indexOf('@') > -1) {
+            lookStartbodyArr = process.env.lookStartbody.split('@');
+            console.log(`您选择的是用"@"隔开\n`)
  }
  else {
             lookStartbodys = [process.env.lookStartbody]
