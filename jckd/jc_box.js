@@ -11,15 +11,15 @@ if (!jcboxbody) {
      });
      $.done()
  }
- else if (jcboxbody.indexOf("&") == -1) {
+ else if (jcboxbody.indexOf("@") == -1) {
             jcboxbodyArr.push(jcboxbody)
  }
- else if (jcboxbody.indexOf("&") > -1) {
-            jcboxbodys = jcboxbody.split("&")
+ else if (jcboxbody.indexOf("@") > -1) {
+            jcboxbodys = jcboxbody.split("@")
  }
- else if (process.env.jcboxbody && process.env.jcboxbody.indexOf('&') > -1) {
-            jcboxbodyArr = process.env.jcboxbody.split('&');
-            console.log(`您选择的是用"&"隔开\n`)
+ else if (process.env.jcboxbody && process.env.jcboxbody.indexOf('@') > -1) {
+            jcboxbodyArr = process.env.jcboxbody.split('@');
+            console.log(`您选择的是用"@"隔开\n`)
  }
  else {
             jcboxbodys = [process.env.jcboxbody]
