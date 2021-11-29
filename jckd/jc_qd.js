@@ -21,15 +21,15 @@ const qdheader={
      });
      $.done()
  }
- else if (qdbody.indexOf("&") == -1) {
+ else if (qdbody.indexOf("@") == -1) {
             qdbodyArr.push(qdbody)
  }
- else if (qdbody.indexOf("&") > -1) {
-            qdbodys = qdbody.split("&")
+ else if (qdbody.indexOf("@") > -1) {
+            qdbodys = qdbody.split("@")
  }
- else if (process.env.qdbody && process.env.qdbody.indexOf('&') > -1) {
-            qdbodyArr = process.env.qdbody.split('&');
-            console.log(`您选择的是用"&"隔开\n`)
+ else if (process.env.qdbody && process.env.qdbody.indexOf('@') > -1) {
+            qdbodyArr = process.env.qdbody.split('@');
+            console.log(`您选择的是用"@"隔开\n`)
  }
  else {
             qdbodys = [process.env.qdbody]
