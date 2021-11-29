@@ -1,11 +1,16 @@
-﻿## 使用教程
+## 使用教程
 
 【拉库】
 
     ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
 
-## 都爱玩 Leaf版 daw_leaf.js
+## 更新时间
+
+2021-11-28
+
+
+## 都爱玩 Leaf版 daw.js
 
 抓POST包，进分红币页面获取token
 
@@ -17,7 +22,21 @@ https://v3.sdk.haowusong.com/api/box/wallet/info
 
 Cron：15 0,1,8,15,20 * * *
 
-export dawToken='account1@account2@account3'
+    export dawToken='account1@account2@account3'
+
+
+## 滴滴果园 ddgy.js
+
+
+抓get包，进app-5天种水果，即可获取数据
+
+把 wsgsig= 和 D-Header-T= 后的值
+
+填入ddgyCOOKIE.js里的url和header中
+
+cron：随意，一天一次即可
+
+
 
 
 
@@ -27,13 +46,84 @@ export dawToken='account1@account2@account3'
 
 https://dj.palmestore.com/zycl/gold/receive
 
-环境配置
-
 Cron：0 */1 * * *
 
-export djxsCookie='抓取的Cookie1@抓取的Cookie2'
+    export djxsCookie='Cookie1@Cookie2'
 
-export djxsReferer='抓取的Referer1@抓取的Referer2'
+    export djxsReferer='Referer1@Referer2'
+
+
+
+
+## 返利购(更名：利淘优选) flg.js
+
+抓POST包，进APP-我的-签到，即可获取数据
+
+https://api.flgflg.com/htmmall/api/gold/finishedVideoNum
+
+cron：0,30 8 * * *
+
+    export flgReferer='抓取的Referer1@抓取的Referer2'
+
+
+
+
+
+
+## 返利好省 flhs.js
+
+
+抓包，进APP-现金福利，即可获取
+
+https://api.uutequan.com/v1/welfare/page
+
+随便哪一个Cookie应该都行
+
+cron：0 8-15 * * *
+
+    export flhsCookie='Cookie1@Cookie2'
+
+
+
+
+## 果冻宝盒 gdbh.py
+
+抓包，进APP-我的-视频赚钱，搜索关键字coins
+
+
+cron：随意，一天一次即可
+
+    export userid=''
+    export devid=''
+    export gdbhtoken=''
+    export UA=''
+    export appid=''
+
+
+
+
+## 高佣金(更名：佣金帝) gyj.js
+
+抓包，进APP-签到赚钱，即可获取
+
+https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
+
+复制token值，添加到环境变量
+    
+    export gyjhd='token1@token2@token3'
+
+
+
+## 机场签到 jcCheck.js
+
+请第1次拉完库，自己新建一个py文件，不然每次都会覆盖！
+
+例：
+原本Yiov_wool_jcCheck.js，新建一个jcCheck.js
+
+代码复制进去，再青龙重新task，原本的禁用
+
+
 
 
 
@@ -51,6 +141,27 @@ Cron：0 1-23 * * *
 
 
 
+
+## 琪琪的果园 qqdgy.js
+
+
+只支持青龙，打开微信小程序后抓POST包
+
+www.weiju123.com/wxqqgy/public/index.php/user/myIndex
+
+获取Cookie和请求数据body中的aot参数
+
+Cron : */10 * * * *
+
+    export qqck='PHPSESSID=***'
+
+    export qqaot='***'
+
+
+
+
+
+
 ## 睡觉宝 sjb.js
 
 抓POST包，打开APP即可获取ua
@@ -63,20 +174,16 @@ Cron : 0,30 6,12,13,18,21 * * *
 
 
 
-## 琪琪的果园 qqdgy.js
 
 
-只支持青龙，打开微信小程序后抓POST包
 
-www.weiju123.com/wxqqgy/public/index.php/user/myIndex
+## 闪辆 sl.js
 
-获取Cookie和请求数据body中的aot参数
+抓取get包，进APP-来玩-打卡，即可获取数据
 
-export qqck='PHPSESSID=***'
+https://newvideo.autohome.com.cn/openapi/activity-api/checkin/query_list?_appid=ydsp&_timestamp=1635960539&deviceid=********&version=1.4.0&pm=1&_sign=********&uid=********&uticket=********
 
-export qqaot='***'
-
-Cron : */10 * * * *
+    export slurl='抓取的url1@抓取的url2'
 
 
 
@@ -96,127 +203,60 @@ Cron : */10 * * * *
 
 密码passwd = "******"
 
-直接输入想要修改的步数值，留空为随机步数
+修改固定步数值，留空为随机步数
 
 step = "23333"
 
+修改随机范围步数值，与固定步数二选一改
+
 step = str(random.randint(20000, 21000))
 
-这个是随机的范围，自己改
+
+
+## 萤石云视频 ysy.js
+
+抓3个数据，重新登录！重新登录才可以抓到数据
+
+https://api.ys7.com/v3/users/login/v2
+
+把header转成JSON：https://tooltt.com/header2json/
+
+    export ysyhd=''
+
+body查看表单即可获取
+
+    export ysybody='account=188********'
+
+
+CK获取
+
+https://api.ys7.com/v3/integral/yd/getUserOpenBoxCd
+
+    export cookie='"ASG_DisplayName=***"'
+
+
+提现body 查看表单获取数据
+
+https://api.ys7.com/v3/integral/yd/pay
+
+    export txbody='payCode=101006&receiverType=2&receiverId=2********'
 
 
 
+## 晶彩看点 jckd
 
-## 机场签到 jcCheck.js
-
-请第1次拉完库，自己新建一个py文件，不然每次都会覆盖！
-
-例：
-原本Yiov_wool_jcCheck.js，新建一个jcCheck.js
-
-代码复制进去，再青龙重新task，原本的禁用
+文件内有教程
 
 
+## 晶彩天气 jctq
+
+文件内有教程
 
 
-## 滴滴果园 ddgy.js
+## 中青看点 zqkd
 
-ddgyCOOKIE.js是CK文件，自己改
+文件内有教程
 
-
-## 晶彩天气 jctq_daily.js
-
-每小时2到3次
-
-
-### 转发页定时宝箱/时段转发/刷福利视频/抽奖5次
-
-抓GET包，点开福利页即可获取jctqCookie
-
-https://tq.xunsl.com/v17/NewTask/getTaskListByWeather.json
-
-https://tooltt.com/header2json/
-
-export jctqCookie=''
-
-
-### 福利页定时宝箱
-
-抓get包，点开福利页浮窗宝箱和观看翻倍视频获取body
-
-https://tq.xunsl.com/v17/Weather/getBoxByweather.json
-
-链接转换：https://tooltt.com/header2json/
-
-export jctqGiveBoxBody=''
-
-
-
-### 首页气泡红包
-
-抓POST包，点开首页气泡红包和观看翻倍视频获取body
-
-https://tq.xunsl.com/v5/weather/giveTimeInterval.json
-
-链接转换：https://tooltt.com/header2json/
-
-export jctqBubbleBody=''
-
-
-## 晶彩天气 jctq_reward.js
-
-每天一次，放在其他脚本完成之后
-
-签到和翻倍，任务奖励领取，统计今日收益，自动提现
-
-https://tq.xunsl.com/v5/CommonReward/toGetReward.json -- 签到，和福利页任务奖励
-https://tq.xunsl.com/v5/CommonReward/toDouble.json -- 领取签到翻倍奖励后可获取
-https://tq.xunsl.com/v5/wechat/withdraw2.json -- 提现一次对应金额获取body
-
-export jctqWithdraw=''
-export jctqWithdrawFlag=''
-export jctqBoxbody=''
-export jctqQdBody=''
-export jctqSignDoubleBody=''
-
-
-
-## 晶彩天气 jctq_kkz.js
-
-每天一到两次
-
-抓POST包，点开看看赚，刷新闻，获取body
-
-https://tq.xunsl.com/v5/nameless/adlickstart.json
-
-链接转换：https://tooltt.com/header2json/
-
-export jctqLookStartbody=''
-
-
-
-
-## 晶彩天气 jctq_read.js
-
-每天一到两次
-
-抓POST包，阅读文章或者看视频一段时间后可以获取到时长body
-
-https://tq.xunsl.com/v5/user/stay.json
-
-链接转换：https://tooltt.com/header2json/
-
-export jctqTimeBody=''
-
-抓get，点开文章/视频获取文章body
-
-https://tq.xunsl.com/v5/article/info.json
-
-https://tq.xunsl.com/v5/article/detail.json
-
-链接转换：https://tooltt.com/header2json/
-
-export jctqWzBody=''
 
 
 
