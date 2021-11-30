@@ -64,10 +64,10 @@ Object.keys(zq_cookies).forEach((item) => {
 
                 }
                 if (message.length != 0) {
-             await notify ? notify.sendNotify("中青看点打卡", `${message}\n\n 吹水群：https://t.me/ShaolinTemple2`) :
-                 $.msg($.name, "中青看点打卡", `${message}\n\n 吹水群：https://t.me/ShaolinTemple2`);
+             await notify ? notify.sendNotify("中青看点打卡", `${message}\n\n任务完成`) :
+                 $.msg($.name, "中青看点打卡", `${message}\n\n 任务完成`);
          } else if ($.isNode()) {
-             await notify.sendNotify("中青看点打卡", `${message}\n\n 吹水群：https://t.me/ShaolinTemple2`);
+             await notify.sendNotify("中青看点打卡", `${message}\n\n 任务完成`);
          }
             }
      })()
