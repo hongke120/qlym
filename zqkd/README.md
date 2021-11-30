@@ -1,4 +1,4 @@
-## 使用教程
+﻿## 使用教程
 
 【只拉 中青看点库】
 
@@ -122,20 +122,6 @@ https://kandian.wkandian.com/v5/task/browse_start.json
     export zqllzbody='p=***@p=***'
 
 
-
-
-
-## 中青听歌 zq_music.js
-
-cron：19 10-18 * * *
-
-我没有哪个版本都没有听歌-_-||
-
-点击音频即可获取，不用播放
-
-https://kandian.wkandian.com/V17/Ximalaya/setCompleteSec.json
-
-export zqmusic='p=***' #我猜的→_→
 
 
 
@@ -270,7 +256,17 @@ https://kandian.wkandian.com/v5/user/stay.json
 
 
 
+## 中青听歌 zqkd_audio_pro.js
 
+cron：30 12 * * *（一天一次即可）
+
+CK是格式和上面是一样的，变量不一样
+
+    export zqkdCookie='zqkey=***&zqkey_id=***&uid=***'
+
+青龙报错没有依赖crypto-js
+
+      docker exec -it qinglong bash -c "npm install -g crypto-js"
 
 
 

@@ -1,4 +1,4 @@
-## 使用教程
+﻿## 使用教程
 
 【拉库】
 
@@ -86,18 +86,14 @@ cron：0 8-15 * * *
 
 
 
-## 果冻宝盒 gdbh.py
-
-抓包，进APP-我的-视频赚钱，搜索关键字coins
-
+## 果冻宝盒 gdbhapp.js
 
 cron：随意，一天一次即可
 
-    export userid=''
-    export devid=''
-    export gdbhtoken=''
-    export UA=''
-    export appid=''
+不需要抓包，输入手机号即可
+
+    export gdhbPhone='果冻宝盒手机号'
+
 
 
 
