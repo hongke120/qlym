@@ -63,7 +63,7 @@ Object.keys(zq_cookies).forEach((item) => {
              zq_cookie1 = cookie_id + '&' + bodyVal
              zq_cookie2 = 'uid='+zq_cookieArr[k].split('&uid=')[1] + '&'+ bodyVal
              //待处理cookie
-             console.log(`${zq_cookie1}`)
+             //console.log(`${zq_cookie1}`)
              console.log(`--------第 ${k + 1} 个账号收益查询中--------\n`)
              await nickname(zq_cookie2)
              if ($.message.length != 0) {
@@ -75,10 +75,10 @@ Object.keys(zq_cookies).forEach((item) => {
 
 
          if (message.length != 0) {
-             await notify ? notify.sendNotify("中青看点收益查询", `${message}\n\n 吹水群：https://t.me/ShaolinTemple2`) :
-                 $.msg($.name, "中青看点收益查询", `${message}\n\n吹水群：https://t.me/ShaolinTemple2`);
+             await notify ? notify.sendNotify("中青看点收益查询", `${message}\n\n 任务完成`) :
+                 $.msg($.name, "中青看点收益查询", `${message}\n\n 任务完成`);
          } else if ($.isNode()) {
-             await notify.sendNotify("中青看点收益查询", `${message}\n\n吹水群：https://t.me/ShaolinTemple2`);
+             await notify.sendNotify("中青看点收益查询", `${message}\n\n 任务完成`);
          }
      }
      })()
