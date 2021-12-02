@@ -1,4 +1,4 @@
-﻿## 使用教程
+## 使用教程
 
 【只拉 中青看点库】
 
@@ -7,8 +7,9 @@
 
 ## 更新时间
 
-2021-11-29
-
+2021-12-1
+ 
+有些脚本还没有加通知，后续有空了再更新
 
 
 ## 仅限中青版本V3.2.6-V3.5.5
@@ -19,10 +20,27 @@ https://www.wandoujia.com/apps/7702132/history
 
 
 
+如果被强制更新了，body要改一下，把抓到的zkqd_param=***，替换成p=***
+
+
+
+
 ## 中青cookie适用
 
 福利视频/阅读翻倍/转盘抽奖/火山爆发/每日收益/看看赚，都是通用的，抓一次即可
 
+
+
+
+## 中青5_60分钟任务领取 zq_5_60.js
+
+cron：20 21 * * *
+
+抓Get包，点领取后即可获取
+
+https://kandian.wkandian.com/v17/Ad/getReward.json
+
+    export zqerciboxbody='acces=***'
 
 
 
@@ -47,7 +65,7 @@ https://kandian.wkandian.com/V17/NewTask/recordNum.json?
 
 cron：15 22 * * *
 
-抓post包，我只知道首页右上角，哪里还有宝箱啊，其他用@隔开
+抓post包，完成3个任务后可以开，以上首页右上角，其他用@隔开
 
 （注意看相应是否为任务奖励）
 
@@ -79,11 +97,11 @@ https://kandian.wkandian.com/V17/NewTask/recordNum.json?
 
 cron：30 22 * * *
 
-这里我只会抓签到的翻倍，其他用@隔开
+这里我只会抓签到的翻倍，也适用其他翻倍
 
 https://kandian.wkandian.com/v5/CommonReward/toDouble/
 
-    export zqfbjlbody='p=***@p=***'
+    export zqfbjlbody=''
 
 
 
@@ -150,13 +168,15 @@ https://kandian.wkandian.com/v5/CommonReward/toGetReward.json
 
 cron：34 22 * * *
 
-抓get包，打开app-我的-抽奖赚，看完即可获取
+抓get包，打开app-任务-抽奖赚，看完即可获取
 
 https://kandian.wkandian.com/html/rotaryTable/index.html?
 
     export zq_cookie='zqkey=***&zqkey_id=***&uid=***'
 
+抽奖翻倍
 
+https://kandian.wkandian.com/v5/RotaryTable/toTurnDouble.json
 
 
 
@@ -267,6 +287,20 @@ CK是格式和上面是一样的，变量不一样
 青龙报错没有依赖crypto-js
 
       docker exec -it qinglong bash -c "npm install -g crypto-js"
+
+
+
+
+## 中青看点 风险查询 zqkd_risk.js
+
+
+cron：30 9 */7 * *（想跑就跑一下）
+
+CK是格式和上面是一样的，变量不一样
+
+    export zqkdCookie='zqkey=***&zqkey_id=***&uid=***'
+
+
 
 
 
