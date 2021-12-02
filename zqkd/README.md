@@ -47,7 +47,7 @@ https://kandian.wkandian.com/v17/Ad/getReward.json
 ## 福利视频 zq_Adv_video.js
 
 
-cron：20 21 * * *
+cron：20 5 * * *
 
 抓get包，打开app-任务-福利视频，看完即可获取
 
@@ -195,7 +195,7 @@ https://kandian.wkandian.com/h5/20200612makeMoney/?
 
 
 
-## 搜索赚 zq_share.js
+## 搜索赚 zq_ssz.js
 
 cron：35 5 * * *
 
