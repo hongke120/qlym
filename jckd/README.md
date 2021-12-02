@@ -7,7 +7,7 @@
 
 ## 更新时间
 
-2021-11-29
+2021-12-2
 
 
 ## 晶彩cookie适用
@@ -33,7 +33,7 @@ https://ant.xunsl.com/v17/Ad/getReward.json
 ## 福利视频 jc_Adv_video.js
 
 
-cron：20 21 * * *
+cron：20 2 * * *
 
 抓get包，打开app-任务-福利视频，看完即可获取
 
@@ -49,7 +49,7 @@ https://ant.xunsl.com/V17/NewTask/recordNum.json?
 ## 宝箱 jc_box.js
 
 
-cron：15 22 * * *
+cron：30 * * * *
 
 抓post包，有2个地方，首页右上角、赚钱页漂浮奖励，其他用@隔开
 
@@ -125,9 +125,7 @@ https://ant.xunsl.com/html/rotaryTable/index.html?
 
 cron：15 6,12,18 * * *
 
-抓get包，打开app-赚钱-火山爆发，看完即可获取
-
-https://ant.xunsl.com/h5/20200612makeMoney/?
+同上面的CK通用的
 
     export jc_cookie='zqkey=***&zqkey_id=***&uid=***'
 
