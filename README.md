@@ -402,7 +402,7 @@ https://api.ys7.com/v3/integral/yd/pay
 * [@xl2101200](https://github.com/xl2101200/-/)「Tom」
 * [@YaphetS0903](https://github.com/YaphetS0903/JStest/)「YaphetS」
 * [@WindFgg](https://github.com/WindFgg/QuantumultX_Conf/)「WindFgg」
-* [@wx13069](https://github.com/wx13069/JD/)「wx13069」
-* [@LubooC](https://github.com/LubooC/Script/)「萝卜」
+* [@gossh520](https://gitee.com/gossh520/script/)「gossh520」
+* [@LubooC](https://gitee.com/xiecoll/radish-script)「萝卜」
 * [@leafxcy](https://github.com/leafxcy/JavaScript/)「leaf」
 * [@shaolin-kongfu](https://github.com/shaolin-kongfu/js_scripts/)「少林大佬」
