@@ -75,14 +75,14 @@ async function checkEnv() {
         return false
     }
     
-    if(jctqWzBody.indexOf('&') > -1) {
-        jctqWzBodyArr = jctqWzBody.split('&')
+    if(jctqWzBody.indexOf('@') > -1) {
+        jctqWzBodyArr = jctqWzBody.split('@')
     } else {
         jctqWzBodyArr.push(jctqWzBody)
     }
     
-    if(jctqTimeBody && jctqTimeBody.indexOf('&') > -1) {
-        jctqTimeBodys = jctqTimeBody.split('&')
+    if(jctqTimeBody && jctqTimeBody.indexOf('@') > -1) {
+        jctqTimeBodys = jctqTimeBody.split('@')
         jctqTimeBody = jctqTimeBodys[0]
     }
     
