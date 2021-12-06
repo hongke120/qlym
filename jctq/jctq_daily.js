@@ -99,7 +99,7 @@ async function showmsg() {
 async function checkEnv() {
     
     if(jctqCookie) {
-        if(jctqCookie.indexOf('&') > -1) {
+        if(jctqCookie.indexOf('@') > -1) {
             let jctqCookies = jctqCookie.split('@')
             for(let i=0; i<jctqCookies.length; i++) {
                 jctqCookieArr.push(replaceCookie(jctqCookies[i]))
@@ -111,8 +111,8 @@ async function checkEnv() {
     }
     
     if(jctqBubbleBody) {
-        if(jctqBubbleBody.indexOf('&') > -1) {
-            let jctqBubbleBodyArrs = jctqBubbleBody.split('&')
+        if(jctqBubbleBody.indexOf('@') > -1) {
+            let jctqBubbleBodyArrs = jctqBubbleBody.split('@')
             for(let i=0; i<jctqBubbleBodyArrs.length; i++) {
                 jctqBubbleBodyArr.push(jctqBubbleBodyArrs[i])
             }
@@ -122,8 +122,8 @@ async function checkEnv() {
     }
     
     if(jctqGiveBoxBody) {
-        if(jctqGiveBoxBody.indexOf('&') > -1) {
-            let jctqGiveBoxBodyArrs = jctqGiveBoxBody.split('&')
+        if(jctqGiveBoxBody.indexOf('@') > -1) {
+            let jctqGiveBoxBodyArrs = jctqGiveBoxBody.split('@')
             for(let i=0; i<jctqGiveBoxBodyArrs.length; i++) {
                 jctqGiveBoxBodyArr.push(jctqGiveBoxBodyArrs[i])
             }
@@ -133,8 +133,8 @@ async function checkEnv() {
     }
     
     if(jctqGoldBody) {
-        if(jctqGoldBody.indexOf('&') > -1) {
-            let jctqGoldBodyArrs = jctqGoldBody.split('&')
+        if(jctqGoldBody.indexOf('@') > -1) {
+            let jctqGoldBodyArrs = jctqGoldBody.split('@')
             for(let i=0; i<jctqGoldBodyArrs.length; i++) {
                 jctqGoldBodyArr.push(jctqGoldBodyArrs[i])
             }
