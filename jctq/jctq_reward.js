@@ -1,13 +1,12 @@
 /*
-安卓：晶彩天气(v8.3.7)
+安卓：水果天气(v8.3.9)
 
 此脚本负责：
-签到和翻倍，任务奖励领取，统计今日收益，自动提现
+签到和翻倍，任务奖励领取，领首页福利视频奖励，首页统计今日收益，自动提现
 
 请将定时放在看看赚和阅读任务后面
 如果不想自动提现的，请不要捉提现body，或者新建环境变量jctqWithdrawFlag，写成0
 */
-
 
 const $ = new Env('晶彩天气任务签到');
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
@@ -128,8 +127,8 @@ async function checkEnv() {
     }
     
     if(jctqWithdraw) {
-        if(jctqWithdraw.indexOf('@') > -1) {
-            let jctqWithdraws = jctqWithdraw.split('@')
+        if(jctqWithdraw.indexOf('&') > -1) {
+            let jctqWithdraws = jctqWithdraw.split('&')
             for(let i=0; i<jctqWithdraws.length; i++) {
                 jctqWithdrawArr.push(jctqWithdraws[i])
             }
@@ -139,8 +138,8 @@ async function checkEnv() {
     }
     
     if(jctqQdBody) {
-        if(jctqQdBody.indexOf('@') > -1) {
-            let jctqQdBodyArr = jctqQdBody.split('@')
+        if(jctqQdBody.indexOf('&') > -1) {
+            let jctqQdBodyArr = jctqQdBody.split('&')
             for(let i=0; i<jctqQdBodyArr.length; i++) {
                 jctqRewardBodyArr.push(jctqQdBodyArr[i])
             }
@@ -150,8 +149,8 @@ async function checkEnv() {
     }
     
     if(jctqBoxbody) {
-        if(jctqBoxbody.indexOf('@') > -1) {
-            let jctqBoxbodyArr = jctqBoxbody.split('@')
+        if(jctqBoxbody.indexOf('&') > -1) {
+            let jctqBoxbodyArr = jctqBoxbody.split('&')
             for(let i=0; i<jctqBoxbodyArr.length; i++) {
                 jctqRewardBodyArr.push(jctqBoxbodyArr[i])
             }
@@ -161,8 +160,8 @@ async function checkEnv() {
     }
     
     if(jctqSignDoubleBody) {
-        if(jctqSignDoubleBody.indexOf('@') > -1) {
-            let jctqSignDoubleBodys = jctqSignDoubleBody.split('@')
+        if(jctqSignDoubleBody.indexOf('&') > -1) {
+            let jctqSignDoubleBodys = jctqSignDoubleBody.split('&')
             for(let i=0; i<jctqSignDoubleBodys.length; i++) {
                 jctqSignDoubleBodyArr.push(jctqSignDoubleBodys[i])
             }
@@ -180,7 +179,7 @@ function replaceCookie(jctqCookieItem) {
         jctqCookieItem = jctqCookieItem.replace(/zqkey_id=/, "cookie_id=")
     }
     if(jctqCookieItem.indexOf('app_version=') == -1) {
-        jctqCookieItem = 'app_version=8.3.7&' + jctqCookieItem
+        jctqCookieItem = 'app_version=8.3.9&' + jctqCookieItem
     }
     return jctqCookieItem
 }
