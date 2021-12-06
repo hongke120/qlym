@@ -1,10 +1,10 @@
 /*
-安卓：晶彩天气(v8.3.7)
+安卓：水果天气(v8.3.9)
 
 此脚本负责：
-领转发页定时宝箱，领福利页定时宝箱，领首页气泡红包，时段转发，刷福利视频，抽奖5次
+旧版本8.3.7：领首页气泡红包和翻倍奖励，福利页定时宝箱和翻倍奖励
+新版本8.3.9：领转发页定时宝箱，领资讯页宝箱和视频奖励，任务页一键收金币，时段转发，刷福利视频，抽奖5次
 */
-
 
 const $ = new Env('晶彩天气日常');
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
@@ -21,10 +21,14 @@ let userCookie = ''
 let jctqCookie = ($.isNode() ? process.env.jctqCookie : $.getdata('jctqCookie')) || '';
 let jctqBubbleBody = ($.isNode() ? process.env.jctqBubbleBody : $.getdata('jctqBubbleBody')) || '';
 let jctqGiveBoxBody = ($.isNode() ? process.env.jctqGiveBoxBody : $.getdata('jctqGiveBoxBody')) || '';
+let jctqGoldBody = ($.isNode() ? process.env.jctqGoldBody : $.getdata('jctqGoldBody')) || '';
+let jctqVideoBody = ($.isNode() ? process.env.jctqVideoBody : $.getdata('jctqVideoBody')) || '';
 
 let jctqCookieArr = []
 let jctqBubbleBodyArr = []
 let jctqGiveBoxBodyArr = []
+let jctqGoldBodyArr = []
+let jctqVideoBodyArr = []
 
 let refHotShare = 'http://tq.xunsl.com/h5/hotShare/?'
 let refRotory = 'https://tq.xunsl.com/html/rotaryTable/index.html?keyword_wyq=woyaoq.com&'
@@ -58,6 +62,12 @@ let refRotory = 'https://tq.xunsl.com/html/rotaryTable/index.html?keyword_wyq=wo
             await queryBubbleStatus()
             await $.wait(1000)
             
+            await getVideoReward()
+            await $.wait(1000)
+            
+            await giveGoldCoin()
+            await $.wait(1000)
+            
             await getTaskListByWeather()
             await $.wait(1000)
             
@@ -89,7 +99,7 @@ async function showmsg() {
 async function checkEnv() {
     
     if(jctqCookie) {
-        if(jctqCookie.indexOf('@') > -1) {
+        if(jctqCookie.indexOf('&') > -1) {
             let jctqCookies = jctqCookie.split('@')
             for(let i=0; i<jctqCookies.length; i++) {
                 jctqCookieArr.push(replaceCookie(jctqCookies[i]))
@@ -101,8 +111,8 @@ async function checkEnv() {
     }
     
     if(jctqBubbleBody) {
-        if(jctqBubbleBody.indexOf('@') > -1) {
-            let jctqBubbleBodyArrs = jctqBubbleBody.split('@')
+        if(jctqBubbleBody.indexOf('&') > -1) {
+            let jctqBubbleBodyArrs = jctqBubbleBody.split('&')
             for(let i=0; i<jctqBubbleBodyArrs.length; i++) {
                 jctqBubbleBodyArr.push(jctqBubbleBodyArrs[i])
             }
@@ -112,13 +122,35 @@ async function checkEnv() {
     }
     
     if(jctqGiveBoxBody) {
-        if(jctqGiveBoxBody.indexOf('@') > -1) {
-            let jctqGiveBoxBodyArrs = jctqGiveBoxBody.split('@')
+        if(jctqGiveBoxBody.indexOf('&') > -1) {
+            let jctqGiveBoxBodyArrs = jctqGiveBoxBody.split('&')
             for(let i=0; i<jctqGiveBoxBodyArrs.length; i++) {
                 jctqGiveBoxBodyArr.push(jctqGiveBoxBodyArrs[i])
             }
         } else {
             jctqGiveBoxBodyArr.push(jctqGiveBoxBody)
+        }
+    }
+    
+    if(jctqGoldBody) {
+        if(jctqGoldBody.indexOf('&') > -1) {
+            let jctqGoldBodyArrs = jctqGoldBody.split('&')
+            for(let i=0; i<jctqGoldBodyArrs.length; i++) {
+                jctqGoldBodyArr.push(jctqGoldBodyArrs[i])
+            }
+        } else {
+            jctqGoldBodyArr.push(jctqGoldBody)
+        }
+    }
+    
+    if(jctqVideoBody) {
+        if(jctqVideoBody.indexOf('@') > -1) {
+            let jctqVideoBodyArrs = jctqVideoBody.split('@')
+            for(let i=0; i<jctqVideoBodyArrs.length; i++) {
+                jctqVideoBodyArr.push(jctqVideoBodyArrs[i])
+            }
+        } else {
+            jctqVideoBodyArr.push(jctqVideoBody)
         }
     }
 }
@@ -131,7 +163,7 @@ function replaceCookie(jctqCookieItem) {
         jctqCookieItem = jctqCookieItem.replace(/zqkey_id=/, "cookie_id=")
     }
     if(jctqCookieItem.indexOf('app_version=') == -1) {
-        jctqCookieItem = 'app_version=8.3.7&' + jctqCookieItem
+        jctqCookieItem = 'app_version=8.3.9&' + jctqCookieItem
     }
     return jctqCookieItem
 }
@@ -494,6 +526,82 @@ async function recordVideoNum() {
         console.log(`刷福利视频成功`)
     } else {
         console.log(`刷福利视频失败`)
+    }
+}
+
+//领取资讯页宝箱
+async function getVideoReward() {
+    let numBody = jctqVideoBodyArr.length
+    if(numBody > 0) {
+        console.log(`\n找到${numBody}个资讯页宝箱body，开始尝试领取`)
+        for(let i=0; i<numBody; i++) {
+            let videoBody = jctqVideoBodyArr[i]
+            await $.wait(500)
+            await getVideoCallback(videoBody)
+        }
+    } else {
+        console.log(`\n没有找到资讯页宝箱body，如果需要请手动领取奖励获取body`)
+    }
+}
+
+//资讯页宝箱
+async function getVideoCallback(body) {
+    let caller = printCaller()
+    let url = 'https://tq.xunsl.com/v17/Rvideo/videoCallback.json'
+    let urlObject = populatePostUrl(url,refHotShare,body)
+    let token = ''
+    if(body.indexOf('token=') > -1) {
+        token = body.match(/\&token=([\w\.-_]+)/)[1]
+    }
+    urlObject.headers['Token'] = token
+    await httpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.success == true) {
+        console.log(`领取资讯页宝箱获得：${result.items.dialog.score}金币`)
+    } else {
+        console.log(`领取资讯页宝箱失败：${result.message}`)
+    }
+}
+
+//一键收金币
+async function giveGoldCoin() {
+    let numBody = jctqGoldBodyArr.length
+    if(numBody > 0) {
+        console.log(`\n找到${numBody}个收金币body，开始尝试领取`)
+        for(let i=0; i<numBody; i++) {
+            let goldBody = jctqGoldBodyArr[i]
+            await $.wait(500)
+            await giveReceiveGoldCoin(goldBody)
+            if(i != numBody-1) {
+                let randomTime = Math.floor(Math.random()*2000)+32000
+                console.log(`\n随机延迟${randomTime}ms后尝试领取下一个`)
+                await $.wait(randomTime)
+            }
+        }
+    } else {
+        console.log(`\n没有找到收金币body，如果需要请手动领取奖励获取body`)
+    }
+}
+
+//收金币接口
+async function giveReceiveGoldCoin(body) {
+    let caller = printCaller()
+    let url = 'https://tq.xunsl.com/v5/Weather/giveReceiveGoldCoin.json'
+    let urlObject = populatePostUrl(url,refHotShare,body)
+    await httpPost(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    if(result.status == 1) {
+        console.log(`一键收金币获得：${result.items.score}金币`)
+    } else {
+        let msg = ''
+        if(result.message && Array.isArray(result.message)) {
+            for(let msgItem of result.message) msg += (msgItem+' ')
+        }
+        console.log(`一键收金币(部分成功也会显示失败)：${msg}`)
     }
 }
 ////////////////////////////////////////////////////////////////////
