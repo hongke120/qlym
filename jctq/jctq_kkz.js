@@ -1,10 +1,9 @@
-﻿/*
-安卓：晶彩天气(v8.3.7)
+/*
+安卓：水果天气(v8.3.9)
 
 此脚本负责：
-完成看看赚任务，删除重复和失效的body
+完成看看赚任务
 */
-
 
 const $ = new Env('晶彩天气看看赚');
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
@@ -119,7 +118,7 @@ function replaceCookie(jctqCookieItem) {
         jctqCookieItem = jctqCookieItem.replace(/zqkey_id=/, "cookie_id=")
     }
     if(jctqCookieItem.indexOf('app_version=') == -1) {
-        jctqCookieItem = 'app_version=8.3.7&' + jctqCookieItem
+        jctqCookieItem = 'app_version=8.3.9&' + jctqCookieItem
     }
     return jctqCookieItem
 }
