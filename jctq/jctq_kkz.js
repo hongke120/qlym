@@ -86,8 +86,8 @@ async function checkEnv() {
         return false
     }
     
-    if(jctqLookStartbody.indexOf('&') > -1) {
-        jctqLookStartbodyArr = jctqLookStartbody.split('&')
+    if(jctqLookStartbody.indexOf('@') > -1) {
+        jctqLookStartbodyArr = jctqLookStartbody.split('@')
     } else {
         jctqLookStartbodyArr.push(jctqLookStartbody)
     }
