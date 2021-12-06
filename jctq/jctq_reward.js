@@ -127,8 +127,8 @@ async function checkEnv() {
     }
     
     if(jctqWithdraw) {
-        if(jctqWithdraw.indexOf('&') > -1) {
-            let jctqWithdraws = jctqWithdraw.split('&')
+        if(jctqWithdraw.indexOf('@') > -1) {
+            let jctqWithdraws = jctqWithdraw.split('@')
             for(let i=0; i<jctqWithdraws.length; i++) {
                 jctqWithdrawArr.push(jctqWithdraws[i])
             }
@@ -138,8 +138,8 @@ async function checkEnv() {
     }
     
     if(jctqQdBody) {
-        if(jctqQdBody.indexOf('&') > -1) {
-            let jctqQdBodyArr = jctqQdBody.split('&')
+        if(jctqQdBody.indexOf('@') > -1) {
+            let jctqQdBodyArr = jctqQdBody.split('@')
             for(let i=0; i<jctqQdBodyArr.length; i++) {
                 jctqRewardBodyArr.push(jctqQdBodyArr[i])
             }
@@ -149,8 +149,8 @@ async function checkEnv() {
     }
     
     if(jctqBoxbody) {
-        if(jctqBoxbody.indexOf('&') > -1) {
-            let jctqBoxbodyArr = jctqBoxbody.split('&')
+        if(jctqBoxbody.indexOf('@') > -1) {
+            let jctqBoxbodyArr = jctqBoxbody.split('@')
             for(let i=0; i<jctqBoxbodyArr.length; i++) {
                 jctqRewardBodyArr.push(jctqBoxbodyArr[i])
             }
@@ -160,8 +160,8 @@ async function checkEnv() {
     }
     
     if(jctqSignDoubleBody) {
-        if(jctqSignDoubleBody.indexOf('&') > -1) {
-            let jctqSignDoubleBodys = jctqSignDoubleBody.split('&')
+        if(jctqSignDoubleBody.indexOf('@') > -1) {
+            let jctqSignDoubleBodys = jctqSignDoubleBody.split('@')
             for(let i=0; i<jctqSignDoubleBodys.length; i++) {
                 jctqSignDoubleBodyArr.push(jctqSignDoubleBodys[i])
             }
