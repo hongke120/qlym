@@ -6,7 +6,8 @@
 新版本8.3.9：领转发页定时宝箱，领资讯页宝箱和视频奖励，任务页一键收金币，时段转发，刷福利视频，抽奖5次
 */
 
-const $ = new Env('晶彩天气日常');
+const jsname = '晶彩天气日常'
+const $ = Env(jsname)
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
 const logDebug = 0
 
