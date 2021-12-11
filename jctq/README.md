@@ -1,4 +1,4 @@
-## 使用教程
+﻿## 使用教程
 
 【只拉 晶彩天气库】
 
@@ -7,7 +7,7 @@
 
 ## 更新时间
 
-2021-11-29
+2021-12-11
 
 
 晶彩天气 已经 改名 水果天气
@@ -27,7 +27,7 @@
 
 ## 晶彩天气日常 jctq_daily.js
 
-领转发页定时宝箱/领福利页定时宝箱/领首页气泡红包/时段转发/刷福利视频/抽奖5次
+领转发页定时宝箱/领福利页定时宝箱/领首页气泡红包/时段转发/刷激励视频/抽奖5次
 
 
 cron：15,45 * * * *
@@ -43,21 +43,31 @@ https://tq.xunsl.com/v17/NewTask/getTaskListByWeather.json
 
 ### 悬浮气泡
 
-抓POST包，首页-天气，悬浮的气泡，多个用@隔开
+200气泡翻倍 测试中...
 
 https://tq.xunsl.com/v5/weather/giveTimeInterval.json
 
-    export jctqBubbleBody='p=***@p=***'
 
 
 
-### 浮窗宝箱
+### 收金币
 
-抓POST包，福利页悬浮宝箱，这个我填进去了，老是说没找到body
+抓POST包，领现金-收金币
 
-https://tq.xunsl.com/v5/Weather/giveBoxOnWeather.json
+https://tq.xunsl.com/v5/Weather/giveReceiveGoldCoin.json
 
-export jctqGiveBoxBody='p=***'
+    export jctqGoldBody='p=***'
+
+
+
+### 资讯页视频
+
+抓POST包，资讯-右上角 视频（第一次点是签到，第二次才是视频）
+
+https://tq.xunsl.com/v17/Rvideo/videoCallback.json
+
+    export jctqVideoBody=''
+
 
 
 
