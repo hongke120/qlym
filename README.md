@@ -206,6 +206,20 @@ https://api.st615.com/v1/user/info
 
 
 
+## 快手极速版 ks_js.js
+
+Cron：随意，一天一次
+
+抓get包，进app-点红包进去，获取Cookie
+
+https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
+
+    export kshd="Cookie1@Cookie2"
+
+
+
+
+
 
 ## 美团赚米粒 meituan.js
 
@@ -420,3 +434,5 @@ https://api.ys7.com/v3/integral/yd/pay
 * [@LubooC](https://gitee.com/xiecoll/radish-script)「萝卜」
 * [@leafxcy](https://github.com/leafxcy/JavaScript/)「leaf」
 * [@shaolin-kongfu](https://github.com/shaolin-kongfu/js_scripts/)「少林大佬」
+* [@liuqi6968](https://github.com/liuqi6968/-/)「liuqi6968」
+
