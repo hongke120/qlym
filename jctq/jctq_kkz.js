@@ -5,7 +5,8 @@
 完成看看赚任务
 */
 
-const $ = new Env('晶彩天气看看赚');
+const jsname = '水果天气看看赚'
+const $ = Env(jsname)
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
 const logDebug = 0
 
@@ -86,8 +87,8 @@ async function checkEnv() {
         return false
     }
     
-    if(jctqLookStartbody.indexOf('@') > -1) {
-        jctqLookStartbodyArr = jctqLookStartbody.split('@')
+    if(jctqLookStartbody.indexOf('&') > -1) {
+        jctqLookStartbodyArr = jctqLookStartbody.split('&')
     } else {
         jctqLookStartbodyArr.push(jctqLookStartbody)
     }
