@@ -90,20 +90,11 @@ https://tq.xunsl.com/v5/CommonReward/toDouble.json
 
 
 
-
-    export jctqBoxbody='p=***'
-
-
 提现
 
 https://tq.xunsl.com/v5/wechat/withdraw2.json
 
     export jctqWithdraw='p=***'
-
-CK同上
-
-    export jctqCookie="zqkey=***&zqkey_id=***&uid=***"
-
 
 
 
@@ -146,9 +137,11 @@ https://tq.xunsl.com/v5/nameless/adlickstart.json
 
 
 
+## 分享阅读 jctq_shareRead.js
 
+设置好次数就行了，5代表5次，自己改
 
-
+    export jctqShareNum='5'
 
 
 
