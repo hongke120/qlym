@@ -206,6 +206,18 @@ https://api.st615.com/v1/user/info
 
 
 
+## 快手果园 ks_fruit.js
+
+Cron：随意，一天一次
+
+抓get包，进app-左上角三横-快手果园，获取Cookie
+
+https://ug-fission.kuaishou.com/rest/n/darwin/orchard/water/watering
+
+    export KS_COOKIE='client_key=***;did=***;kuaishou.api_st=***;ud=***;ver=***;'
+
+
+
 ## 快手极速版 ks_js.js
 
 Cron：随意，一天一次
