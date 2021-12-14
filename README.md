@@ -24,7 +24,7 @@ Cron：5 9,11,18 * * *
 
 
 
-## 都爱玩 daw.js
+## 都爱玩 daw.js(凉了)
 
 Cron：15 0,1,8,15,20 * * *
 
@@ -175,17 +175,23 @@ cron：随意，一天一次即可
 
 
 
-#聚看点 jkdapp.js
+#今日头条极速版 jrttjsb.js
 
-Cron：10 10 * * *
+Cron：*/15 6-23 * * *
 
-抓GET包，APP-我的-我的邀请码，获取数据
+抓get包，打开APP-任务即可获取，多账户@隔开
 
-https://www.xiaodouzhuan.cn/jkd/weixin20/member/code.jsp?
+https://api3-normal-lq.toutiaoapi.com/luckycat/lite/v1/task/page_data/
 
-    export jkdck='{"Cookie":"xz_jkd_appkey=d32******37a!android!765"}'
+安卓抓的host不一样，只要有Cookie就行
 
-    export jkdhd='{"openid": "d32******37a"}' 
+https://i.snssdk.com/luckycat/lite/v1/task/page_data/
+
+    export jrttjsbHeader="gftoken=***"
+
+安卓机就不要抓填UA了，苹果的换成自己的UA
+
+    export jrttjsbUA=""
 
 
 
@@ -251,7 +257,7 @@ F12审查元素-登录账号-工作台选 网络，找到www.meituan.com的封�
 
 
 
-## 琪琪的果园 qqdgy.js
+## 琪琪的果园 qqdgy.js(失效了要重新抓)
 
 
 Cron : */10 * * * *
@@ -290,7 +296,7 @@ https://mapi.shuijiaobao.cn/login/code
 
 
 
-## 闪辆 sl.js
+## 闪辆 sl.js(不能评论了)
 
 cron：10 0 * * *
 
