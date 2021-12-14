@@ -7,7 +7,7 @@
 
 ## 更新时间
 
-2021-12-1
+2021-12-14
  
 有些脚本还没有加通知，后续有空了再更新
 
@@ -32,15 +32,6 @@ https://www.wandoujia.com/apps/7702132/history
 
 
 
-## 中青5_60分钟任务领取 zq_5_60.js
-
-cron：20 21 * * *
-
-抓Get包，点领取后即可获取
-
-https://kandian.wkandian.com/v17/Ad/getReward.json
-
-    export zqerciboxbody='acces=***'
 
 
 
