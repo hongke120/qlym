@@ -92,7 +92,7 @@ https://tq.xunsl.com/v5/wechat/withdraw2.json
 ## 阅读 jctq_read.js
 
 
-cron：20 18 * * *
+cron：20 9 * * *
 
 抓get包，打开app-资讯，一个新闻一个body，请挨个抓，其他用@隔开
 
