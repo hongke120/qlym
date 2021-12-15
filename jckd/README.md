@@ -155,7 +155,7 @@ https://ant.xunsl.com/v5/wechat/withdraw2.json
 ## 文章 jc_wz.js
 
 
-cron：30 7,12,18 * * *
+cron：30 7 * * *
 
 抓get包，打开app-资讯，一个新闻一个body，请挨个抓，其他用@隔开
 
