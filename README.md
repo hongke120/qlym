@@ -308,6 +308,28 @@ https://newvideo.autohome.com.cn/openapi/activity-api/checkin/query_list?_appid=
 
 
 
+## 同程夺宝 tcdb.js
+
+cron：随意，每天最少11次
+
+
+抓get包，同程旅行小程序-右侧 悬浮100元天天赚钱
+
+https://x.elong.com/feifang/activity/baseapi/treasure/task
+
+
+Cookie里的值growthActivityOpenId=***; growthActivityUnionId=***; SessionToken=***; 
+
+
+复制出来整理成下面这样，填入tcdbCOOKIE.js
+
+    ZIYE&wxxcxOpenId=***&wxxcxUnionId=***&SessionToken=***
+
+
+脚本含作者助力，介意勿玩
+
+
+
 
 ## 腾讯自选股 txstock.js
 
@@ -422,6 +444,21 @@ https://api.ys7.com/v3/integral/yd/pay
 
 
 
+
+## 亿享云 yxyapp.js
+
+注册地址：https://ystzwz.com/h6/#/
+
+就是个网页，没有APP的
+
+
+    export yxyPhone='手机号#密码'
+
+
+
+
+
+
 ## 晶彩看点 jckd
 
 文件内有教程
@@ -453,4 +490,5 @@ https://api.ys7.com/v3/integral/yd/pay
 * [@leafxcy](https://github.com/leafxcy/JavaScript/)「leaf」
 * [@shaolin-kongfu](https://github.com/shaolin-kongfu/js_scripts/)「少林大佬」
 * [@liuqi6968](https://github.com/liuqi6968/-/)「liuqi6968」
+* [@ziye888](https://github.com/ziye888/JavaScript)「ziye」
 
