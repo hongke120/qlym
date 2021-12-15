@@ -43,17 +43,26 @@ https://v3.sdk.haowusong.com/api/box/wallet/info
 
 
 
-## 滴滴果园 ddgy.js
+## 滴滴果园 dd_fruit.js
 
-cron：随意，一天一次即可
+cron：10 0,8,12,18 * * *
 
-抓get包，进app-5天种水果，即可获取数据
+抓get包，进app-5天种水果，浇一次水，搜water
 
-把 wsgsig= 和 D-Header-T= 后的值
+把请求主题中的 token 值复制出来，多账户用,号(英文)隔开
 
-填入ddgyCOOKIE.js里的url和header中
+    export DD_TOKEN='token1,token2'
+
+拉库了的记得把dd_cookie.js从运行列表中禁用
 
 
+
+## 滴滴果园自动收水 dd_bucketWater.js
+
+cron：*/30 * * * *
+
+
+用上面的token即可
 
 
 
@@ -61,7 +70,7 @@ cron：随意，一天一次即可
 
 ## 得间小说 djxs.js
 
-Cron：0 */1 * * *
+Cron：0 6-23 * * *
 
 抓get包，进app-福利-看视频，获取数据
 
@@ -128,17 +137,6 @@ https://api.uutequan.com/v1/welfare/page
 
 
     export flhsCookie='Cookie1@Cookie2'
-
-
-
-
-## 果冻宝盒 gdbhapp.js（凉了）
-
-cron：随意，一天一次即可
-
-不需要抓包，输入手机号即可
-
-    export gdhbPhone='果冻宝盒手机号'
 
 
 
@@ -310,7 +308,7 @@ https://newvideo.autohome.com.cn/openapi/activity-api/checkin/query_list?_appid=
 
 ## 同程夺宝 tcdb.js
 
-cron：随意，每天最少11次
+cron：5 8-18 * * *
 
 
 抓get包，同程旅行小程序-右侧 悬浮100元天天赚钱
@@ -446,6 +444,10 @@ https://api.ys7.com/v3/integral/yd/pay
 
 
 ## 亿享云 yxyapp.js
+
+
+cron：随意，一天一次即可
+
 
 注册地址：https://ystzwz.com/h6/#/
 
