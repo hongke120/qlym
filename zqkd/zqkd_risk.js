@@ -135,13 +135,21 @@ async function GetOrderList() {
     if(!result) return
     
     if(result.status == 1) {
+		notifyStr += `账户${userIdx+1} ${nickname[userIdx]}: \n`
         for(let item of result.data) {
-            if(item.description) {
-                notifyStr += `提现风险信息：${item.add_time_str} ${item.description}\n`
-            }
+            let withdrawStr = ''
+            let desc = (item.description) ? item.description : '无'
+            if (item.status == 0){
+                withdrawStr = '未入账';
+            } else if (item.status == 1){
+                withdrawStr = '已入账';
+            } else if (item.status == 2){
+                withdrawStr = '提现失败';
+            }	
+            notifyStr += `提现信息：${item.add_time_str} 提现${item.money}元，${withdrawStr}，风险信息：${desc}\n`		
         }
     } else {
-        console.log(`查询风险信息失败`)
+        console.log(`账户${userIdx+1}查询风险信息失败`)
     }
 }
 
