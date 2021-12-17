@@ -4,6 +4,7 @@ shaolin-kongfu
 
 软件名称：中青看点
 
+cron 30 12 * * *
 
 
 【MITM】
