@@ -7,7 +7,7 @@
 
  具体都有哪些奖励翻倍 自己探索吧  
  注意一定要在 zqbx.js运行前抓包   定时要在zqbox.js之后
-
+cron 30 22 * * *
  
 [rewrite_local]
  
