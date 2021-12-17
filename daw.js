@@ -1,8 +1,10 @@
 /*
 IOS/安卓：都爱玩
+下载注册地址，微信打开：
+https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx592b7bf2a9f7f003&redirect_uri=https://v3.sdk.haowusong.com/api/auth/wechat/sharelogin&response_type=code&scope=snsapi_userinfo&state=AAABQKAW,dawbox-android#wechat_redirect
 
-炒个冷饭，之前有几位大佬已经写过了
-现在支持了苹果和安卓双端的任务，两边账户分红币独立，理论上收益可以翻倍，每天2块多到3块的样子，不过提现次数似乎两边共用
+现在需要充钱1块才能解锁分红池，自己考虑要不要充
+支持苹果和安卓双端的任务，两边账户分红币独立，理论上收益可以翻倍，每天2块多到3块的样子，不过提现次数似乎两边共用
 支持多账户，可以并发看视频广告，减少运行时间，V2P跑有时会有code=400错误信息，忽略就好
 重写捉包只需要捉其中一端的账号即可，ck通用
 脚本内置了自动提现，默认提现到微信
@@ -16,7 +18,7 @@ export dawToken='account1@account2@account3'
 V2P重写：打开APP即可获取CK，没有的话点一下下面分红币页面，可以直接捉多账号
 [task_local]
 #都爱玩
-15 0,1,8,15,20 * * * https://raw.githubusercontent.com/leafxcy/JavaScript/main/daw.js, tag=都爱玩, enabled=true
+3 1,20 * * * https://raw.githubusercontent.com/leafxcy/JavaScript/main/daw.js, tag=都爱玩, enabled=true
 [rewrite_local]
 https://v3.sdk.haowusong.com/api/box/wallet/info url script-request-header https://raw.githubusercontent.com/leafxcy/JavaScript/main/daw.js
 [MITM]
@@ -39,6 +41,7 @@ let httpResult //global buffer
 let userToken = ''
 let userIdx = 0
 let numBoxbody = 0
+let userStatus = []
 let coinStatus = []
 
 let maxTryNum = 12
@@ -54,7 +57,7 @@ let withdrawMethod = []
 let dawToken = ($.isNode() ? process.env.dawToken : $.getdata('dawToken')) || '';
 let dawTokenArr = []
 
-let userName = ''
+let userName = []
 let isVip = 0
 let vipLevel = 0
 
@@ -71,20 +74,27 @@ let vipLevel = 0
         await CheckEnv()
         
         numBoxbody = dawTokenArr.length
-        console.log(`找到${numBoxbody}个账户，脚本会同时做IOS和安卓端任务\n`)
+        console.log(`\n找到${numBoxbody}个账户，脚本会同时做IOS和安卓端任务`)
         
+        console.log(`\n检查账号状态中...`)
+        for(channelIdx=0; channelIdx<channel.length; channelIdx++) for(userIdx=0; userIdx<numBoxbody; userIdx++) {await QueryVipInfo(); await $.wait(1000)}
+        
+        console.log(`\n先尝试投入分红池`)
+        for(channelIdx=0; channelIdx<channel.length; channelIdx++) for(userIdx=0; userIdx<numBoxbody; userIdx++) if(userStatus[channelIdx*numBoxbody+userIdx]==1) {await QueryCoinInfo(0); await $.wait(1000)}
+        
+        console.log(`\n查询DAB状态`)
         for(channelIdx=0; channelIdx<channel.length; channelIdx++) {
             for(userIdx=0; userIdx<numBoxbody; userIdx++) {
-                if(await QueryVipInfo()) {
+                if(userStatus[channelIdx*numBoxbody+userIdx]==1) {
                     if(!coinStatus[channelIdx*numBoxbody+userIdx]) coinStatus.push(1)
-                    await $.wait(100)
                     await QueryWarehouse() //查询现有币和仓库容量
                 }
             }
         }
         
+        console.log(`\n先每个账号并发看广告和抽奖`)
         for(channelIdx=0; channelIdx<channel.length; channelIdx++) {
-            console.log(`\n先每个账号并发看广告和抽奖，开始${channelStr[channelIdx]}任务`)
+            console.log(`\n开始${channelStr[channelIdx]}任务`)
             for(let i=0; i<maxTryNum; i++) {
                 console.log(`\n======== 第${i+1}轮看视频抽奖 ========`)
                 allCompFlag = 1
@@ -92,12 +102,11 @@ let vipLevel = 0
                 
                 for(userIdx=0; userIdx<numBoxbody; userIdx++) {
                     if(coinStatus[channelIdx*numBoxbody+userIdx] == 1) {
-                        if(await QueryVipInfo()) {
-                            console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName}：`)
+                        if(userStatus[channelIdx*numBoxbody+userIdx]==1) {
                             await QueryCoinInfo(1) //做领币任务
                         }
                     } else {
-                        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName}：DAB已满且暂时无法投入分红池，暂停做任务`)
+                        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName[userIdx]}：DAB已满且暂时无法投入分红池，暂停做任务`)
                     }
                 }
                 
@@ -114,31 +123,18 @@ let vipLevel = 0
         }
         
         console.log(`\n开始签到，领取任务奖励，兑换红包和提现`)
-        for(channelIdx=0; channelIdx<channel.length; channelIdx++) {
-            for(userIdx=0; userIdx<numBoxbody; userIdx++) {
-                if(await QueryVipInfo()) {
-                    console.log(`\n账户${userIdx+1}${channelStr[channelIdx]}： ${userName}`)
-                    notifyStr += `\n账户${userIdx+1}${channelStr[channelIdx]}： ${userName}\n`
-                    
-                    await $.wait(100)
-                    await QueryCoinInfo(0) //投入瓜分池
-                    
-                    await $.wait(100)
-                    await QuerySignList() //签到
-                    
-                    await $.wait(100)
-                    await QueryTaskList() //做积分任务
-                    
-                    await $.wait(100)
-                    await QueryMallExchange(0) //兑换积分红包
-                }
-            }
-        }
+        for(channelIdx=0; channelIdx<channel.length; channelIdx++) for(userIdx=0; userIdx<numBoxbody; userIdx++) if(userStatus[channelIdx*numBoxbody+userIdx]==1) await QuerySignList()
+        
+        console.log(`\n开始领取任务奖励`)
+        for(channelIdx=0; channelIdx<channel.length; channelIdx++) for(userIdx=0; userIdx<numBoxbody; userIdx++) if(userStatus[channelIdx*numBoxbody+userIdx]==1) await QueryTaskList()
+        
+        console.log(`\n开始兑换积分红包`)
+        for(channelIdx=0; channelIdx<channel.length; channelIdx++) for(userIdx=0; userIdx<numBoxbody; userIdx++) if(userStatus[channelIdx*numBoxbody+userIdx]==1) await QueryMallExchange(0)
         
         console.log(`\n======== 查询余额 ========`)
         for(userIdx=0; userIdx<numBoxbody; userIdx++) {
             for(channelIdx=0; channelIdx<channel.length; channelIdx++) {
-                if(await QueryVipInfo()) {
+                if(userStatus[channelIdx*numBoxbody+userIdx]==1) {
                     await QueryWithdrawIntegral(1)
                     await QueryWithdrawBox(1)
                 }
@@ -146,18 +142,15 @@ let vipLevel = 0
         }
         
         console.log(`\n======== 开始提现 ========`)
-        for(userIdx=0; userIdx<numBoxbody; userIdx++) {
-            await Withdraw()
-        }
+        for(userIdx=0; userIdx<numBoxbody; userIdx++) await Withdraw()
         
         for(channelIdx=0; channelIdx<channel.length; channelIdx++) {
             for(userIdx=0; userIdx<numBoxbody; userIdx++) {
-                if(await QueryVipInfo()) {
-                    console.log(`\n======== 账户${userIdx+1}${channelStr[channelIdx]}： ${userName} ========`)
-                    notifyStr += `\n账户${userIdx+1}${channelStr[channelIdx]}： ${userName}\n`
+                if(userStatus[channelIdx*numBoxbody+userIdx]==1) {
+                    console.log(`\n======== 账户${userIdx+1}${channelStr[channelIdx]}： ${userName[userIdx]} ========`)
+                    notifyStr += `\n账户${userIdx+1}${channelStr[channelIdx]}： ${userName[userIdx]}\n`
                     
                     await QueryWalletInfo(0)
-                    
                     await QueryCoinInfo(2)
                 }
             }
@@ -239,11 +232,13 @@ async function QueryVipInfo() {
     if(!result) return false
     
     if(result.code == 200) {
-        userName = result.data.nickname ? result.data.nickname : ''
+        userName.push(result.data.nickname ? result.data.nickname : '')
         isVip = result.data.is_vip ? result.data.is_vip : 0
         vipLevel = result.data.vip_level ? result.data.vip_level : 0
+        userStatus.push(1)
     } else {
-        console.log(`\n账户查询失败：${result.error}`)
+        userStatus.push(0)
+        console.log(`\n账户${userIdx+1}${channelStr[channelIdx]}查询账户状态失败：${result.error}`)
         return false
     }
     
@@ -262,7 +257,7 @@ async function QueryWarehouse() {
     if(result.code == 200) {
         let integral_num = result.data.info.integral_num ? result.data.info.integral_num : 0
         let warehouse_num = result.data.info.warehouse_num ? result.data.info.warehouse_num : 0
-        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName}：现在有${integral_num}币，仓库容量${warehouse_num}币`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName[userIdx]}：现在有${integral_num}币，仓库容量${warehouse_num}币`)
         if(result.data.tasks && Array.isArray(result.data.tasks)) {
             for(let i=0; i<result.data.tasks.length; i++) {
                 let taskItem = result.data.tasks[i]
@@ -273,7 +268,7 @@ async function QueryWarehouse() {
             }
         }
     } else {
-        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName}：查询仓库容量失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]} ${userName[userIdx]}：查询仓库容量失败：${result.error}`)
     }
 }
 
@@ -287,9 +282,9 @@ async function ReceiveWarehouse(taskItem) {
     if(!result) return false
     
     if(result.code == 200) {
-        console.log(`--领取任务【${taskItem.title}】奖励成功，获得${taskItem.warehouse_num}仓库容量`)
+        console.log(`--账户${userIdx+1}${channelStr[channelIdx]}领取任务【${taskItem.title}】奖励成功，获得${taskItem.warehouse_num}仓库容量`)
     } else {
-        console.log(`--领取任务【${taskItem.title}】奖励失败：${result.error}`)
+        console.log(`--账户${userIdx+1}${channelStr[channelIdx]}领取任务【${taskItem.title}】奖励失败：${result.error}`)
     }
 }
 
@@ -333,7 +328,7 @@ async function QueryCoinInfo(type) {
             let use_integral_num = result.data.player.use_integral_num ? result.data.player.use_integral_num : 0
             let integral_min_put_num = result.data.pool.integral_min_put_num ? result.data.pool.integral_min_put_num : 0
             let can_put_num = result.data.pool.can_put_num ? result.data.pool.can_put_num : 0
-            console.log(`现在有${integral_num}币，已投入${use_integral_num}币，今日可投入次数为${can_num}，当前池子可投入${can_put_num}币`)
+            console.log(`账号${userIdx+1}${channelStr[channelIdx]}现在有${integral_num}币，已投入${use_integral_num}币，今日可投入次数为${can_num}，当前池子可投入${can_put_num}币`)
             if(can_num > 0) {
                 if(integral_num >= integral_min_put_num && can_put_num >= integral_min_put_num) {
                     let putNum = (integral_num>can_put_num) ? can_put_num : integral_num
@@ -380,7 +375,7 @@ async function QueryCoinInfo(type) {
             notifyStr += `【分红余额】：${money}\n`
         }
     } else {
-        console.log(`\n查询信息失败：${result.error}`)
+        console.log(`\n账户${userIdx+1}${channelStr[channelIdx]}查询信息失败：${result.error}`)
     }
 }
 
@@ -395,18 +390,18 @@ async function ReceiveCoin(taskItem) {
     if(!result) return
     
     if(result.code == 200) {
-        console.log(`完成任务【${taskItem.title}】，领取DAB币成功`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}完成任务【${taskItem.title}】，领取DAB币成功`)
     } else {
-        console.log(`完成任务【${taskItem.title}】失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}完成任务【${taskItem.title}】失败：${result.error}`)
         if(result.error.indexOf('当前仓库已存满') > -1) {
             let idx = channelIdx*numBoxbody+userIdx
             if(coinStatus[idx] == 1) {
-                console.log(`仓库已存满，尝试先投入分红池`)
+                console.log(`账户${userIdx+1}${channelStr[channelIdx]}仓库已存满，尝试先投入分红池`)
                 coinStatus[idx] = 2
                 await $.wait(100)
                 await QueryCoinInfo(0)
             } else if(coinStatus[idx] == 2) {
-                console.log(`仓库已存满，且无法投入分红池，此用户暂时不再做任务`)
+                console.log(`账户${userIdx+1}${channelStr[channelIdx]}仓库已存满，且无法投入分红池，此用户暂时不再做任务`)
             }
         }
     }
@@ -438,7 +433,7 @@ async function QueryTurntable(taskItem) {
             await Turntable(taskItem)
         }
     } else {
-        console.log(`获取转盘次数失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}获取转盘次数失败：${result.error}`)
         return false
     }
     
@@ -456,12 +451,12 @@ async function ReceiveVideoReward(taskItem) {
     if(!result) return
     
     if(result.code == 200) {
-        console.log(`看视频获得了一次抽奖机会`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}看视频获得了一次抽奖机会`)
         await $.wait(100)
         waitTime -= 100
         await Turntable(taskItem)
     } else {
-        console.log(`看视频得抽奖机会失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}看视频得抽奖机会失败：${result.error}`)
     }
 }
 
@@ -477,12 +472,12 @@ async function Turntable(taskItem) {
     
     if(result.code == 200) {
         let reward = result.data.title ? result.data.title : '【？】'
-        console.log(`抽奖成功，获得了${reward}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}抽奖成功，获得了${reward}`)
         await $.wait(100)
         waitTime -= 100
         await ReceiveTurntable(taskItem)
     } else {
-        console.log(`抽奖失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}抽奖失败：${result.error}`)
     }
 }
 
@@ -497,18 +492,18 @@ async function ReceiveTurntable(taskItem) {
     if(!result) return
     
     if(result.code == 200) {
-        console.log(`看视频获得抽奖翻倍奖励成功`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}看视频获得抽奖翻倍奖励成功`)
     } else {
-        console.log(`看视频获得抽奖翻倍奖励失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}看视频获得抽奖翻倍奖励失败：${result.error}`)
         if(result.error.indexOf('当前仓库已存满') > -1) {
             let idx = channelIdx*numBoxbody+userIdx
             if(coinStatus[idx] == 1) {
-                console.log(`仓库已存满，尝试先投入分红池`)
+                console.log(`账户${userIdx+1}${channelStr[channelIdx]}仓库已存满，尝试先投入分红池`)
                 coinStatus[idx] = 2
                 await $.wait(100)
                 await QueryCoinInfo(0)
             } else if(coinStatus[idx] == 2) {
-                console.log(`仓库已存满，且无法投入分红池，此用户暂时不再做任务`)
+                console.log(`账户${userIdx+1}${channelStr[channelIdx]}仓库已存满，且无法投入分红池，此用户暂时不再做任务`)
             }
         }
     }
@@ -524,11 +519,11 @@ async function PutInPool(num,pool_lv) {
     if(!result) return false
     
     if(result.code == 200) {
-        console.log(`投入瓜分池${num}币成功`)
-        notifyStr += `投入瓜分池${num}币成功\n`
+        console.log(`账号${userIdx+1}${channelStr[channelIdx]}投入瓜分池${num}币成功`)
+        notifyStr += `账号${userIdx+1}${channelStr[channelIdx]}投入瓜分池${num}币成功\n`
         coinStatus[channelIdx*numBoxbody+userIdx] = 1
     } else {
-        console.log(`投入瓜分池${num}币失败：${result.error}`)
+        console.log(`账号${userIdx+1}${channelStr[channelIdx]}投入瓜分池${num}币失败：${result.error}`)
     }
 }
 
@@ -546,10 +541,10 @@ async function QuerySignList() {
             await $.wait(100)
             await SignToday()
         } else {
-            console.log(`今日已签到`)
+            console.log(`账户${userIdx+1}${channelStr[channelIdx]}今日已签到`)
         }   
     } else {
-        console.log(`获取签到信息失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}获取签到信息失败：${result.error}`)
     }
 }
 
@@ -563,9 +558,9 @@ async function SignToday() {
     if(!result) return
     
     if(result.code == 200) {
-        console.log(`签到成功，获得${result.data.total_credit_num}积分`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}签到成功，获得${result.data.total_credit_num}积分`)
     } else {
-        console.log(`签到失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}签到失败：${result.error}`)
     }
 }
 
@@ -589,7 +584,7 @@ async function QueryTaskList() {
             }
         }
     } else {
-        console.log(`获取积分任务列表失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}获取积分任务列表失败：${result.error}`)
         return false
     }
     
@@ -608,10 +603,10 @@ async function TaskReceiveReward(taskItem) {
     
     if(result.code == 200) {
         let credit_num = result.data.credit_num ? `获得${result.data.credit_num}积分` : ''
-        console.log(`完成任务【${taskItem.title}】成功 ${credit_num}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}完成任务【${taskItem.title}】成功 ${credit_num}`)
         return true
     } else {
-        console.log(`完成任务【${taskItem.title}】失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}完成任务【${taskItem.title}】失败：${result.error}`)
     }
 }
 
@@ -635,7 +630,7 @@ async function QueryMallExchange(page) {
             }
         }
     } else {
-        console.log(`获取积分红包兑换列表失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}获取积分红包兑换列表失败：${result.error}`)
     }
 }
 
@@ -650,9 +645,9 @@ async function MallExchange(exchangeItem,num) {
     if(!result) return
     
     if(result.code == 200) {
-        console.log(`兑换【${exchangeItem.title}】成功`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}兑换【${exchangeItem.title}】成功`)
     } else {
-        console.log(`兑换【${exchangeItem.title}】失败：${result.error}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}兑换【${exchangeItem.title}】失败：${result.error}`)
     }
 }
 
@@ -673,8 +668,8 @@ async function QueryWithdrawBox(page) {
         if(result.data.is_bind_wechat==1) payType += ' 微信'
         if(result.data.is_bind_alipay==1) payType += ' 支付宝'
         if(!payType) payType += '无'
-        console.log(`积分红包余额：${result.data.money}`)
-        console.log(`已绑定支付方式：${payType}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}积分红包余额：${result.data.money}`)
+        console.log(`账户${userIdx+1}${channelStr[channelIdx]}已绑定支付方式：${payType}`)
         if(result.data.withdraw_config && Array.isArray(result.data.withdraw_config)) {
             for(let i=0; i<result.data.withdraw_config.length; i++) {
                 let withItem = result.data.withdraw_config[i]
