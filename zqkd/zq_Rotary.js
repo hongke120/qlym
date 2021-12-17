@@ -2,7 +2,7 @@
 shaolin-kongfu
 
 软件名称：中青看点
-
+cron 34 22 * * *
 
 
 转盘抽奖，使用zq_cookie
