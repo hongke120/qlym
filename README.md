@@ -173,7 +173,7 @@ cron：随意，一天一次即可
 
 
 
-#今日头条极速版 jrttjsb.js
+## 今日头条极速版 jrttjsb.js
 
 Cron：*/15 6-23 * * *
 
@@ -251,6 +251,17 @@ F12审查元素-登录账号-工作台选 网络，找到www.meituan.com的封�
 
     export sjpz="false"
 
+
+
+## 梦想花园 mxhy.js
+
+Cron：1-59/2 * * * *
+
+抓GET或者POST都行，只要有accessKey值，多账户@隔开
+
+https://bp-api.coohua.com/bubuduo-mxhy/game/account
+
+    export mxhykey='账户1的accessKey值@账户2的accessKey值'
 
 
 
