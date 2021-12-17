@@ -1,3 +1,8 @@
+/*
+
+cron 30 7 * * *
+
+*/ 
 const $ = new Env("晶彩看点阅读文章");
 const notify = $.isNode() ? require('./sendNotify') : '';
 message = ""
