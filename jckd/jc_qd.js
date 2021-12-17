@@ -1,3 +1,8 @@
+/*
+
+cron 15 2 * * *
+
+*/ 
 const $ = new Env("晶彩看点签到");
 const notify = $.isNode() ? require('./sendNotify') : '';
 message = ""
