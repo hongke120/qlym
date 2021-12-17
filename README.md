@@ -24,9 +24,9 @@ Cron：5 9,11,18 * * *
 
 
 
-## 都爱玩 daw.js(凉了)
+## 都爱玩 daw.js
 
-Cron：15 0,1,8,15,20 * * *
+Cron：3 1,20 * * *
 
 抓POST包，进分红币页面获取token
 
@@ -39,7 +39,7 @@ https://v3.sdk.haowusong.com/api/box/wallet/info
 
     export dawToken='account1@account2@account3'
 
-
+由于官网已经更新玩法，不充值1元不让投。IOS用户可以玩农场，安卓没有的可以玩 九州修仙传，到达20级后有个1元秒杀，充值完，把cron改成1点2分或者1点2分投入
 
 
 
