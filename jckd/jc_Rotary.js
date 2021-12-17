@@ -3,7 +3,7 @@ shaolin-kongfu
 
 软件名称：晶彩看点
 
-
+cron 34 22 * * *
 
 转盘抽奖，使用jc_cookie
 
