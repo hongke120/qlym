@@ -4,6 +4,7 @@ shaolin-kongfu
 
 软件名称：中青看点
 
+cron 15 2 * * *
 
 [rewrite_local]
 
