@@ -1,3 +1,9 @@
+/*
+
+cron 34 5 * * 1
+
+*/ 
+
 const $ = new Env("中青看点阅读翻倍");
 const notify = $.isNode() ? require('./sendNotify') : '';
 message = ""
