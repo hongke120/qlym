@@ -7,7 +7,7 @@
  增加青龙环境通知
 
 
-
+cron 51 10 * * *
   
 export kshd ="账号1ck@账号2ck"
 环境变量填写  名称 kshd    值    账号1ck@账号2ck
