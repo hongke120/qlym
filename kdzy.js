@@ -23,7 +23,7 @@ soy_kdzy_UA
 
 多个号用 @ 或 # 或 换行 隔开
 
-cron 35 0 * * *
+cron 35 0 * * * kdzy.js
 
 */
 
