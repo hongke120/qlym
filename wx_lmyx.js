@@ -31,7 +31,7 @@ app_lmyx.js
 MITM 中的 解析域名
 v3.sdk.haowusong.com
 
-cron "3 0,9,17 * * *"
+cron 3 0,9,17 * * * wx_lmyx.js
 
 脚本地址:https://gitee.com/soy-tool/app-script/raw/master/wx_lmyx.js
 
