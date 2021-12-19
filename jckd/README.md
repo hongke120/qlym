@@ -107,19 +107,6 @@ https://ant.xunsl.com/html/rotaryTable/index.html?
 
 
 
-
-## 火山爆发 jc_share.js
-
-
-cron：15 6,12,18 * * *
-
-同上面的CK通用的
-
-    export jc_cookie='zqkey=***&zqkey_id=***&uid=***'
-
-
-
-
 ## 收益统计 jc_today_score.js
 
 
