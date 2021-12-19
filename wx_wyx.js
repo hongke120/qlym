@@ -28,7 +28,7 @@ soy_wyx_UA
 
 多个号用 @  或 换行 隔开
 
-cron "11 10 * * *"
+cron 11 10 * * * wx_wyx.js
 
 脚本地址:https://gitee.com/soy-tool/app-script/raw/master/wx_wyx.js
 
