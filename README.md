@@ -156,6 +156,19 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 
 
+## 惠猜 hc.js
+
+cron：25 10,13 * * *
+
+下载：http://goodjob.juliym.com/yp/hc/invite-land?product=9166
+
+登录-我的-头像绑定ZFB，右上角齿轮获得ID，答题数量默认500，多账号@隔开
+
+自己手动提现，秒到的，一次性活动，跑完就删
+
+export soy_hc_data="你的ID&刷答题数量"
+
+
 
 
 ## 机场签到 jcCheck.js
@@ -260,6 +273,29 @@ Cron：1-59/2 * * * *
 https://bp-api.coohua.com/bubuduo-mxhy/game/account
 
     export mxhykey='账户1的accessKey值@账户2的accessKey值'
+
+
+
+
+## NTF博物馆
+
+Cron：45 18 * * *
+
+下载：http://nftwatches.net
+
+登录APP即可获取token
+
+http://service.nftbwg.net/home/view
+
+视频code2，需要点门票收益获取，广告一直会加载出问题，反复进，有个60几秒的广告就是了
+
+http://mobads.baidu.com/cpro/ui/mads.php?code2=***
+
+注意:提示视频缓存失败，抓不到code值，关掉APP重来。即便抓到了，也不一定能完成,app自身的原因
+
+export soy_NFT_data="token&视频code2的值"
+
+
 
 
 
@@ -389,6 +425,20 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
 
 
+## 链萌优选 小程序 wx_lmyx.js
+
+cron：3 0,9,17 * * *
+
+抓token和version值，打开APP即可获取，多账户@隔开
+
+https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***&_version=2.8.9&_platform=wx
+
+    export soy_lmyx_data="9u******&2.8.9"
+    
+    export soy_lmyx_UA="Mozilla/5.0***"
+
+
+
 
 
 ## 小米刷步 xmsb.py
@@ -502,4 +552,5 @@ cron：随意，一天一次即可
 * [@shaolin-kongfu](https://github.com/shaolin-kongfu/js_scripts/)「少林大佬」
 * [@liuqi6968](https://github.com/liuqi6968/-/)「liuqi6968」
 * [@ziye888](https://github.com/ziye888/JavaScript)「ziye」
+* [@soy](https://gitee.com/soy-tool/app-script)「soy」
 
