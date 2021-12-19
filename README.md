@@ -221,6 +221,32 @@ https://api.st615.com/v1/user/info
 
 
 
+
+## 口袋庄园 kdzy.js
+
+Cron：35 0 * * *
+
+注册即可，手机号和密码等会要用
+
+http://kdzhy.mlyougame.com:82/web/page/qr.html?c=214736
+
+APP个人中心-收款账号，绑定ZFB
+
+    export soy_kdzy_mobile="手机号"
+
+    export soy_kdzy_password="登录密码"
+
+UA不想填也可以，随机，想填就抓任意包下的UA
+
+http://test2.znvb.cn:82/home/user/
+
+    export soy_kdzy_UA="Mozilla/5.0***"
+
+
+
+
+
+
 ## 快手果园 ks_fruit.js
 
 Cron：随意，一天一次
@@ -425,6 +451,8 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
 
 
+
+
 ## 链萌优选 小程序 wx_lmyx.js
 
 cron：3 0,9,17 * * *
@@ -437,6 +465,26 @@ https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***
     
     export soy_lmyx_UA="Mozilla/5.0***"
 
+
+
+
+
+## 沃邮箱 公众号 wx_wyx.js
+
+cron：11 10 * * *
+
+关注公众号:联通沃邮箱-进入邮箱，不知道密码的重置
+
+重置密码：https://user.mail.wo.cn/m/reset?mobile
+
+
+抓Get包，福利中心-签到领话费，多账号@隔开
+
+https://nyan.mail.wo.cn/cn/sign/index/index?mobile=***&userName=&openId=***
+
+    export soy_wyx_data="手机号#密码#抓包链接https://nyan.mail.wo.cn/cn/sign/index/index?mobile=***&userName=&openId=***"
+    
+    export soy_wyx_UA="Mozilla/5.0***"
 
 
 
