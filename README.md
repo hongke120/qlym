@@ -162,12 +162,10 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 cron：随意，一天一次即可
 
-请第1次拉完库，自己新建一个py文件，不然每次都会覆盖！
+请第1次拉完库，复制一份到scripts目录，不然每次都会覆盖！
 
 例：
-原本Yiov_wool_jcCheck.js，新建一个jcCheck.js
-
-代码复制进去，再青龙重新task，原本的禁用
+在Yiov_wool/jcCheck.js，复制粘贴到scripts目录，青龙task jcCheck.js，原本的禁用
 
 
 
@@ -397,10 +395,10 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
 cron：随意，一天一次即可
 
-请第1次拉完库，自己新建一个py文件，不然每次都会覆盖！
+请第1次拉完库，复制一份到scripts目录，不然每次都会覆盖！
 
 例：
-原本Yiov_wool_xmsb.py，新建一个xmsb.py，代码复制进去，再青龙重新task，原本的禁用
+在Yiov_wool/xmsb.py，复制粘贴到scripts目录，青龙task xmsb.py，原本的禁用
 
 
 ### 注册好小米运动账号，绑定第三方微信
