@@ -16,7 +16,7 @@
 
 多个号用 # 或 @ 或 换行 隔开
 
-cron "25 10,13 * * *"
+cron 25 10,13 * * * hc.js
 
 脚本地址:https://gitee.com/soy-tool/app-script/raw/master/app_hc.js
 
