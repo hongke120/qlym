@@ -5,9 +5,10 @@
     ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
 
-## 更新时间
+## 2021-12-20更新说明
 
-2021-12-11
+后续会按照添加顺序，包括更新进程写明，不用来问我，在上面的都可以玩
+
 
 
 ## 中国联通 Chinaunicom.js
@@ -158,7 +159,7 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 ## 惠猜 hc.js
 
-cron：25 10,13 * * *
+cron：1 6,13 * * *
 
 下载：http://goodjob.juliym.com/yp/hc/invite-land?product=9166
 
@@ -326,26 +327,6 @@ export soy_NFT_data="token&视频code2的值"
 
 
 
-## 琪琪的果园 qqdgy.js(失效了要重新抓)
-
-
-Cron : */10 * * * *
-
-
-只支持青龙，打开微信小程序后抓POST包
-
-www.weiju123.com/wxqqgy/public/index.php/user/myIndex
-
-获取Cookie和请求数据body中的aot参数
-
-
-    export qqck='PHPSESSID=***'
-
-    export qqaot='***'
-
-
-
-
 
 
 ## 睡觉宝 sjb.js
@@ -361,19 +342,6 @@ https://mapi.shuijiaobao.cn/login/code
 填入sjbCOOKIE.js中
 
 
-
-
-
-
-## 闪辆 sl.js(不能评论了)
-
-cron：10 0 * * *
-
-抓取get包，进APP-来玩-打卡，即可获取数据
-
-https://newvideo.autohome.com.cn/openapi/activity-api/checkin/query_list?_appid=ydsp&_timestamp=1635960539&deviceid=********&version=1.4.0&pm=1&_sign=********&uid=********&uticket=********
-
-    export slurl='抓取的url1@抓取的url2'
 
 
 
