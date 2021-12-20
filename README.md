@@ -5,9 +5,31 @@
     ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
 
-## 2021-12-20更新说明
 
-后续会按照添加顺序，包括更新进程写明，不用来问我，在上面的都可以玩
+
+
+# 2021-12-20更新说明
+
+
+## 惠猜 hc.js
+
+cron：25 8,12,14,19,21 * * *
+
+下载：http://goodjob.juliym.com/yp/hc/invite-land?product=9166
+
+登录-我的-头像绑定ZFB，右上角齿轮获得ID，答题数量默认500
+
+抓任意一个请求头，找到info-di的值即可
+
+如：http://chick.juliym.com/api/guess/get_user_withdraw_info?userId=***&lotteryDraw=0&version=1
+
+自己手动提现，秒到的，一次性活动，跑完就删
+
+export soy_hc_data="你的ID&答题数量&info-di的值"
+
+
+——————————————————————————————————————————————————————————————————————————————————
+
 
 
 
@@ -156,18 +178,6 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
     export gyjhd='token1@token2@token3'
 
 
-
-## 惠猜 hc.js
-
-cron：1 6,13 * * *
-
-下载：http://goodjob.juliym.com/yp/hc/invite-land?product=9166
-
-登录-我的-头像绑定ZFB，右上角齿轮获得ID，答题数量默认500，多账号@隔开
-
-自己手动提现，秒到的，一次性活动，跑完就删
-
-export soy_hc_data="你的ID&刷答题数量"
 
 
 
