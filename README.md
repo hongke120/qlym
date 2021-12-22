@@ -8,10 +8,10 @@
 
 
 
-# 2021-12-20更新说明
+# 2021-12-22更新说明
 
 
-## 惠猜 hc.js
+## 惠猜 hc.js（脚本提示非F请求 凉了 请禁用）
 
 cron：25 8,12,14,19,21 * * *
 
@@ -25,12 +25,22 @@ cron：25 8,12,14,19,21 * * *
 
 自己手动提现，秒到的，一次性活动，跑完就删
 
-export soy_hc_data="你的ID&答题数量&info-di的值"
+    export soy_hc_data="你的ID&答题数量&info-di的值"
 
 
-——————————————————————————————————————————————————————————————————————————————————
+
+## 晶彩天气 jctq
+
+即便APP又更新了，脚本还是可以跑的，我已经黑号了，注销账号并不能抹除记录
 
 
+建议别刷抓很多文章，主要签到和看看赚即可，0.3不香吗
+
+我换个号了明天试试
+
+
+
+# 2021-12月
 
 
 ## 中国联通 Chinaunicom.js
@@ -117,7 +127,7 @@ https://h5.ele.me/svip/task-list
 
 只要cookie，不要cookie2，复制出来包括分号，多账户@隔开
 
-export elmck='SID=***'
+    export elmck='SID=***'
 
 
 说明：以上数据由IOS设备抓取，安卓机用Alook浏览器或者用M浏览器，UA设置为
@@ -330,7 +340,7 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
 
 注意:提示视频缓存失败，抓不到code值，关掉APP重来。即便抓到了，也不一定能完成,app自身的原因
 
-export soy_NFT_data="token&视频code2的值"
+    export soy_NFT_data="token&视频code2的值"
 
 
 
@@ -551,9 +561,7 @@ cron：随意，一天一次即可
 文件内有教程
 
 
-## 晶彩天气 jctq
 
-文件内有教程
 
 
 ## 中青看点 zqkd
