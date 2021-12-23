@@ -3,6 +3,8 @@
 
 此脚本负责：
 完成看看赚任务
+
+cron 30 10 * * * jctq_kkz.js
 */
 
 const jsname = '水果天气看看赚'
