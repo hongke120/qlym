@@ -6,6 +6,7 @@
 
 请将定时放在看看赚和阅读任务后面
 如果不想自动提现的，请不要捉提现body，或者新建环境变量jctqWithdrawFlag，写成0
+cron 30 22 * * * jctq_reward.js
 */
 
 const jsname = '晶彩天气任务签到'
