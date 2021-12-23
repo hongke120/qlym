@@ -3,6 +3,7 @@
 
 此脚本负责：
 阅读文章，浏览视频
+cron 20 9 * * * jctq_read.js
 */
 
 const jsname = '晶彩天气文章视频'
