@@ -6,6 +6,27 @@
 
 
 
+# 2021-12-23更新说明
+
+## 删除 同程夺宝 tcdb.js
+
+活动下线了，原入口也变成其他了
+
+
+## 晶彩天气 jctq
+
+我已经黑号了，换号也黑了，在右上角设置-注销账号，15天后重新来过吧！15天后！不是立即生效的
+
+
+没黑的，一天跑签到和满看看赚即可，0.3不香吗
+
+
+顺便把定时写脚本里了
+
+
+
+
+
 
 
 # 2021-12-22更新说明
@@ -28,15 +49,6 @@ cron：25 8,12,14,19,21 * * *
     export soy_hc_data="你的ID&答题数量&info-di的值"
 
 
-
-## 晶彩天气 jctq
-
-即便APP又更新了，脚本还是可以跑的，我已经黑号了，注销账号并不能抹除记录
-
-
-建议别刷抓很多文章，主要签到和看看赚即可，0.3不香吗
-
-我换个号了明天试试
 
 
 
@@ -365,26 +377,6 @@ https://mapi.shuijiaobao.cn/login/code
 
 
 
-## 同程夺宝 tcdb.js
-
-cron：5 8-18 * * *
-
-
-抓get包，同程旅行小程序-右侧 悬浮100元天天赚钱
-
-https://x.elong.com/feifang/activity/baseapi/treasure/task
-
-
-Cookie里的值growthActivityOpenId=***; growthActivityUnionId=***; SessionToken=***; 
-
-
-复制出来整理成下面这样，填入tcdbCOOKIE.js
-
-    ZIYE&wxxcxOpenId=***&wxxcxUnionId=***&SessionToken=***
-
-
-脚本含作者助力，介意勿玩
-
 
 
 
@@ -562,6 +554,9 @@ cron：随意，一天一次即可
 
 
 
+## 水果天气 jctq
+
+文件内有教程
 
 
 ## 中青看点 zqkd
@@ -578,13 +573,14 @@ cron：随意，一天一次即可
 
 * [@whyour](https://github.com/whyour/qinglong)「青龙」
 * [@xl2101200](https://github.com/xl2101200/-/)「Tom」
-* [@YaphetS0903](https://github.com/YaphetS0903/JStest/)「YaphetS」
+* [@YaphetS0903](https://github.com/YaphetS0903/JStest)「YaphetS」
 * [@WindFgg](https://github.com/WindFgg/QuantumultX_Conf/)「WindFgg」
 * [@gossh520](https://gitee.com/gossh520/script/)「gossh520」
 * [@LubooC](https://gitee.com/xiecoll/radish-script)「萝卜」
-* [@leafxcy](https://github.com/leafxcy/JavaScript/)「leaf」
-* [@shaolin-kongfu](https://github.com/shaolin-kongfu/js_scripts/)「少林大佬」
+* [@leafxcy](https://github.com/leafxcy/JavaScript)「leaf」
+* [@shaolin-kongfu](https://github.com/shaolin-kongfu/js_scripts)「少林大佬」
 * [@liuqi6968](https://github.com/liuqi6968/-/)「liuqi6968」
 * [@ziye888](https://github.com/ziye888/JavaScript)「ziye」
 * [@soy](https://gitee.com/soy-tool/app-script)「soy」
+* [@passerby-b](https://github.com/passerby-b/didi_fruit)「passerby-b」
 
