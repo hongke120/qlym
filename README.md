@@ -6,7 +6,31 @@
 
 
 
-# 2021-12-23更新说明
+
+## 2021-12-25 更新
+
+太冷了，不想动
+
+## 中油E宝 zyEb.js
+
+Cron：25 9,12 * * *
+
+
+注册必须要填邀请码，就用脚本作者的吧，然后签到页面支付宝授权实名一下，和石油没有半毛钱的关系
+
+打开APP即可抓到token，多账号@隔开，比如
+
+http://hc.independentfilm.cn:5259/app/users/getUserinfo
+
+
+    export soy_zyEb_data="手机号&密码&token"
+
+
+
+
+
+
+## 2021-12-23更新说明
 
 ## 删除 同程夺宝 tcdb.js
 
@@ -542,7 +566,6 @@ cron：随意，一天一次即可
 
 
     export yxyPhone='手机号#密码'
-
 
 
 
