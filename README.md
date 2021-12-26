@@ -7,9 +7,57 @@
 
 
 
+
+## 2021-12-26更新
+
+
+## 链萌优选 小程序 wx_lmyx.js
+
+新增提现变量，需要提供ZFB信息
+
+cron：3 0,9,17 * * *
+
+抓token和version值，打开APP即可获取，多账户@隔开
+
+https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***&_version=2.8.9&_platform=wx
+
+    export soy_lmyx_data="token值&2.8.9&支付宝名&支付宝账号&UA"
+
+不开小号给大号送通行证，分红很少，提现基本不够，可以先只使用前2个变量跑，金额多了再加变量上去
+
+
+
+
+## 快手极速版 ks_js.js
+
+新增提现变量，金币改为当天兑换及自动提现，自己绑一下微信。不刷视频，只挂脚本容易黑号
+
+Cron：随意，一天一次
+
+抓get包，进app-点红包进去，获取Cookie
+
+https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
+
+    export kshd="Cookie1@Cookie2"
+
+0为不自动提现,0.3为提现3毛，默认自动提现3元
+
+    export kscash="0.3"
+
+提现时间变量，默认20点提现和金币兑换
+
+    export kstxtime=""
+
+通知变量，默认开启，2为关闭通知
+
+    export kstz=""
+
+
+
+
+
 ## 2021-12-25 更新
 
-太冷了，不想动
 
 ## 中油E宝 zyEb.js
 
@@ -30,7 +78,9 @@ http://hc.independentfilm.cn:5259/app/users/getUserinfo
 
 
 
-## 2021-12-23更新说明
+
+## 2021-12-23更新
+
 
 ## 删除 同程夺宝 tcdb.js
 
@@ -53,7 +103,7 @@ http://hc.independentfilm.cn:5259/app/users/getUserinfo
 
 
 
-# 2021-12-22更新说明
+## 2021-12-22更新
 
 
 ## 惠猜 hc.js（脚本提示非F请求 凉了 请禁用）
@@ -76,7 +126,7 @@ cron：25 8,12,14,19,21 * * *
 
 
 
-# 2021-12月
+## 2021-12月
 
 
 ## 中国联通 Chinaunicom.js
@@ -316,18 +366,6 @@ https://ug-fission.kuaishou.com/rest/n/darwin/orchard/water/watering
 
 
 
-## 快手极速版 ks_js.js
-
-Cron：随意，一天一次
-
-抓get包，进app-点红包进去，获取Cookie
-
-https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
-
-    export kshd="Cookie1@Cookie2"
-
-
-
 
 
 
@@ -453,21 +491,6 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
     export TxStockHelpOrder='0'
 
-
-
-
-
-## 链萌优选 小程序 wx_lmyx.js
-
-cron：3 0,9,17 * * *
-
-抓token和version值，打开APP即可获取，多账户@隔开
-
-https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***&_version=2.8.9&_platform=wx
-
-    export soy_lmyx_data="9u******&2.8.9"
-    
-    export soy_lmyx_UA="Mozilla/5.0***"
 
 
 
