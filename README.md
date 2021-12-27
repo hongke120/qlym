@@ -6,6 +6,15 @@
 
 
 
+## 2021-12-27更新
+
+
+
+## 删除 睡觉宝 sjb.js
+
+作者已删库
+
+
 
 
 ## 2021-12-26更新
@@ -415,26 +424,6 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
 注意:提示视频缓存失败，抓不到code值，关掉APP重来。即便抓到了，也不一定能完成,app自身的原因
 
     export soy_NFT_data="token&视频code2的值"
-
-
-
-
-
-
-
-
-## 睡觉宝 sjb.js
-
-Cron : 0,30 6,12,13,18,21 * * *
-
-抓POST包，打开APP即可获取ua
-
-https://mapi.shuijiaobao.cn/login/code
-
-
-
-填入sjbCOOKIE.js中
-
 
 
 
