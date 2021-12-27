@@ -6,6 +6,44 @@
 
 
 
+
+
+
+## 2021-12-28更新
+
+
+## 中青看点 新增 看看赚肥皂版 zq_kkz_fz.js
+
+cron：随意一天一次
+
+注意：由于这个脚本非常粗暴，直接刷完，可能会黑号！！！自行斟酌是否使用，如使用本脚本，请停用之前的看看赚zq_kkz.js
+
+
+打开赚赚看页面，获取url和hd
+
+https://kd.youth.cn/webApi/Nameless/getTaskBrowse
+
+    export zqkkzurl="https://kd.youth.cn/webApi/Nameless/getTaskBrowse?***"
+
+请求头用链接转换：https://tooltt.com/header2json/
+
+    export zqkkzlbhd='{"Host"***}'
+
+
+
+打开任意新闻后，获取文章的hd和body
+
+https://kandian.wkandian.com/v5/nameless/adlickstart.json
+
+    export zqkkzbody="p=***"
+
+请求头用链接转换：https://tooltt.com/header2json/
+
+    export zqkkzrwhd='{"device-platform"***}'
+
+
+
+
 ## 2021-12-27更新
 
 
