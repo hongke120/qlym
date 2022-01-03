@@ -5,6 +5,37 @@
     ql repo https://github.com/Yiov/wool.git "zq_"
 
 
+## 2022-1-3更新
+
+关于中青低版本黑号的问题，这个也看脸
+
+我是低版本抓了包后，强制升级了，后来也就一直用的新版本，唯一的不同是文章body，我只是把zkqd_param=换成了p=
+
+
+
+### 中青版本V3.2.6-V3.5.5
+
+豌豆荚普通下载
+
+https://www.wandoujia.com/apps/7702132/history
+
+
+
+如果被强制更新了，body要改一下，把抓到的zkqd_param=***
+
+
+
+
+
+### 中青cookie适用
+
+福利视频/阅读翻倍/转盘抽奖/火山爆发/每日收益/看看赚，都是通用的，抓一次即可
+
+
+
+
+
+
 ## 更新时间
 
 2021-12-28
@@ -40,29 +71,6 @@ https://kandian.wkandian.com/v5/nameless/adlickstart.json
 请求头用链接转换：https://tooltt.com/header2json/
 
     export zqkkzrwhd='{"device-platform"***}'
-
-
-
-
-
-
-
-## 仅限中青版本V3.2.6-V3.5.5
-
-其他版本抓的用不了
-
-https://www.wandoujia.com/apps/7702132/history
-
-
-
-如果被强制更新了，body要改一下，把抓到的zkqd_param=***，替换成p=***
-
-
-
-
-## 中青cookie适用
-
-福利视频/阅读翻倍/转盘抽奖/火山爆发/每日收益/看看赚，都是通用的，抓一次即可
 
 
 
