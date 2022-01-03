@@ -8,6 +8,83 @@
 
 
 
+## 2022-1-3更新
+
+大家新年好，上班！开始更新
+
+### 快手极速版 ks_js.js
+
+修复报错bug 注意：不刷视频，只挂脚本容易黑号！
+
+Cron：11 8 * * *（一天一次即可，仅供参考）
+
+抓get包，进app-点红包进去，获取Cookie
+
+https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
+
+    export kshd="Cookie1@Cookie2"
+
+0为不自动提现,0.3为提现3毛，默认自动提现3元
+
+    export kscash="3"
+
+提现时间变量，默认20点提现和金币兑换
+
+    export kstxtime=""
+
+通知变量，默认开启，2为关闭通知
+
+    export kstz=""
+
+
+
+
+### 滴滴果园 dd_fruit.js
+
+修复token错误，新增吹牛
+
+cron：10 0,8,12,18 * * *
+
+抓get包，进app-5天种水果，浇一次水，搜water
+
+把请求主题中的 token 值复制出来，多账户用,号(英文)隔开
+
+    export DD_TOKEN='token1,token2'
+
+拉库了的记得把dd_cookie.js从运行列表中禁用
+
+
+
+### 滴滴果园自动收水 dd_bucketWater.js
+
+cron：*/30 * * * *
+
+
+用上面的token即可
+
+
+
+### 高佣金(更名：佣金帝) gyj.js
+
+我的账号已经黑号，签到异常了 -_-||
+
+cron：随意，一天一次即可
+
+抓包，进APP-签到赚钱，即可获取
+
+https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
+
+复制token值，添加到环境变量
+    
+    export gyjhd='token1@token2@token3'
+
+
+
+
+
+
+
+
 
 ## 2021-12-28更新
 
@@ -45,33 +122,6 @@ https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***
     export soy_lmyx_data="token值&2.8.9&支付宝名&支付宝账号&UA"
 
 不开小号给大号送通行证，分红很少，提现基本不够，可以先只使用前2个变量跑，金额多了再加变量上去
-
-
-
-
-## 快手极速版 ks_js.js
-
-新增提现变量，金币改为当天兑换及自动提现，自己绑一下微信。不刷视频，只挂脚本容易黑号
-
-Cron：随意，一天一次
-
-抓get包，进app-点红包进去，获取Cookie
-
-https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
-
-    export kshd="Cookie1@Cookie2"
-
-0为不自动提现,0.3为提现3毛，默认自动提现3元
-
-    export kscash="0.3"
-
-提现时间变量，默认20点提现和金币兑换
-
-    export kstxtime=""
-
-通知变量，默认开启，2为关闭通知
-
-    export kstz=""
 
 
 
@@ -183,26 +233,7 @@ https://v3.sdk.haowusong.com/api/box/wallet/info
 
 
 
-## 滴滴果园 dd_fruit.js
 
-cron：10 0,8,12,18 * * *
-
-抓get包，进app-5天种水果，浇一次水，搜water
-
-把请求主题中的 token 值复制出来，多账户用,号(英文)隔开
-
-    export DD_TOKEN='token1,token2'
-
-拉库了的记得把dd_cookie.js从运行列表中禁用
-
-
-
-## 滴滴果园自动收水 dd_bucketWater.js
-
-cron：*/30 * * * *
-
-
-用上面的token即可
 
 
 
@@ -278,21 +309,6 @@ https://api.uutequan.com/v1/welfare/page
 
     export flhsCookie='Cookie1@Cookie2'
 
-
-
-
-
-## 高佣金(更名：佣金帝) gyj.js
-
-cron：随意，一天一次即可
-
-抓包，进APP-签到赚钱，即可获取
-
-https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
-
-复制token值，添加到环境变量
-    
-    export gyjhd='token1@token2@token3'
 
 
 
