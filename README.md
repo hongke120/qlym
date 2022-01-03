@@ -66,7 +66,7 @@ cron：*/30 * * * *
 
 ### 高佣金(更名：佣金帝) gyj.js
 
-我的账号已经黑号，签到异常了 -_-||
+我的账号已经黑号，签到异常了，我先禁用了 -_-||
 
 cron：随意，一天一次即可
 
@@ -80,7 +80,9 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 
 
+### 删除 闪辆 sl.js
 
+脚本过期了，app也更新了，忘记删了
 
 
 
@@ -89,7 +91,7 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 ## 2021-12-28更新
 
 
-## 中青看点 新增 看看赚肥皂版 zq_kkz_fz.js
+### 中青看点 新增 看看赚肥皂版 zq_kkz_fz.js
 
 教程在文件内，注意CryptoJS.js文件是依赖文件，别删了，禁用就行
 
@@ -99,7 +101,7 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 
 
-## 删除 睡觉宝 sjb.js
+### 删除 睡觉宝 sjb.js
 
 作者已删库
 
@@ -109,7 +111,7 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 ## 2021-12-26更新
 
 
-## 链萌优选 小程序 wx_lmyx.js
+### 链萌优选 小程序 wx_lmyx.js
 
 新增提现变量，需要提供ZFB信息
 
@@ -130,7 +132,7 @@ https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***
 ## 2021-12-25 更新
 
 
-## 中油E宝 zyEb.js
+### 中油E宝 zyEb.js
 
 Cron：25 9,12 * * *
 
@@ -153,12 +155,12 @@ http://hc.independentfilm.cn:5259/app/users/getUserinfo
 ## 2021-12-23更新
 
 
-## 删除 同程夺宝 tcdb.js
+### 删除 同程夺宝 tcdb.js
 
 活动下线了，原入口也变成其他了
 
 
-## 晶彩天气 jctq
+### 晶彩天气 jctq
 
 我已经黑号了，换号也黑了，在右上角设置-注销账号，15天后重新来过吧！15天后！不是立即生效的
 
@@ -177,7 +179,7 @@ http://hc.independentfilm.cn:5259/app/users/getUserinfo
 ## 2021-12-22更新
 
 
-## 惠猜 hc.js（脚本提示非F请求 凉了 请禁用）
+### 惠猜 hc.js（脚本提示非F请求 凉了 请禁用）
 
 cron：25 8,12,14,19,21 * * *
 
@@ -200,7 +202,7 @@ cron：25 8,12,14,19,21 * * *
 ## 2021-12月
 
 
-## 中国联通 Chinaunicom.js
+### 中国联通 Chinaunicom.js
 
 Cron：5 9,11,18 * * *
 
@@ -214,7 +216,7 @@ Cron：5 9,11,18 * * *
 
 
 
-## 都爱玩 daw.js
+### 都爱玩 daw.js（凉了禁用）
 
 Cron：3 1,20 * * *
 
@@ -229,7 +231,6 @@ https://v3.sdk.haowusong.com/api/box/wallet/info
 
     export dawToken='account1@account2@account3'
 
-由于官网已经更新玩法，不充值1元不让投。IOS用户可以玩农场，安卓没有的可以玩 九州修仙传，到达20级后有个1元秒杀，充值完，把cron改成1点2分或者1点2分投入
 
 
 
@@ -239,7 +240,8 @@ https://v3.sdk.haowusong.com/api/box/wallet/info
 
 
 
-## 得间小说 djxs.js
+
+### 得间小说 djxs.js
 
 Cron：0 6-23 * * *
 
@@ -255,7 +257,7 @@ https://dj.palmestore.com/zycl/gold/receive
 
 
 
-## 饿了么吃货豆 elm.js
+### 饿了么吃货豆 elm.js
 
 Cron：5 12,18 * * * 
 
@@ -280,7 +282,7 @@ https://h5.ele.me/svip/task-list
 
 
 
-## 返利购(更名：利淘优选) flg.js
+### 返利购(更名：利淘优选) flg.js
 
 cron：0,30 8 * * *
 
@@ -296,7 +298,7 @@ https://api.flgflg.com/htmmall/api/gold/finishedVideoNum
 
 
 
-## 返利好省 flhs.js
+### 返利好省 flhs.js
 
 cron：0 8-23 * * *
 
@@ -315,7 +317,7 @@ https://api.uutequan.com/v1/welfare/page
 
 
 
-## 机场签到 jcCheck.js
+### 机场签到 jcCheck.js
 
 cron：随意，一天一次即可
 
@@ -328,7 +330,7 @@ cron：随意，一天一次即可
 
 
 
-## 今日头条极速版 jrttjsb.js
+### 今日头条极速版 jrttjsb.js
 
 Cron：*/15 6-23 * * *
 
@@ -350,7 +352,7 @@ https://i.snssdk.com/luckycat/lite/v1/task/page_data/
 
 
 
-## 九章头条 jztt.js
+### 九章头条 jztt.js
 
 Cron：0 1-23 * * *
 
@@ -366,7 +368,7 @@ https://api.st615.com/v1/user/info
 
 
 
-## 口袋庄园 kdzy.js
+### 口袋庄园 kdzy.js
 
 Cron：35 0 * * *
 
@@ -391,7 +393,7 @@ http://test2.znvb.cn:82/home/user/
 
 
 
-## 快手果园 ks_fruit.js
+### 快手果园 ks_fruit.js
 
 Cron：随意，一天一次
 
@@ -406,7 +408,7 @@ https://ug-fission.kuaishou.com/rest/n/darwin/orchard/water/watering
 
 
 
-## 美团赚米粒 meituan.js
+### 美团赚米粒 meituan.js
 
 Cron：5 11 * * *
 
@@ -422,7 +424,7 @@ F12审查元素-登录账号-工作台选 网络，找到www.meituan.com的封�
 
 
 
-## 梦想花园 mxhy.js
+### 梦想花园 mxhy.js
 
 Cron：1-59/2 * * * *
 
@@ -435,7 +437,7 @@ https://bp-api.coohua.com/bubuduo-mxhy/game/account
 
 
 
-## NTF博物馆
+### NTF博物馆
 
 Cron：45 18 * * *
 
@@ -459,7 +461,7 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
 
 
 
-## 腾讯自选股 txstock.js
+### 腾讯自选股 txstock.js
 
 cron：35 11,16 * * *
 
@@ -513,7 +515,7 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
 
 
-## 沃邮箱 公众号 wx_wyx.js
+### 沃邮箱 公众号 wx_wyx.js
 
 cron：11 10 * * *
 
@@ -533,7 +535,7 @@ https://nyan.mail.wo.cn/cn/sign/index/index?mobile=***&userName=&openId=***
 
 
 
-## 小米刷步 xmsb.py
+### 小米刷步 xmsb.py
 
 cron：随意，一天一次即可
 
@@ -561,7 +563,7 @@ step = str(random.randint(20000, 21000))
 
 
 
-## 萤石云视频 ysy.js
+### 萤石云视频 ysy.js
 
 cron：随意，一天一次即可
 
@@ -594,7 +596,7 @@ https://api.ys7.com/v3/integral/yd/pay
 
 
 
-## 亿享云 yxyapp.js
+### 亿享云 yxyapp.js
 
 
 cron：随意，一天一次即可
