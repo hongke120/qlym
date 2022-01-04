@@ -5,6 +5,38 @@
     ql repo https://github.com/Yiov/wool.git "zq_"
 
 
+
+
+## 2022-1-4更新
+
+
+### 中青看点极速版 快应用 zqkdFast_read.js
+
+cron：25 8-22 * * * 
+
+说明：和APP版的应用数据是分开不互通的
+
+入口：浏览器打开即可跳转，打不开的百度搜一下
+
+https://user.youth.cn/h5/fastAppWeb/invite/invite_ground.html
+
+抓get包，登录账号-领红包即可获取
+
+https://user.youth.cn/FastApi/NewTaskSimple/getTaskList
+
+    export zqkdFastCookie="uid=***&token=***&token_id=***"
+
+
+问题：有CK但是提示token失效
+
+答：token字符里有斜杠/，请替换成%，是在不行的在请求头里复制有%的那一段
+
+建议：改下UA，避免黑号
+
+答：在148和164行，注意后面的不要改，截止到2.5.5，避免拉库后被覆盖，请自己复制到Scripts文件夹，再本地task
+
+
+
 ## 2022-1-3更新
 
 关于中青低版本黑号的问题，这个也看脸
