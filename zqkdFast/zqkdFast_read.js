@@ -7,7 +7,7 @@
 
 本脚本负责阅读文章，只需要ck即可
 定时自己看着改吧，我也不知道一天几次能跑满阅读收益，可能十来次吧
-25 8-22 * * *
+cron 25 8-22 * * * zqkdFast_read.js
 
 青龙：
 捉包找uid=xxxx&token=xxxxx&token_id=xxxxx，填到变量zqkdFastCookie里，多账号用@连接
@@ -19,7 +19,7 @@ https://user.youth.cn/FastApi/NewTaskSimple/getTaskList  https://raw.githubuserc
 user.youth.cn
 */
 
-const jsname = '中青极速版文章'
+const jsname = '中青极速版文章视频'
 const $ = Env(jsname)
 const logDebug = 0
 
@@ -37,6 +37,9 @@ let userReadList = []
 
 let maxReadNum = 0
 
+let ART_ID = 0
+let VIDEO_ID = 1453
+
 ///////////////////////////////////////////////////////////////////
 
 !(async () => {
@@ -48,18 +51,25 @@ let maxReadNum = 0
         if(!(await checkEnv())) return
         
         for(userIdx=0; userIdx < userCount; userIdx++) {
-            await ListArts(userIdx)
+            await ListArts(userIdx,VIDEO_ID,ART_ID)
+            await ListArts(userIdx,ART_ID,VIDEO_ID)
         }
         
         for(let i=0; i<maxReadNum; i++) {
             console.log(`\n第${i+1}轮阅读`)
             for(userIdx=0; userIdx < userCount; userIdx++) {
                 if(i<userReadList[userIdx].length) {
+                    ReadArts(userIdx,i)
+                    await $.wait(200)
+                }
+            }
+            for(userIdx=0; userIdx < userCount; userIdx++) {
+                if(i<userReadList[userIdx].length) {
                     CompleteArts(userIdx,i)
                     await $.wait(200)
                 }
             }
-            await $.wait(Math.floor(Math.random()*5000) + 30000)
+            await $.wait(Math.floor(Math.random()*30000) + 5000)
         }
     }
 })()
@@ -107,29 +117,51 @@ async function GetRewrite() {
     }
 }
 ///////////////////////////////////////////////////////////////////
-async function ListArts(userIdx) {
+async function ListArts(userIdx,cid,vid) {
     let caller = printCaller()
     let userCk = userCookieArr[userIdx]
-    let url = `https://user.youth.cn/FastApi/article/lists.json?catid=0&video_catid=1453&op=0&behot_time=0&&app_version=2.5.5&${userCk}`
+    let uid = userCk.match(/uid=(\w+)/)[1]
+    let url = `https://user.youth.cn/FastApi/article/lists.json?catid=${cid}&video_catid=${vid}&op=0&behot_time=0&&app_version=2.5.5&${userCk}`
+    let urlObject = populateGetUrl(url)
+    await httpGet(urlObject,caller)
+    let result = httpResult;
+    if(!result) return
+    
+    let typeStr = (cid==1453) ? '视频' : '文章'
+    if(result.error_code == 0) {
+        for(let item of result.items) {
+            userReadList[userIdx].push(item.signature)
+        }
+        maxReadNum = getMax(maxReadNum,userReadList[userIdx].length)
+        console.log(`用户${userIdx+1}[${uid}]找到${result.items.length}${typeStr}`)
+    } else {
+        console.log(`用户${userIdx+1}[${uid}]获取${typeStr}列表失败：${result.message}`)
+    }
+}
+
+async function ReadArts(uIdx,signIdx) {
+    let caller = printCaller()
+    let userCk = userCookieArr[userIdx]
+    let uid = userCk.match(/uid=(\w+)/)[1]
+    let sign = userReadList[userIdx][signIdx]
+    let url = `https://user.youth.cn/v1/article/detail.json?signature=${sign}&source=articleDetail&${userCk}&app_version=2.5.5&channel=c6001&device_model=OPPOR9tm&device_brand=OPPO&resolution=1080*1920&os_version=22&is_wxaccount=1&active_channel=c6001&access=wifi`
     let urlObject = populateGetUrl(url)
     await httpGet(urlObject,caller)
     let result = httpResult;
     if(!result) return
     
     if(result.error_code == 0) {
-        for(let item of result.items) {
-            userReadList[userIdx].push(item.signature)
-        }
-        maxReadNum = getMax(maxReadNum,userReadList[userIdx].length)
-        console.log(`用户${userIdx+1}找到${userReadList[userIdx].length}篇文章`)
+        console.log(`用户${uIdx+1}[${uid}]开始看文章视频：${result.items.title}`)
     } else {
-        console.log(`${result.message}`)
+        console.log(`用户${uIdx+1}[${uid}]看文章视频失败：${result.message}`)
     }
 }
 
 async function CompleteArts(uIdx,signIdx) {
     let caller = printCaller()
     let sign = userReadList[userIdx][signIdx]
+    let userCk = userCookieArr[userIdx]
+    let uid = userCk.match(/uid=(\w+)/)[1]
     let url = `https://user.youth.cn/FastApi/article/complete.json?signature=${sign}`
     let urlObject = populateGetUrl(url)
     await httpGet(urlObject,caller)
@@ -137,9 +169,9 @@ async function CompleteArts(uIdx,signIdx) {
     if(!result) return
     
     if(result.error_code == 0) {
-        console.log(`用户${uIdx+1}[${result.items.uid}]阅读文章获得${result.items.read_score}青豆`)
+        console.log(`用户${uIdx+1}[${uid}]看文章视频获得${result.items.read_score}青豆`)
     } else {
-        console.log(`${result.message}`)
+        console.log(`用户${uIdx+1}[${uid}]获得文章视频奖励失败：${result.message}`)
     }
 }
 ////////////////////////////////////////////////////////////////////
