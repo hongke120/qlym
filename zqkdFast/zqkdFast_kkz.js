@@ -6,7 +6,7 @@
 
 本脚本负责看看赚，目前有bug，只需要捉一个看看赚就可以刷满收益
 所以定时暂时一天一次就可
-35 10 * * *
+cron 35 10 * * * zqkdFast_kkz.js
 
 青龙：
 捉包找adlickstart的url，把body填到zqkdFastKkzBody里，多账号用@隔开
@@ -111,6 +111,7 @@ async function GetRewrite() {
 async function adlickstart(idx) {
     let caller = printCaller()
     let body = userBodyArr[userIdx]
+    let uid = body.match(/uid=(\w+)/)[1]
     let url = 'https://user.youth.cn/v1/Nameless/adlickstart.json'
     let urlObject = populatePostUrl(url,body)
     await httpPost(urlObject,caller)
@@ -118,15 +119,16 @@ async function adlickstart(idx) {
     if(!result) return
     
     if(result.error_code == 0) {
-        console.log(`用户${idx+1}开始看看赚任务[${result.items.banner_id}]`)
+        console.log(`用户${idx+1}[${uid}]开始看看赚任务[${result.items.banner_id}]`)
     } else {
-        console.log(`用户${idx+1}开始看看赚任务失败：${result.message}`)
+        console.log(`用户${idx+1}[${uid}]开始看看赚任务失败：${result.message}`)
     }
 }
 
 async function bannerstatus(idx) {
     let caller = printCaller()
     let body = userBodyArr[userIdx]
+    let uid = body.match(/uid=(\w+)/)[1]
     let url = 'https://user.youth.cn/v1/Nameless/bannerstatus.json'
     let urlObject = populatePostUrl(url,body)
     await httpPost(urlObject,caller)
@@ -134,15 +136,16 @@ async function bannerstatus(idx) {
     if(!result) return
     
     if(result.error_code == 0) {
-        console.log(`用户${idx+1}阅读看看赚文章中[${result.items.banner_id}]`)
+        console.log(`用户${idx+1}[${uid}]阅读看看赚文章中[${result.items.banner_id}]`)
     } else {
-        console.log(`用户${idx+1}阅读看看赚文章失败：${result.message}`)
+        console.log(`用户${idx+1}[${uid}]阅读看看赚文章失败：${result.message}`)
     }
 }
 
 async function adlickend(idx) {
     let caller = printCaller()
     let body = userBodyArr[userIdx]
+    let uid = body.match(/uid=(\w+)/)[1]
     let url = 'https://user.youth.cn/v1/Nameless/adlickend.json'
     let urlObject = populatePostUrl(url,body)
     await httpPost(urlObject,caller)
@@ -150,12 +153,12 @@ async function adlickend(idx) {
     if(!result) return
     
     if(result.error_code == 0) {
-        console.log(`用户${idx+1}获得${result.items.score}青豆`)
+        console.log(`用户${idx+1}[${uid}]获得${result.items.score}青豆`)
         if(result.items.score==0) {
             stopFlag = 1
         }
     } else {
-        console.log(`用户${idx+1}完成看看赚任务失败：${result.message}`)
+        console.log(`用户${idx+1}[${uid}]完成看看赚任务失败：${result.message}`)
         stopFlag = 1
     }
 }
