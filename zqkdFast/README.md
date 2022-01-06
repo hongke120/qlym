@@ -17,12 +17,44 @@
 
 
 
-## 2022-1-5更新
+## 2022-1-6更新
+
+
+
+## 日常 zqkdFast_daily.js
+
+更新内容：新增
+
+cron：5,35 8-20 * * *
+
+同阅读的CK通用，多账号用@隔开
+
+
+
+
+
+
+### 看看赚 zqkdFast_kkz.js
+
+更新内容：小调整
+
+cron：35 10 * * *（一天一次，可以自己改）
+
+抓POST包，领红包-看看赚，点任意一个新闻后获取body，多账号用@隔开
+
+https://user.youth.cn/v1/Nameless/adlickstart
+
+    export zqkdFastKkzBody="access=***"
+
+注意：只需要捉一个看看赚，就可以刷满收益了
+
+
+
 
 
 ### 阅读 zqkdFast_read.js
 
-更新内容：增加延迟
+更新内容：增加视频脚本
 
 cron：25 8-22 * * * 
 
@@ -45,22 +77,30 @@ https://user.youth.cn/FastApi/NewTaskSimple/getTaskList
 
 
 
-### 看看赚 zqkdFast_kkz.js
 
-cron：35 10 * * *（一天一次，可以自己改）
+## 奖励领取 zqkdFast_reward.js
 
-抓POST包，领红包-看看赚，点任意一个新闻后获取body，多账号用@隔开
+更新内容：新增
 
-https://user.youth.cn/v1/Nameless/adlickstart
+签到奖励抓POST包，签到成功获取数据
 
-    export zqkdFastKkzBody="access=***"
+https://user.youth.cn/FastApi/Task/sign
 
-注意：只需要捉一个看看赚，就可以刷满收益了
+    export zqkdFastSignBody=""
+
+所有可领取的奖励body都抓一遍，包括时段奖励等
+
+https://user.youth.cn/FastApi/CommonReward/toGetReward
+
+    export zqkdFastRewardBody=""
+
 
 
 
 
 ### 分享阅读 zqkdFast_shareRead.js
+
+更新内容：小调整
 
 cron：35 11 * * *（一天一次，可以自己改）
 
