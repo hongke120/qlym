@@ -4,11 +4,11 @@
 脚本地址：https://raw.githubusercontent.com/leafxcy/JavaScript/main/zqkdFast/zqkdFast_shareRead.js
 
 支持快应用的安卓手机才能玩
+cron cron：35 11 * * * zqkdFast_shareRead.js
 
 转发和分享阅读，请勿贪心，小心黑号
 需要zqkdFastCookie，自行捉包填写或者使用文章重写去捉，格式uid=xxxx&token=xxxxx&token_id=xxxxx，多账号用@连接
 需要设置被阅读的次数，填到zqkdFastShareNum里，不填默认不跑
-cron 35 11 * * * zqkdFast_shareRead.js
 */
 
 const jsname = '中青极速版分享阅读'
@@ -86,13 +86,14 @@ async function checkEnv() {
         return false
     }
     
-    console.log(`共找到${userCount}个CK`)
+    console.log(`共找到${userCount}个CK，每个账号分享${zqkdFastShareNum}次`)
     return true
 }
 ///////////////////////////////////////////////////////////////////
 async function ListArts(uIdx) {
     let caller = printCaller()
     let userCk = userCookieArr[uIdx]
+    let uid = userCk.match(/uid=(\w+)/)[1]
     let url = `https://user.youth.cn/FastApi/article/lists.json?catid=0&video_catid=1453&op=0&behot_time=0&&app_version=2.5.5&${userCk}`
     let urlObject = populateGetUrl(url)
     await httpGet(urlObject,caller)
@@ -106,16 +107,17 @@ async function ListArts(uIdx) {
             await $.wait(1000)
             await ReadArts(uIdx,sign)
         } else {
-            console.log(`用户${uIdx+1}没有找到可转发的文章`)
+            console.log(`用户${uIdx+1}[${uid}]没有找到可转发的文章`)
         }
     } else {
-        console.log(`用户${uIdx+1} ${result.message}`)
+        console.log(`用户${uIdx+1}[${uid}]获取文章列表失败：${result.message}`)
     }
 }
 
 async function ReadArts(uIdx,sign) {
     let caller = printCaller()
     let userCk = userCookieArr[userIdx]
+    let uid = userCk.match(/uid=(\w+)/)[1]
     let url = `https://user.youth.cn/v1/article/detail.json?signature=${sign}&source=articleDetail&${userCk}&app_version=2.5.5&channel=c6001&device_model=OPPOR9tm&device_brand=OPPO&resolution=1080*1920&os_version=22&is_wxaccount=1&active_channel=c6001&access=wifi`
     let urlObject = populateGetUrl(url)
     await httpGet(urlObject,caller)
@@ -125,20 +127,21 @@ async function ReadArts(uIdx,sign) {
     if(result.error_code == 0) {
         share_url = result.items.share_url
         fromUrl = encodeURIComponent(encodeURIComponent(share_url+'#'))
-        console.log(`用户${uIdx+1}[${result.items.uid}]开始分享文章：${result.items.title}`)
+        console.log(`用户${uIdx+1}[${uid}]开始分享文章：${result.items.title}`)
         shareFlag = 1
         await $.wait(1000)
         await ShareArticleCallback(uIdx)
         await $.wait(100)
         await ShareEnd(uIdx,result.items.id)
     } else {
-        console.log(`用户${uIdx+1} ${result.message}`)
+        console.log(`用户${uIdx+1}[${uid}]分享文章失败：${result.message}`)
     }
 }
 
 async function ShareArticleCallback(uIdx) {
     let caller = printCaller()
     let userCk = userCookieArr[userIdx]
+    let uid = userCk.match(/uid=(\w+)/)[1]
     let url = `https://user.youth.cn/FastApi/ArticleTop/shareArticleCallback.json?${userCk}&app_version=2.5.5&channel=c6001&device_model=OPPOR9tm&device_brand=OPPO&resolution=1080*1920&os_version=22&is_wxaccount=1&active_channel=c6001&access=wifi&from=1`
     let urlObject = populateGetUrl(url)
     await httpGet(urlObject,caller)
@@ -146,9 +149,9 @@ async function ShareArticleCallback(uIdx) {
     if(!result) return
     
     if(result.error_code == 0) {
-        console.log(`用户${uIdx+1}每次分享可获得：${result.items.share_red_score}青豆`)
+        console.log(`用户${uIdx+1}[${uid}]每次分享可获得：${result.items.share_red_score}青豆`)
     } else {
-        console.log(`用户${uIdx+1} ${result.message}`)
+        console.log(`用户${uIdx+1}[${uid}]${result.message}`)
         shareFlag = 0
     }
 }
@@ -156,6 +159,7 @@ async function ShareArticleCallback(uIdx) {
 async function ShareEnd(uIdx,artId) {
     let caller = printCaller()
     let userCk = userCookieArr[userIdx]
+    let uid = userCk.match(/uid=(\w+)/)[1]
     let url = `https://user.youth.cn/FastApi/article/shareEnd.json?${userCk}&app_version=2.5.5&channel=c6001&device_model=OPPOR9tm&device_brand=OPPO&resolution=1080*1920&os_version=22&is_wxaccount=1&active_channel=c6001&access=wifi&from=1&device_platform=android&article_id=${artId}&stype=WEIXIN`
     let urlObject = populateGetUrl(url)
     await httpGet(urlObject,caller)
@@ -163,9 +167,9 @@ async function ShareEnd(uIdx,artId) {
     if(!result) return
     
     if(result.error_code == 0) {
-        console.log(`用户${uIdx+1} ${result.message}`)
+        console.log(`用户${uIdx+1}[${uid}]${result.message}`)
     } else {
-        console.log(`用户${uIdx+1} ${result.message}`)
+        console.log(`用户${uIdx+1}[${uid}]${result.message}`)
         shareFlag = 0
     }
 }
