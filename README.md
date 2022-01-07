@@ -6,6 +6,24 @@
 
 
 
+## 2022-1-7更新
+
+
+
+## 爱微影 awy.js
+
+Cron：25 10,13 * * *
+
+应用商店下载，抓GET包，登录即可获取数据
+
+https://api.awy2020.com/api/profile
+
+    export soy_awy_data="提现金额&platform值&version值&authorization值"
+
+注：这里的提现金额为如0.5/1/2，由于1个账号跑完时间很长，多账号可以尝试并发
+
+
+
 ## 2022-1-5更新
 
 
@@ -89,7 +107,7 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 ### 删除 闪辆 sl.js
 
-脚本过期了，app也更新了，忘记删了
+~脚本过期了，app也更新了，忘记删了~
 
 
 
