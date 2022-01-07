@@ -10,7 +10,9 @@
 
 
 
-## 爱微影 awy.js
+## ~爱微影 awy.js~
+
+别玩了，我TM秒封，哈哈哈，牛
 
 Cron：25 10,13 * * *
 
@@ -105,7 +107,7 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 
 
-### 删除 闪辆 sl.js
+### ~删除 闪辆 sl.js~
 
 ~脚本过期了，app也更新了，忘记删了~
 
@@ -126,9 +128,9 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 
 
-### 删除 睡觉宝 sjb.js
+### ~删除 睡觉宝 sjb.js~
 
-作者已删库
+~作者已删库~
 
 
 
@@ -180,9 +182,9 @@ http://hc.independentfilm.cn:5259/app/users/getUserinfo
 ## 2021-12-23更新
 
 
-### 删除 同程夺宝 tcdb.js
+### ~删除 同程夺宝 tcdb.js~
 
-活动下线了，原入口也变成其他了
+~活动下线了，原入口也变成其他了~
 
 
 ### 晶彩天气 jctq
@@ -204,7 +206,7 @@ http://hc.independentfilm.cn:5259/app/users/getUserinfo
 ## 2021-12-22更新
 
 
-### 惠猜 hc.js（脚本提示非F请求 凉了 请禁用）
+### ~惠猜 hc.js（脚本提示非F请求 凉了 请禁用）~
 
 cron：25 8,12,14,19,21 * * *
 
@@ -241,7 +243,7 @@ Cron：5 9,11,18 * * *
 
 
 
-### 都爱玩 daw.js（凉了禁用）
+### ~都爱玩 daw.js（凉了禁用）~
 
 Cron：3 1,20 * * *
 
