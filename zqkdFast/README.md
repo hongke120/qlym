@@ -34,7 +34,7 @@ cron：5,35 8-20 * * *
 
 
 
-### 看看赚 zqkdFast_kkz.js
+### 看看赚 zqkdFast_kkz.js（bug已修复等更新）
 
 更新内容：小调整
 
@@ -82,17 +82,17 @@ https://user.youth.cn/FastApi/NewTaskSimple/getTaskList
 
 更新内容：新增
 
-签到奖励抓POST包，签到成功获取数据
+签到奖励抓GET包，签到成功获取数据，把链接后的body复制出来
 
 https://user.youth.cn/FastApi/Task/sign
 
-    export zqkdFastSignBody=""
+    export zqkdFastSignBody="uid=***sign=***"
 
-所有可领取的奖励body都抓一遍，包括时段奖励等
+所有可领取的奖励body都抓一遍，包括时段奖励等，用@隔开
 
 https://user.youth.cn/FastApi/CommonReward/toGetReward
 
-    export zqkdFastRewardBody=""
+    export zqkdFastRewardBody="uid=***sign=***"
 
 
 
