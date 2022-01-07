@@ -9,20 +9,15 @@
 ## 2022-1-7更新
 
 
+## 中青快应用 更新
+
+更新奖励领取，无需抓body
+
 
 ## ~爱微影 awy.js~
 
 别玩了，我TM秒封，哈哈哈，牛
 
-Cron：25 10,13 * * *
-
-应用商店下载，抓GET包，登录即可获取数据
-
-https://api.awy2020.com/api/profile
-
-    export soy_awy_data="提现金额&platform值&version值&authorization值"
-
-注：这里的提现金额为如0.5/1/2，由于1个账号跑完时间很长，多账号可以尝试并发
 
 
 
