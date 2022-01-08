@@ -16,10 +16,34 @@
 
 
 
+
+## 2022-1-8说明
+
+
+
+### 看看赚 zqkdFast_kkz.js
+
+说明：之前刷满的漏洞不行了，还是一个新闻一个body吧
+
+cron 35 10 * * *（一天一次，可以自己改）
+
+抓POST包，领红包-看看赚，点任意一个新闻后获取body，多账号用@隔开
+
+https://user.youth.cn/v1/Nameless/adlickstart
+
+    export zqkdFastKkzBody="access=***"
+
+
+
+
+
+
 ## 2022-1-7更新
 
 
 ## 奖励领取 zqkdFast_reward_pro.js
+
+cron 10 22 * * *
 
 不需要抓body，可以一键领取，与老版奖励二选一禁用
 
@@ -35,28 +59,9 @@
 
 更新内容：新增抽奖和PK
 
-cron：5,35 8-20 * * *
+cron 5,35 8-20 * * *
 
 同阅读的CK通用，多账号用@隔开
-
-
-
-
-
-
-### 看看赚 zqkdFast_kkz.js（bug已修复等更新）
-
-更新内容：小调整
-
-cron：35 10 * * *（一天一次，可以自己改）
-
-抓POST包，领红包-看看赚，点任意一个新闻后获取body，多账号用@隔开
-
-https://user.youth.cn/v1/Nameless/adlickstart
-
-    export zqkdFastKkzBody="access=***"
-
-注意：只需要捉一个看看赚，就可以刷满收益了
 
 
 
@@ -66,7 +71,7 @@ https://user.youth.cn/v1/Nameless/adlickstart
 
 更新内容：增加视频脚本
 
-cron：25 8-22 * * * 
+cron 25 8-22 * * * 
 
 入口：https://user.youth.cn/h5/fastAppWeb/invite/invite_ground.html
 
@@ -92,6 +97,8 @@ https://user.youth.cn/FastApi/NewTaskSimple/getTaskList
 
 更新内容：新增
 
+cron 10 22 * * *
+
 签到奖励抓GET包，签到成功获取数据，把链接后的body复制出来
 
 https://user.youth.cn/FastApi/Task/sign
@@ -112,7 +119,7 @@ https://user.youth.cn/FastApi/CommonReward/toGetReward
 
 更新内容：小调整
 
-cron：35 11 * * *（一天一次，可以自己改）
+cron 35 11 * * *（一天一次，可以自己改）
 
 同阅读的CK通用，设置一下阅读次数变量即可，多账号用@隔开
 
