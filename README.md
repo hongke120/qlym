@@ -41,6 +41,8 @@ http://coin.makingmoney.cn:8088/invite/code****
 
 把上面这个url填到tqybjsbCOOKIE.js的第63行的val值的引号中即可
 
+注：由于拉库不会拉取tqybjsbCOOKIE.js，请去repo文件夹拷贝到脚本同目录
+
 
 
 
