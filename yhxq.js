@@ -25,7 +25,7 @@ soy_yhxq_UA
 
 支持v2p手动添加变量,不支持v2p重写
 
-cron 13 0-23/2 * * *
+cron 13 0-23/2 * * * yhxq.js
 
 脚本地址：https://gitee.com/soy-tool/app-script/raw/master/app_yhxq.js
 
