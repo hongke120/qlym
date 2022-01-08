@@ -10,6 +10,40 @@
 ## 2022-1-8更新
 
 
+### 闪辆 sl.js
+
+咋们的老朋友了，现在是现金，我好像还是黑的
+
+cron 5 0 * * *
+
+抓get包，进app-来玩获取url即可
+
+https://newvideo.autohome.com.cn/openapi/activity-api/switch/get_user_switch_info
+
+    export slurl="https://newvideo.autohome.com.cn/openapi/activity-api/switch/get_user_switch_info?_appid=***"
+
+
+
+
+
+
+### 天气预报 tqyb.js
+
+cron */10 * * * *
+
+IOS专属，安卓无视，进链接下载
+
+https://apps.apple.com/cn/app/id1522640110
+
+抓get包，进app即可获取数据，作者说随便抓个url，参考我的吧
+
+http://coin.makingmoney.cn:8088/invite/code****
+
+把上面这个url填到tqybjsbCOOKIE.js的第63行的val值的引号中即可
+
+
+
+
 ### 源火星球 yhxq.js
 
 cron 13 0-23/2 * * *
