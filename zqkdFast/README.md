@@ -17,59 +17,14 @@
 
 
 
-## 2022-1-8说明
-
-
-
-### 看看赚 zqkdFast_kkz.js
-
-说明：之前刷满的漏洞不行了，还是一个新闻一个body吧
-
-cron 35 10 * * *（一天一次，可以自己改）
-
-抓POST包，领红包-看看赚，点任意一个新闻后获取body，多账号用@隔开
-
-https://user.youth.cn/v1/Nameless/adlickstart
-
-    export zqkdFastKkzBody="access=***"
-
-
-
-
-
-
-## 2022-1-7更新
-
-
-## 奖励领取 zqkdFast_reward_pro.js
-
-cron 10 22 * * *
-
-不需要抓body，可以一键领取，与老版奖励二选一禁用
-
-当然是用这个啦！
-
-
-
-## 2022-1-6更新
-
-
-
-## 日常 zqkdFast_daily.js
-
-更新内容：新增抽奖和PK
-
-cron 5,35 8-20 * * *
-
-同阅读的CK通用，多账号用@隔开
-
+## 2022-1-10更新
 
 
 
 
 ### 阅读 zqkdFast_read.js
 
-更新内容：增加视频脚本
+更新内容：修复文章出错，脚本加密
 
 cron 25 8-22 * * * 
 
@@ -93,9 +48,52 @@ https://user.youth.cn/FastApi/NewTaskSimple/getTaskList
 
 
 
+
+
+### 看看赚 zqkdFast_kkz.js
+
+说明：修复出错问题，脚本加密
+
+cron 35 6,20 * * *（一天一次，可以自己改）
+
+抓POST包，领红包-看看赚，点任意一个新闻后获取body，多账号用@隔开
+
+https://user.youth.cn/v1/Nameless/adlickstart
+
+    export zqkdFastKkzBody="access=***"
+
+
+
+## 日常 zqkdFast_daily.js
+
+更新内容：脚本加密
+
+cron 5,35 8-20 * * *
+
+同阅读的CK通用，多账号用@隔开
+
+
+
+
+### 分享阅读 zqkdFast_shareRead.js
+
+更新内容：脚本加密
+
+cron 35 11 * * *（一天一次，可以自己改）
+
+同阅读的CK通用，设置一下阅读次数变量即可，多账号用@隔开
+
+建议设置5-10次，免得多了黑号
+
+    export zqkdFastShareNum=""
+
+
+
+
+
 ## 奖励领取 zqkdFast_reward.js
 
-更新内容：新增
+更新内容：脚本加密
 
 cron 10 22 * * *
 
@@ -115,17 +113,26 @@ https://user.youth.cn/FastApi/CommonReward/toGetReward
 
 
 
-### 分享阅读 zqkdFast_shareRead.js
 
-更新内容：小调整
 
-cron 35 11 * * *（一天一次，可以自己改）
+## 2022-1-7更新
 
-同阅读的CK通用，设置一下阅读次数变量即可，多账号用@隔开
 
-建议设置5-10次，免得多了黑号
+## 奖励领取 zqkdFast_reward_pro.js
 
-    export zqkdFastShareNum=""
+cron 10 22 * * *
+
+不需要抓body，可以一键领取，pro版比原版好用，另一个禁用即可
+
+
+
+
+
+
+
+
+
+
 
 
 
