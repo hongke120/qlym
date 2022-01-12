@@ -9,6 +9,20 @@
 ## 2022-1-12更新
 
 
+### 九章头条 jztt.js
+
+更新内容：修复文章、提现
+
+Cron 15 0,6-23 * * *
+
+抓get包，进app-任务，抓取token值
+
+https://api.st615.com/v2/user/info
+
+    export jzttToken="***"
+
+
+
 
 ### 滴滴果园 dd_fruit.js
 
@@ -80,19 +94,6 @@ APP进不去了，应该是跑路了
 修复了文章和看看赚出错，重新拉库即可，脚本加密
 
 
-### 九章头条 jztt.js
-
-更新内容：九章强制更新至v2.0.8，tom大佬重新写了脚本，只看文章不提现
-
-Cron 0 1-23 * * *
-
-抓get包，进app-任务，抓取token值
-
-https://api.st615.com/v2/user/info
-
-    export jztoken="***"
-
-注意：原脚本内只填入token，我为了方便，改写成了环境变量
 
 
 
