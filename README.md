@@ -21,7 +21,10 @@ https://api.st615.com/v2/user/info
 
     export jzttToken="***"
 
-
+自定义阅读次数，默认每次阅读3篇文章
+    export jzttReadNum="***"
+提现金额，按门槛自动提现，从大到小，默认顺序5元，2元和0.3元
+    export jzttWithdrawLimit="***"
 
 
 ### 滴滴果园 dd_fruit.js
