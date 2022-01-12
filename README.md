@@ -6,6 +6,36 @@
 
 
 
+## 2022-1-12更新
+
+
+
+### 滴滴果园 dd_fruit.js
+
+更新内容：新增转盘抽奖，自动使用背包道具
+
+cron 10 0,8,12,18 * * *
+
+抓get包，进app-5天种水果，浇一次水，搜water
+
+把请求主题中的 token 值复制出来，多账户用,号(英文)隔开
+
+    export DD_TOKEN='token1,token2'
+
+拉库了的记得把dd_cookie.js从运行列表中禁用
+
+
+### 滴滴果园自动收水 dd_bucketWater.js
+
+cron */30 * * * *
+
+
+用上面的token即可
+
+
+
+
+
 ## 2022-1-11 通知说明
 
 仓库更新一般是每天晚上，晚上不更基本就第二天了
@@ -171,29 +201,6 @@ https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
 
 
 
-
-### 滴滴果园 dd_fruit.js
-
-更新内容：修复token错误，新增吹牛
-
-cron 10 0,8,12,18 * * *
-
-抓get包，进app-5天种水果，浇一次水，搜water
-
-把请求主题中的 token 值复制出来，多账户用,号(英文)隔开
-
-    export DD_TOKEN='token1,token2'
-
-拉库了的记得把dd_cookie.js从运行列表中禁用
-
-
-
-### 滴滴果园自动收水 dd_bucketWater.js
-
-cron */30 * * * *
-
-
-用上面的token即可
 
 
 
