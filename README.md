@@ -5,27 +5,49 @@
     ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
 
+## 2022-2-13更新
 
-## 2022-1-27 说明
+上班忙的团团转，总算有空看一下，懒癌犯了。
 
-最近忙着搬家，也没有时间更新脚本，现在的毛也小。马不停地的摸索着学会使用圈X了，实在抽不出空来更新，还是自己学着写毛比较靠谱
-
-
-## 2022-1-19更新
-
-终于闲下来点了，来整理下
-
-我已经被风控账号
-
-    闪辆、中青、中青快应用、晶彩、梦想花园
-
-沃邮箱已经恢复了，继续跑吧
+总有些人说找不到脚本说明，我弄成折叠的吧
 
 
 
-### ~删除 梦想花园 mxhy.js~
+### ~删除 口袋庄园 kdzy.js~
 
-脚本报错了，我安卓账号也异常了，微信号正常，就慢慢提吧
+Cron 35 0 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+注册即可，手机号和密码等会要用
+
+http://kdzhy.mlyougame.com:82/web/page/qr.html?c=214736
+
+APP个人中心-收款账号，绑定ZFB
+
+    export soy_kdzy_mobile="手机号"
+
+    export soy_kdzy_password="登录密码"
+
+UA不想填也可以，随机，想填就抓任意包下的UA
+
+http://test2.znvb.cn:82/home/user/
+
+    export soy_kdzy_UA="Mozilla/5.0***"
+
+</details>
+
+    // 2022-2-13删除说明：凉了
+
+
+### ~删除 天气预报 tqyb.js~
+
+
+要拉人才能提现，算球
+
+
+
 
 
 
@@ -34,10 +56,11 @@
 
 ### 九章头条 jztt.js
 
-更新内容：修复文章、提现
-
 Cron 15 0,6-23 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓get包，进app-任务，抓取token值
 
 https://api.st615.com/v2/user/info
@@ -52,13 +75,18 @@ https://api.st615.com/v2/user/info
 
     export jzttWithdrawLimit="***"
 
+</details>
+
+    // 2022-1-12更新：修复文章、提现
+
 
 ### 滴滴果园 dd_fruit.js
 
-更新内容：新增转盘抽奖，自动使用背包道具
-
 cron 10 0,8,12,18 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓get包，进app-5天种水果，浇一次水，搜water
 
 把请求主题中的 token 值复制出来，多账户用,号(英文)隔开
@@ -67,26 +95,16 @@ cron 10 0,8,12,18 * * *
 
 拉库了的记得把dd_cookie.js从运行列表中禁用
 
+</details>
+
+    // 2022-1-12更新：新增转盘抽奖，自动使用背包道具
+
 
 ### 滴滴果园自动收水 dd_bucketWater.js
 
 cron */30 * * * *
 
-
 用上面的token即可
-
-
-
-
-## 2022-1-10更新
-
-
-
-### 中青快应用 系列
-
-修复了文章和看看赚出错，重新拉库即可，脚本加密
-
-
 
 
 
@@ -96,36 +114,22 @@ cron */30 * * * *
 
 ### 闪辆 sl.js
 
-咋们的老朋友了，现在是现金，我好像还是黑的
-
 cron 5 0 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓get包，进app-来玩获取url即可
 
 https://newvideo.autohome.com.cn/openapi/activity-api/switch/get_user_switch_info
 
     export slurl="https://newvideo.autohome.com.cn/openapi/activity-api/switch/get_user_switch_info?_appid=***"
 
+</details>
+
+    // 不知道是我黑号了，看视频没有加积分，手动可以
 
 
-
-
-
-### 天气预报 tqyb.js
-
-cron */10 * * * *
-
-IOS专属，安卓无视，进链接下载
-
-https://apps.apple.com/cn/app/id1522640110
-
-抓get包，进app即可获取数据，作者说随便抓个url，参考我的吧
-
-http://coin.makingmoney.cn:8088/invite/code****
-
-把上面这个url填到tqybjsbCOOKIE.js的第63行的val值的引号中即可
-
-注：由于拉库不会拉取tqybjsbCOOKIE.js，请去repo文件夹拷贝到脚本同目录
 
 
 
@@ -134,6 +138,9 @@ http://coin.makingmoney.cn:8088/invite/code****
 
 cron 13 0-23/2 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 注册好后下载app并登录
 
 地址：http://reg.yuanhuoxingqiu.com/
@@ -150,22 +157,24 @@ http://api.yuanhuojisuban.com/user/account
 
     export soy_yhxq_UA="Mozilla/5.0***"
 
+</details>
 
+    // 可以先跑，金额差不多了，再绑定提现
 
 
 
 
 ## 2022-1-3更新
 
-大家新年好，上班！开始更新
 
 
 ### 快手极速版 ks_js.js
 
-更新内容：修复报错bug 注意：不刷视频，只挂脚本容易黑号！
-
 Cron 11 8 * * *（一天一次即可，仅供参考）
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓get包，进app-点红包进去，获取Cookie
 
 https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
@@ -184,17 +193,20 @@ https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
 
     export kstz=""
 
+</details>
 
+    // 2022-1-3更新：修复报错bug 注意：不刷视频，只挂脚本容易黑号！
 
 
 
 
 ### 高佣金(更名：佣金帝) gyj.js
 
-官方已恢复，奔跑吧
-
 cron 随意，一天一次即可
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓包，进APP-签到赚钱，即可获取
 
 https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
@@ -203,7 +215,9 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
     
     export gyjhd='token1@token2@token3'
 
+</details>
 
+    // 记得金币要手动去商城兑换，然后再提现
 
 
 
@@ -225,10 +239,11 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 
 ### 链萌优选 小程序 wx_lmyx.js
 
-新增提现变量，需要提供ZFB信息
-
 cron 3 0,9,17 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓token和version值，打开APP即可获取，多账户@隔开
 
 https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***&_version=2.8.9&_platform=wx
@@ -237,7 +252,9 @@ https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***
 
 不开小号给大号送通行证，分红很少，提现基本不够，可以先只使用前2个变量跑，金额多了再加变量上去
 
+</details>
 
+    // 202-12-26新增：提现变量，需要提供ZFB信息
 
 
 
@@ -250,13 +267,19 @@ https://www.lmyx.shop/web/index.php?store_id=1&r=api/user/index&access_token=***
 
 Cron 5 9,11,18 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
+
 功能：签到，签到任务，多账号用 @ 分隔
 
     export ltphone="" #手机号
 
     export ltpwd="" #登录6位密码
 
+</details>
 
+    // 跑的是app的任务，我至今未打开
 
 
 
@@ -266,6 +289,9 @@ Cron 5 9,11,18 * * *
 
 Cron 0 6-23 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓get包，进app-福利-看视频，获取数据
 
 https://dj.palmestore.com/zycl/gold/receive
@@ -275,6 +301,9 @@ https://dj.palmestore.com/zycl/gold/receive
 
     export djxsReferer='Referer1@Referer2'
 
+</details>
+
+    // 提现比较蛋疼，需要同时满足当日阅读120分钟、签到10天、看视频3次
 
 
 
@@ -282,6 +311,9 @@ https://dj.palmestore.com/zycl/gold/receive
 
 Cron 5 12,18 * * * 
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓get包，进APP-我的-赚吃货豆，即可获取数据
 
 https://h5.ele.me/svip/task-list
@@ -298,7 +330,9 @@ https://h5.ele.me/svip/task-list
 
 然后打开h5.ele.me，手机号+验证码登录后，抓的ck就可以用了。第一个参数是__wpk******，最后一个参数是x5check_ele=******
 
+</details>
 
+    // 吃货豆可以换券
 
 
 
@@ -307,15 +341,18 @@ https://h5.ele.me/svip/task-list
 
 cron 0,30 8 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓POST包，进APP-我的-签到，即可获取数据
 
 https://api.flgflg.com/htmmall/api/gold/finishedVideoNum
 
-
     export flgReferer='抓取的Referer1@抓取的Referer2'
 
+</details>
 
-
+    // 是我玩过返利内最良心送钱的app
 
 
 
@@ -323,6 +360,9 @@ https://api.flgflg.com/htmmall/api/gold/finishedVideoNum
 
 cron 0 8-23 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓包，进APP-现金福利，即可获取
 
 https://api.uutequan.com/v1/welfare/page
@@ -332,7 +372,9 @@ https://api.uutequan.com/v1/welfare/page
 
     export flhsCookie='Cookie1@Cookie2'
 
+</details>
 
+    // 扣就一个字
 
 
 
@@ -352,44 +394,22 @@ cron 随意，一天一次即可
 
 
 
-
-
-### 口袋庄园 kdzy.js
-
-Cron 35 0 * * *
-
-注册即可，手机号和密码等会要用
-
-http://kdzhy.mlyougame.com:82/web/page/qr.html?c=214736
-
-APP个人中心-收款账号，绑定ZFB
-
-    export soy_kdzy_mobile="手机号"
-
-    export soy_kdzy_password="登录密码"
-
-UA不想填也可以，随机，想填就抓任意包下的UA
-
-http://test2.znvb.cn:82/home/user/
-
-    export soy_kdzy_UA="Mozilla/5.0***"
-
-
-
-
-
-
 ### 快手果园 ks_fruit.js
 
 Cron 随意，一天一次
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓get包，进app-左上角三横-快手果园，获取Cookie
 
 https://ug-fission.kuaishou.com/rest/n/darwin/orchard/water/watering
 
     export KS_COOKIE='client_key=***;did=***;kuaishou.api_st=***;ud=***;ver=***;'
 
+</details>
 
+    // 默认会助力作者，介意勿玩，代码加密的
 
 
 
@@ -398,6 +418,9 @@ https://ug-fission.kuaishou.com/rest/n/darwin/orchard/water/watering
 
 Cron 5 11 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 进美团官网：https://www.meituan.com
 
 F12审查元素-登录账号-工作台选 网络，找到www.meituan.com的封包，Cookie中找到token值，复制出来
@@ -408,7 +431,9 @@ F12审查元素-登录账号-工作台选 网络，找到www.meituan.com的封�
 
     export sjpz="false"
 
+</details>
 
+    // 米粒有啥用，我还没进app看过
 
 
 
@@ -417,6 +442,10 @@ F12审查元素-登录账号-工作台选 网络，找到www.meituan.com的封�
 ### NTF博物馆
 
 Cron 45 18 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
 
 下载：http://nftwatches.net
 
@@ -432,9 +461,9 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
 
     export soy_NFT_data="token&视频code2的值"
 
+</details>
 
-
-
+    // token有效期好像只有半月，还是几周的，失效记得抓，攒够200万就可以提现了
 
 
 
@@ -442,6 +471,9 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
 
 cron 35 11,16 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 注意：APP和公众号都要抓，多账号用#隔开
 
 
@@ -488,7 +520,9 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
     export TxStockHelpOrder='0'
 
 
+</details>
 
+    // 每天稳定1块，新版的抓不到包，私我下
 
 
 
@@ -496,6 +530,9 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
 cron 11 10 * * *
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 关注公众号:联通沃邮箱-进入邮箱，不知道密码的重置
 
 重置密码：https://user.mail.wo.cn/m/reset?mobile
@@ -509,6 +546,10 @@ https://nyan.mail.wo.cn/cn/sign/index/index?mobile=***&userName=&openId=***
     
     export soy_wyx_UA="Mozilla/5.0***"
 
+</details>
+
+    // 目前公众号系统在维护，跑不动
+
 
 
 
@@ -516,6 +557,9 @@ https://nyan.mail.wo.cn/cn/sign/index/index?mobile=***&userName=&openId=***
 
 cron 随意，一天一次即可
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 请第1次拉完库，复制一份到scripts目录，不然每次都会覆盖！
 
 例：
@@ -538,12 +582,18 @@ step = "23333"
 
 step = str(random.randint(20000, 21000))
 
+</details>
+
+    // 推送通知好像是微信企业微信，我改过其他推送但也没成功，算了
 
 
 ### 萤石云视频 ysy.js
 
 cron 随意，一天一次即可
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 抓3个数据，重新登录！重新登录才可以抓到数据
 
 https://api.ys7.com/v3/users/login/v2
@@ -570,7 +620,9 @@ https://api.ys7.com/v3/integral/yd/pay
 
     export txbody='payCode=101006&receiverType=2&receiverId=2********'
 
+</details>
 
+    // 要攒到1块钱是个无比漫长的过程
 
 
 ### 亿享云 yxyapp.js
@@ -578,16 +630,18 @@ https://api.ys7.com/v3/integral/yd/pay
 
 cron 随意，一天一次即可
 
-
+<details>
+<summary>食用步骤：</summary>
+<br />
 注册地址：https://ystzwz.com/h6/#/
 
 就是个网页，没有APP的
 
-
     export yxyPhone='手机号#密码'
 
+</details>
 
-
+    // 不知道靠不靠谱，反正一直活着
 
 
 ## 晶彩看点 jckd
