@@ -5,9 +5,97 @@
     ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
 
-## 2022-2-13更新
 
-上班忙的团团转，总算有空看一下，懒癌犯了。
+## 2022-2-16更新
+
+出于尊重作者劳动成果，脚本不会做改动
+
+### 悟空浏览器 wkllq.js
+
+cron 0-59/15 0-1,6-15,19-23 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+打开app，即可抓取数据，没有这条的任意host里有值也可
+
+https://api5-normal-lf.toutiaoapi.com/ugc/business_alliance/user_info/
+
+我们需要3个值device_id、x-tt-token、sessionid
+
+> 现在不是用export变量的了，需要添加soy_variable_data.js依赖
+
+在wkllq.js脚本同目录新建soy_variable_data.js文件，把下面的代码粘贴进去
+
+```
+module.exports = {"code":200, 
+"variable_data":{ 
+"wkllq":[{ //悟空浏览器
+    "device_id":"409***", //链接上找device_id值
+    "x-tt-token":"00b***-1.0.1", //请求头的值
+    "sessionid":"b9c***"} //请求头cookie上的值
+]
+}}
+```
+修改成自己的变量保存，就可以跑脚本了
+
+多账号模板演示，英文逗号,后跟一个{}里面填数据
+
+```
+module.exports = {"code":200, 
+"variable_data":{ 
+"wkllq":[{ //悟空浏览器
+    "device_id":"账号1的device_id值",
+    "x-tt-token":"账号1的x-tt-token值",
+    "sessionid":"账号1的sessionid值"},{
+    "device_id":"账号2的device_id值",
+    "x-tt-token":"账号2的x-tt-token值",
+    "sessionid":"账号2的sessionid值"} 
+]
+}}
+```
+
+</details>
+
+    //2022-2-16说明：看广告的任务一般都是做不了的，正常现象
+    一个支付宝好像可以绑定多个账号,默认提现0.2
+    脚本默认跑作者邀请码,如果不想就自行去绑定邀请码后在跑脚本
+
+
+
+### 快音 kyin.js
+
+cron 0-59/10 6-20 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+退出登录-开抓包-微信登录成功后即可获取数据
+https://api.kaixinyf.cn/passport/UnionLogin
+
+> device-id值在请求头里面找
+
+> access-token值和refresh_token值在响应的set-cookie里面找，注意只要token的value值
+
+同样的需要同目录有soy_variable_data.js文件，代码参考如下
+
+```
+module.exports = {"code":200, 
+"variable_data":{ 
+"wkllq":[//这里是悟空浏览器的数据，自己别删了
+],
+"kyin":[//快音
+"device-id值&access-token值&refresh_token值",//这是第1个账号
+"",//多账号逗号换行
+] 
+```
+</details>
+
+    //2022-2-16说明：注册后自行提现0.3元，如果能到账就可以跑脚本，否则跑了也提现不了
+
+
+## 2022-2-13更新
 
 总有些人说找不到脚本说明，我弄成折叠的吧
 
