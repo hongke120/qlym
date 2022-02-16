@@ -1,11 +1,11 @@
 /*
 安卓：中青看点 风险查询+今日收益详情
 
-cron 30 9 * * *
-
 需要用到zqkdCookie，只测试了青龙，理论上V2P也能用
 本脚本没有设置重写，请自己复制zq_cookie到青龙环境下使用，多账号用@隔开
 例子： export zqkdCookie='uid=xxx&zqkey=yyy&zqkey_id=zzz@uid=aaa&zqkey=bbb&zqkey_id=ccc@uid=qqq&zqkey=sss&zqkey_id=ttt'
+
+cron 30 22 * * * zqkd_risk.js
 */
 
 const jsname = '中青看点风险查询'
@@ -140,6 +140,7 @@ async function GetOrderList() {
 		notifyStr += `账户${userIdx+1} ${nickname[userIdx]}: \n`
         for(let item of result.data) {
             let withdrawStr = ''
+            let withType = (item.type==2) ? '微信' : '支付宝'
             let desc = (item.description) ? item.description : '无'
             if (item.status == 0){
                 withdrawStr = '未入账';
@@ -148,7 +149,7 @@ async function GetOrderList() {
             } else if (item.status == 2){
                 withdrawStr = '提现失败';
             }	
-            notifyStr += `提现信息：${item.add_time_str} 提现${item.money}元，${withdrawStr}，风险信息：${desc}\n`		
+            notifyStr += `${item.add_time_str} ${withType}提现${item.money}元，${withdrawStr}，风险信息：${desc}\n`		
         }
     } else {
         console.log(`账户${userIdx+1}查询风险信息失败`)
