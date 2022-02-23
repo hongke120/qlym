@@ -4,25 +4,90 @@
 
     ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
+建议：玩毛不要用自己常用手机，不然垃圾短信一堆
+
+* 移动：和多号app
+* 联通：沃小号app
+* 联通合作商：阿里小号（已下线，续期的可以继续用）
+* 电信：天翼小号（已下线）
+
+
+## 2022-2-23更新
+
+
+### 中青看点 zqkd
+
+全系更新脚本为v3.9.8，详细看内部教程
+
+    //不到3天，我的账号就黑了，真开心
+
+
+
+## 微娱推客 wytk.js
+
+cron 26/5 10,13 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+微信打开注册，然后根据提示下载安装并登陆
+
+https://lm.wy.run/index/user/wechatLogin
+
+抓POST包，签到即可获取toekn值
+
+> 我的-设置-复制appkey-返回 活动-立即签到-保存图片-微信扫码 登陆-签到-输入appkey-再次点签到，等视频完结即可
+
+https://lm.wy.run/api/sign/index
+
+
+    export soy_wytk_data="token&UA"
+
+</details>
+
+    //目前只有签到，500积分=5元
+
+
+
+
+
+### 源火星球 yhxq.js
+
+cron 13 0-23/2 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+注册好后下载app并登录
+
+地址：http://reg.yuanhuoxingqiu.com/
+
+抓get包，登录app即可获取数据，只有Authorization值就行
+
+http://api.yuanhuojisuban.com/user/account
+
+这里的Authorization值，删掉Bearer和空格，只要纯数字的组合
+
+    export soy_yhxq_Authorization="568***"
+
+这里的UA为可选变量，可填可不填
+
+    export soy_yhxq_UA="Mozilla/5.0***"
+
+</details>
+
+    // 出错的请更新脚本
+
+
+
+
+
+
+
 
 ## 2022-2-22更新
 
-快音更新报错、悟空浏览器更新、腾讯自选股 新版（老版可用的不要运行）
 
-
-
-## 2022-2-18不更新说明
-
-一直依赖使用的青龙面板开发者昨晚在群里发了通告，其母亲因为病重已经山穷水尽，希望有能力的能帮一把
-
-这是开发者的群，大家可以去看一下，无论是不是杯水车薪，我先尽绵薄之力吧
-
-https://t.me/jiao_long
-
-
-## 2022-2-16更新
-
-出于尊重作者劳动成果，脚本不会做改动
 
 ### 悟空浏览器 wkllq.js
 
@@ -71,9 +136,9 @@ module.exports = {"code":200,
 
 </details>
 
-    //2022-2-16说明：看广告的任务一般都是做不了的，正常现象
-    一个支付宝好像可以绑定多个账号,默认提现0.2
-    脚本默认跑作者邀请码,如果不想就自行去绑定邀请码后在跑脚本
+    //2022-2-22更新：-
+
+    另：脚本默认跑作者邀请码,如果不想就自行去绑定邀请码后在跑脚本
 
 
 
@@ -106,53 +171,66 @@ module.exports = {"code":200,
 ```
 </details>
 
-    //2022-2-16说明：注册后自行提现0.3元，如果能到账就可以跑脚本，否则跑了也提现不了
+    //2022-2-22更新：报错的重新拉
 
 
-### 中青看点 zqkd
+### 腾讯自选股 txstock.js
 
-全系更新脚本为v3.9.8，详细看内部教程
-
-
-
-## 2022-2-13更新
-
-总有些人说找不到脚本说明，我弄成折叠的吧
-
-
-
-### ~删除 口袋庄园 kdzy.js~
-
-Cron 35 0 * * *
+cron 35 11,16 * * *
 
 <details>
 <summary>食用步骤：</summary>
 <br />
-注册即可，手机号和密码等会要用
+注意：APP和公众号都要抓，多账号用#隔开
 
-http://kdzhy.mlyougame.com:82/web/page/qr.html?c=214736
 
-APP个人中心-收款账号，绑定ZFB
+APP-头像-右上角金币-获取金币，抓get包
 
-    export soy_kdzy_mobile="手机号"
+https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
-    export soy_kdzy_password="登录密码"
 
-UA不想填也可以，随机，想填就抓任意包下的UA
+抓到的连接填在下方
 
-http://test2.znvb.cn:82/home/user/
+    export TxStockAppUrl='https://wzq.ten....#https://wzq.ten....'
 
-    export soy_kdzy_UA="Mozilla/5.0***"
+
+请求头header，转换一下格式 https://tooltt.com/header2json/
+
+    export TxStockAppHeader='{"Host":"...","Accept":"..."}#{"Host":"...","Accept":"..."}'
+
+
+
+自选股公众号-右下角好福利-福利中心，抓get包
+
+https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
+
+请求头header，转换一下格式 https://tooltt.com/header2json/
+
+    export TxStockWxHeader='{"Host":"...","Accept":"..."}#{"Host":"...","Accept":"..."}'
+
+
+
+提现变量，0代表不提现，1代表提现1元，5代表提现5元
+
+    export TxStockCash='1'
+
+新手变量，0代表不做新手任务，1代表做新手任务
+
+    export TxStockNewbie='1'
+
+分享变量，0代表不做分享互助，1代表做分享互助
+
+    export TxStockHelp='0'
+
+互助变量，0代表不帮助其他用户，否则填用户，用@或者#隔开
+
+    export TxStockHelpOrder='0'
+
 
 </details>
 
-    // 2022-2-13删除说明：凉了
-
-
-### ~删除 天气预报 tqyb.js~
-
-
-要拉人才能提现，算球
+    // 新增一个新版的，老版能跑的请禁用！！！
+    新抓包的用new版，不然可能报错，老版的不用管
 
 
 
@@ -239,35 +317,6 @@ https://newvideo.autohome.com.cn/openapi/activity-api/switch/get_user_switch_inf
 
 
 
-
-
-
-### 源火星球 yhxq.js
-
-cron 13 0-23/2 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-注册好后下载app并登录
-
-地址：http://reg.yuanhuoxingqiu.com/
-
-抓get包，登录app即可获取数据，只有Authorization值就行
-
-http://api.yuanhuojisuban.com/user/account
-
-这里的Authorization值，删掉Bearer和空格，只要纯数字的组合
-
-    export soy_yhxq_Authorization="568***"
-
-这里的UA为可选变量，可填可不填
-
-    export soy_yhxq_UA="Mozilla/5.0***"
-
-</details>
-
-    // 可以先跑，金额差不多了，再绑定提现
 
 
 
@@ -574,63 +623,6 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
     // token有效期好像只有半月，还是几周的，失效记得抓，攒够200万就可以提现了
 
 
-
-### 腾讯自选股 txstock.js
-
-cron 35 11,16 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-注意：APP和公众号都要抓，多账号用#隔开
-
-
-APP-头像-右上角金币-获取金币，抓get包
-
-https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
-
-
-抓到的连接填在下方
-
-    export TxStockAppUrl='https://wzq.ten....#https://wzq.ten....'
-
-
-请求头header，转换一下格式 https://tooltt.com/header2json/
-
-    export TxStockAppHeader='{"Host":"...","Accept":"..."}#{"Host":"...","Accept":"..."}'
-
-
-
-自选股公众号-右下角好福利-福利中心，抓get包
-
-https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
-
-请求头header，转换一下格式 https://tooltt.com/header2json/
-
-    export TxStockWxHeader='{"Host":"...","Accept":"..."}#{"Host":"...","Accept":"..."}'
-
-
-
-提现变量，0代表不提现，1代表提现1元，5代表提现5元
-
-    export TxStockCash='1'
-
-新手变量，0代表不做新手任务，1代表做新手任务
-
-    export TxStockNewbie='1'
-
-分享变量，0代表不做分享互助，1代表做分享互助
-
-    export TxStockHelp='0'
-
-互助变量，0代表不帮助其他用户，否则填用户，用@或者#隔开
-
-    export TxStockHelpOrder='0'
-
-
-</details>
-
-    // 每天稳定1块，新版的抓不到包，私我下
 
 
 
