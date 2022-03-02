@@ -29,7 +29,7 @@
 
 
 
-## 2022-3-2更新
+## :fire: 2022-3-2更新
 
 有点忙，几天没看了，又来整理下，撸个毛还要学很多
 
@@ -60,7 +60,7 @@ https://wx.17u.cn/platformflowpool/homepage/info
 
 
 
-## 快手极速版 ksjsb.js (leaf版)
+### 快手极速版 ksjsb.js (leaf版)
 
 cron 38 7-22 * * * (每天15次)
 
@@ -94,7 +94,7 @@ https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
 
 
 
-## 渤海宣传员 wx_bhxcy.js
+### 渤海宣传员 wx_bhxcy.js
 
 cron 40 40 * * *
 
@@ -115,7 +115,8 @@ https://api.yd.ihaoqu.com/?r=api2&apiAction=SignIn
 
 
 
-## 康师傅畅饮社wx_ksfcys.js
+
+### 康师傅畅饮社wx_ksfcys.js
 
 cron 42 9,18 * * *
 
@@ -142,7 +143,7 @@ https://club.biqr.cn/api/member/getMemberInfo
 
 
 
-## 微娱推客 wytk.js
+### 微娱推客 wytk.js
 
 cron 26/5 10,13 * * *(一天12-15次)
 
