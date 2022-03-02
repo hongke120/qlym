@@ -1,6 +1,6 @@
 /*
 @肥皂 2.22 渤海宣传员 签到兑换e卡
-邀请码  =  878217
+cron 40 10 * * * wx_bhxcy.js
 电子账户注册后可以直接领取10元e卡。。。
 青龙抓取签到接口的全部请求体：
 格式  变量名bhxcytoken  uid=xxxx&token=xxxxxxxxxxxxxx&signure=xxxxxxxxxxxx
