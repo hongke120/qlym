@@ -96,7 +96,7 @@ https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
 
 ### 渤海宣传员 wx_bhxcy.js
 
-cron 40 40 * * *
+cron 40 10 * * *
 
 <details>
 <summary>食用步骤：</summary>
