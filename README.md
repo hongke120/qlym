@@ -1,31 +1,150 @@
-## 使用教程
+## :world_map: 使用教程
 
 【拉库】
 
     ql repo https://github.com/Yiov/wool.git "" "COOKIE"
 
+## :loudspeaker: 关于小号
+
 建议：玩毛不要用自己常用手机，不然垃圾短信一堆
 
-* 移动：和多号app
-* 联通：沃小号app
-* 联通合作商：阿里小号（已下线，续期的可以继续用）
-* 电信：天翼小号（已下线）
+* 移动：和多号app（5元/月）
+* 联通：沃小号app（5元/月）
+* 联通&腾讯：微小号（小程序 10元/月）
+* 联通&阿里：阿里小号app（已下线，续期的可以继续用）
+* 电信：天翼小号app（已下线）
 
 
-## 2022-2-23更新
+## :gear: 在线请求头转JSON
+
+我把我已知的都列举出来了，也欢迎投更好用的
+
+* [ToolTT](https://tooltt.com/header2json/)「好像不好用了」
+
+* [uutool](https://uutool.cn/header2json/)
+
+* [wejson](https://wejson.cn/header2json/)
 
 
-### 中青看点 zqkd
 
-全系更新脚本为v3.9.8，详细看内部教程
 
-    //不到3天，我的账号就黑了，真开心
+
+## 2022-3-2更新
+
+有点忙，几天没看了，又来整理下，撸个毛还要学很多
+
+
+
+### 趣躺赚 wx_qtz.js
+
+cron 一天3-4次
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+微信小程序，新人直领0.3
+
+抓POST包，只要请求头包含openid、userToken、userKey、apmat的值，参考链接
+
+https://wx.17u.cn/platformflowpool/homepage/info
+
+复制全部请求头，使用顶部链接把请求头转换成json格式
+
+    export qtzhd='{"Host":"wx.17u.cn",***"html"}'
+
+</details>
+
+    //1万金砖=1元，每天大概有几百
+
+
+
+
+
+## 快手极速版 ksjsb.js (leaf版)
+
+cron 38 7-22 * * * (每天15次)
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+抓POST包，进入积分换好礼页面即可获取数据，只要有Cookie就行
+
+https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
+
+把Cookie中的kuaishou.api_st复制出来，包括分号，多账号换行隔开
+
+    export ksjsbCookie='kuaishou.api_st=***;'
+
+默认每天15点兑换金币和提现，要改的话把提现时间填到变量
+
+    export ksjsbWithdrawTime='15'
+
+默认提现3块，要改的话把提现金额填到变量。如提现失败，手动接验证码提现一次
+
+    export ksjsbCash='100'
+
+</details>
+
+    // 2022-3-2此版本有更详细的做任务，推荐使用
+
+    // 支持签到、开宝箱、翻倍、看广告、逛街任务、抽奖
+
+
+
+
+
+
+## 渤海宣传员 wx_bhxcy.js
+
+cron 40 40 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+微信小程序，需要注册，电子账户看你们，反正我不注册
+
+抓POST包，点天天签到 最高领88元红包，拆，即可获取数据
+
+https://api.yd.ihaoqu.com/?r=api2&apiAction=SignIn
+
+    export bhxcytoken='uid=***&token=***&signure=***'
+
+</details>
+
+    //2022-3-2签到兑换京东E卡
+
+
+
+## 康师傅畅饮社wx_ksfcys.js
+
+cron 42 9,18 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+微信小程序，注册送200积分
+
+抓GET包，点我的即可获取数据，多账号@隔开
+
+https://club.biqr.cn/api/member/getMemberInfo
+
+    export ksfcysToken='***'
+
+默认不会抽奖，如果需要50积分抽奖，请设置变量ksfcysDraw为true
+
+    export ksfcysDraw="true"
+
+</details>
+
+    // 2022-3-2积分可换E卡，重进小程序有可能会挤掉线，请重新抓
+
+
 
 
 
 ## 微娱推客 wytk.js
 
-cron 26/5 10,13 * * *
+cron 26/5 10,13 * * *(一天12-15次)
 
 <details>
 <summary>食用步骤：</summary>
@@ -45,9 +164,20 @@ https://lm.wy.run/api/sign/index
 
 </details>
 
-    //目前只有签到，500积分=5元
+    // 2022-3-2更新了自动提现1元，请自行绑定支付宝
 
 
+
+
+
+## 2022-2-23更新
+
+
+### 中青看点 zqkd
+
+全系更新脚本为v3.9.8，详细看内部教程
+
+    //不到3天，我的账号就黑了，真开心
 
 
 
@@ -76,7 +206,7 @@ http://api.yuanhuojisuban.com/user/account
 
 </details>
 
-    // 出错的请更新脚本
+    // 2022-2-23出错的请更新脚本
 
 
 
@@ -762,7 +892,7 @@ cron 随意，一天一次即可
 
 
 
-## 特别鸣谢:
+## :email: 特别鸣谢:
 
 * [@whyour](https://github.com/whyour/qinglong)「青龙」
 * [@xl2101200](https://github.com/xl2101200/-/)「Tom」
