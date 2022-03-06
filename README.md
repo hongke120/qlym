@@ -28,14 +28,14 @@
 
 
 
+## :fire: 2022-3-6更新
 
-## :fire: 2022-3-2更新
-
-有点忙，几天没看了，又来整理下，撸个毛还要学很多
-
+心态好一点，别总觉得毛小，抖音/快手大公司也没让人薅的飞起啊，毛小可以账号多啊，只要你爱折腾，别老等着喂饭
 
 
-### 趣躺赚 wx_qtz.js
+
+
+### ~趣躺赚 wx_qtz.js~
 
 cron 一天3-4次
 
@@ -54,8 +54,7 @@ https://wx.17u.cn/platformflowpool/homepage/info
 
 </details>
 
-    //1万金砖=1元，每天大概有几百
-
+    //报错了，有点难修
 
 
 
@@ -75,20 +74,90 @@ https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
 
     export ksjsbCookie='kuaishou.api_st=***;'
 
-默认每天15点兑换金币和提现，要改的话把提现时间填到变量
+默认每天0点自动兑换金币，15点提现，要改的话把提现时间填到变量
 
     export ksjsbWithdrawTime='15'
 
-默认提现3块，要改的话把提现金额填到变量。如提现失败，手动接验证码提现一次
+默认提现3块，要改的话把提现金额填到变量。如提现失败，手动接验证码提现一次，更改提现到支付宝，在对应的账号cookie后面加一段ksjsbPayType=ALIPAY;
 
     export ksjsbCash='100'
 
+默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
+
+    export ksjsbNotify='0'
+
 </details>
 
-    // 2022-3-2此版本有更详细的做任务，推荐使用
+    // 2022-3-6修复报错，新增支付宝提现设置入口
 
-    // 支持签到、开宝箱、翻倍、看广告、逛街任务、抽奖
 
+
+
+
+
+### 饿了么吃货豆 elm.js
+
+Cron 5 12,18 * * * 
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+抓get包，进APP-我的-赚吃货豆，即可获取数据
+
+https://h5.ele.me/svip/task-list
+
+只要cookie，不要cookie2，复制出来包括分号，多账户@隔开
+
+    export elmck='SID=***'
+
+
+说明：以上数据由IOS设备抓取，安卓机用Alook浏览器或者用M浏览器，UA设置为
+
+    Mozilla/5.0 (iPhone; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12F70 Safari/600.1.4
+
+
+然后打开h5.ele.me，手机号+验证码登录后，抓的ck就可以用了。第一个参数是__wpk******，最后一个参数是x5check_ele=******
+
+</details>
+
+    // 2022-3-6修复报错
+
+
+
+
+### 微娱推客 wytk.js
+
+cron 26/5 10,13 * * *(一天12-15次)
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+微信打开注册，然后根据提示下载安装并登陆
+
+https://lm.wy.run/index/user/wechatLogin
+
+抓POST包，签到即可获取toekn值
+
+> 我的-设置-复制appkey-返回 活动-立即签到-保存图片-微信扫码 登陆-签到-输入appkey-再次点签到，等视频完结即可
+
+https://lm.wy.run/api/sign/index
+
+
+    export soy_wytk_data="token&UA"
+
+</details>
+
+    // 2022-3-6有可能活不久，不清楚，我放弃了
+
+    // 现在分红只有靠积分，添加客服wwy6762拉群卖积分，而积分交易需要2元实名认证，一不小心就反撸
+
+
+
+
+
+## 2022-3-2更新
+
+有点忙，几天没看了，又来整理下，撸个毛还要学很多
 
 
 
@@ -139,33 +208,6 @@ https://club.biqr.cn/api/member/getMemberInfo
 
     // 2022-3-2积分可换E卡，重进小程序有可能会挤掉线，请重新抓
 
-
-
-
-
-### 微娱推客 wytk.js
-
-cron 26/5 10,13 * * *(一天12-15次)
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-微信打开注册，然后根据提示下载安装并登陆
-
-https://lm.wy.run/index/user/wechatLogin
-
-抓POST包，签到即可获取toekn值
-
-> 我的-设置-复制appkey-返回 活动-立即签到-保存图片-微信扫码 登陆-签到-输入appkey-再次点签到，等视频完结即可
-
-https://lm.wy.run/api/sign/index
-
-
-    export soy_wytk_data="token&UA"
-
-</details>
-
-    // 2022-3-2更新了自动提现1元，请自行绑定支付宝
 
 
 
@@ -594,33 +636,6 @@ https://dj.palmestore.com/zycl/gold/receive
     // 提现比较蛋疼，需要同时满足当日阅读120分钟、签到10天、看视频3次
 
 
-
-### 饿了么吃货豆 elm.js
-
-Cron 5 12,18 * * * 
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-抓get包，进APP-我的-赚吃货豆，即可获取数据
-
-https://h5.ele.me/svip/task-list
-
-只要cookie，不要cookie2，复制出来包括分号，多账户@隔开
-
-    export elmck='SID=***'
-
-
-说明：以上数据由IOS设备抓取，安卓机用Alook浏览器或者用M浏览器，UA设置为
-
-    Mozilla/5.0 (iPhone; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12F70 Safari/600.1.4
-
-
-然后打开h5.ele.me，手机号+验证码登录后，抓的ck就可以用了。第一个参数是__wpk******，最后一个参数是x5check_ele=******
-
-</details>
-
-    // 吃货豆可以换券
 
 
 
