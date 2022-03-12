@@ -26,10 +26,31 @@
 * [wejson](https://wejson.cn/header2json/)
 
 
+## :fire: 2022-3-12更新
 
 
-## :fire: 2022-3-9更新
+### 酷狗音乐 kgyy.js（安卓）
 
+cron 一天一次即可
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+抓GET包，需带有token、uuid、mid、userid、dfid的整段链接
+
+https://gateway.kugou.com/mstc/musicsymbol/v1/user/info?userid=***"
+
+    export kgyy="https://gateway.kugou.com/mstc/musicsymbol/v1/user/info?userid=***"
+
+</details>
+
+    // 2022-3-12 每天7毛
+
+
+
+
+
+## 2022-3-9更新
 
 
 ### 快手 ks.js
