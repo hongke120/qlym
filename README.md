@@ -36,7 +36,7 @@ cron 一天一次即可
 <details>
 <summary>食用步骤：</summary>
 <br />
-抓GET包，需带有token、uuid、mid、userid、dfid的整段链接
+抓GET包，我的-任务中心，需带有token、uuid、mid、userid、dfid的整段链接
 
 https://gateway.kugou.com/mstc/musicsymbol/v1/user/info?userid=***"
 
