@@ -26,7 +26,111 @@
 * [wejson](https://wejson.cn/header2json/)
 
 
-## :fire: 2022-3-12更新
+
+## :fire: 2022-3-17更新
+
+
+### 源火星球 yhxq.js
+
+cron 13 0-23/4 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+注册好后下载app并登录
+
+地址：http://reg.yuanhuoxingqiu.com/
+
+抓get包，登录app即可获取数据，只有Authorization值就行
+
+http://api.yuanhuojisuban.com/user/account
+
+这里的Authorization值，删掉Bearer和空格，只要纯数字的组合
+
+    export soy_yhxq_Authorization="568***"
+
+这里的UA为可选变量，可填可不填
+
+    export soy_yhxq_UA="Mozilla/5.0***"
+
+</details>
+
+    // 2022-3-17更新
+
+
+
+
+### 快手极速版 ksjsb.js (leaf版)
+
+cron 38 7-22 * * * (每天15次)
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+抓POST包，进入积分换好礼页面即可获取数据，只要有Cookie就行
+
+https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
+
+把Cookie中的kuaishou.api_st复制出来，包括分号，多账号换行隔开
+
+    export ksjsbCookie='kuaishou.api_st=***;'
+
+默认每天0点自动兑换金币，15点提现，要改的话把提现时间填到变量，不想提现设置成99
+
+    export ksjsbWithdrawTime='15'
+
+默认从高到低提现，固定金额用以下变量
+
+    export ksjsbCash='100'
+
+默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
+
+    export ksjsbNotify='0'
+
+</details>
+
+    // 2022-3-17修复绑定提现问题，抽奖无金币也能看视频bug，减低黑号风险
+
+
+
+### 快手 ks.js
+
+cron 22 10-20 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+普通版的快手，非极速版，CK可以通用
+
+注意现在多一个did的设备参数，必填！多账户@隔开
+
+> 由于我IOS端找不到入口，我就用的极速版抓的CK里提取了did数值，粘贴在后面，任务一样跑
+
+    export ksCookie='kuaishou.api_st=***;did=***;'
+
+默认每天0点自动兑换金币，14点提现，不想提现设置成99
+
+    export ksWithdrawTime='14'
+
+默认提现2块，要改的话把提现金额填到变量。如提现失败，手动接验证码提现一次，自动检测绑定了微信还是支付宝提现账号，都绑定了的话默认提现到支付宝
+
+>手动提现入口：头像-更多-我的钱包-天降红包提现，默认从高到低提现，固定金额用以下变量
+
+    export ksCash='100'
+
+默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
+
+    export ksNotify='0'
+
+</details>
+
+    // 2022-3-9 修复不做直播任务，更换提现接口
+
+
+
+
+
+## 2022-3-12更新
 
 
 ### 酷狗音乐 kgyy.js（安卓）
@@ -46,45 +150,6 @@ https://gateway.kugou.com/mstc/musicsymbol/v1/user/info?userid=***"
 
     // 2022-3-12 每天7毛
 
-
-
-
-
-## 2022-3-9更新
-
-
-### 快手 ks.js
-
-cron 22 10-20 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-普通版的快手，非极速版，CK可以通用
-
-注意现在多一个did的设备参数，必填！多账户@隔开
-
-> 由于我IOS端找不到入口，我就用的极速版抓的CK里提取了did数值，粘贴在后面，任务一样跑
-
-    export ksCookie='kuaishou.api_st=***;did=***;'
-
-默认每天0点自动兑换金币，14点提现，要改的话把提现时间填到变量
-
-    export ksWithdrawTime='14'
-
-默认提现2块，要改的话把提现金额填到变量。如提现失败，手动接验证码提现一次，自动检测绑定了微信还是支付宝提现账号，都绑定了的话默认提现到支付宝
-
->手动提现入口：头像-更多-我的钱包-天降红包提现
-
-    export ksCash='100'
-
-默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
-
-    export ksNotify='0'
-
-</details>
-
-    // 2022-3-9 修复其他未知错误
 
 
 
@@ -118,39 +183,6 @@ https://wx.17u.cn/platformflowpool/homepage/info
 
     //报错了，有点难修
 
-
-
-
-### 快手极速版 ksjsb.js (leaf版)
-
-cron 38 7-22 * * * (每天15次)
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-抓POST包，进入积分换好礼页面即可获取数据，只要有Cookie就行
-
-https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
-
-把Cookie中的kuaishou.api_st复制出来，包括分号，多账号换行隔开
-
-    export ksjsbCookie='kuaishou.api_st=***;'
-
-默认每天0点自动兑换金币，15点提现，要改的话把提现时间填到变量
-
-    export ksjsbWithdrawTime='15'
-
-默认提现3块，要改的话把提现金额填到变量。如提现失败，手动接验证码提现一次，更改提现到支付宝，在对应的账号cookie后面加一段ksjsbPayType=ALIPAY;
-
-    export ksjsbCash='100'
-
-默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
-
-    export ksjsbNotify='0'
-
-</details>
-
-    // 2022-3-6修复报错，新增支付宝提现设置入口
 
 
 
@@ -269,49 +301,6 @@ https://club.biqr.cn/api/member/getMemberInfo
 </details>
 
     // 2022-3-2积分可换E卡，重进小程序有可能会挤掉线，请重新抓
-
-
-
-
-
-
-## 2022-2-23更新
-
-
-### 中青看点 zqkd
-
-全系更新脚本为v3.9.8，详细看内部教程
-
-    //不到3天，我的账号就黑了，真开心
-
-
-
-### 源火星球 yhxq.js
-
-cron 13 0-23/2 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-注册好后下载app并登录
-
-地址：http://reg.yuanhuoxingqiu.com/
-
-抓get包，登录app即可获取数据，只有Authorization值就行
-
-http://api.yuanhuojisuban.com/user/account
-
-这里的Authorization值，删掉Bearer和空格，只要纯数字的组合
-
-    export soy_yhxq_Authorization="568***"
-
-这里的UA为可选变量，可填可不填
-
-    export soy_yhxq_UA="Mozilla/5.0***"
-
-</details>
-
-    // 2022-2-23出错的请更新脚本
 
 
 
