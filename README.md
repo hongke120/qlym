@@ -42,9 +42,11 @@ cron 未知
 
 https://zj.haier.net/oauthserver/account/v2/login
 
-请求头转换成json格式，body复制出来就可以了
+请求头转换成json格式才可以用
 
     export haierhd='{"appVersion":"7.9.0"***"okhttp/4.9.3"}'
+
+body复制出来就可以了
 
     export haierbody='{"username":***"phoneType":"Mi 10"}'
 
