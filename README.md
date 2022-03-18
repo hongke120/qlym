@@ -41,21 +41,35 @@ cron 13 0-23/4 * * *
 
 地址：http://reg.yuanhuoxingqiu.com/
 
-抓get包，登录app即可获取数据，只有Authorization值就行
+抓get包，登录app即可获取数据，只有Authorization值就行,删掉Bearer和空格，只要纯数字的组合
 
 http://api.yuanhuojisuban.com/user/account
 
-这里的Authorization值，删掉Bearer和空格，只要纯数字的组合
+由于依赖每次拉库会被覆盖，请在脚本同目录手动新建空白文件`raw_master_yhxq_variable.js`
 
-    export soy_yhxq_Authorization="568***"
+复制下列内容，删掉括号和中文字符，填上token和UA变量后，保存即可
 
-这里的UA为可选变量，可填可不填
-
-    export soy_yhxq_UA="Mozilla/5.0***"
+```
+module.exports = {"code":200,"yhxq_variable_data":{
+    "config":[{
+        "url":"https://gitee.com/soy-tool/app-script/raw/master/app_yhxq.js",
+        "update":false,
+        "notice":true
+    }],
+    "user_data":[{
+        "token":"请求头上的Authorization值",
+        "Withdrawal":false,
+        "Withdrawal_Time":8,
+        "Feed":false,
+        "UA":"请求头的User-Agent值选填"
+    }
+    
+]}}
+```
 
 </details>
 
-    // 2022-3-17更新
+    // 2022-3-17新增了依赖文件,请重新配置
 
 
 
