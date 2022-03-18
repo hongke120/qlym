@@ -27,7 +27,34 @@
 
 
 
-## :fire: 2022-3-17更新
+
+## :fire: 2022-3-18更新
+
+
+### 海尔智家 haier.js
+
+cron 未知
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+海尔智家app-手机号登录-设置登录密码-退出登录，然后选择密码登录，抓POST包
+
+https://zj.haier.net/oauthserver/account/v2/login
+
+请求头转换成json格式，body复制出来就可以了
+
+    export haierhd='{"appVersion":"7.9.0"***"okhttp/4.9.3"}'
+
+    export haierbody='{"username":***"phoneType":"Mi 10"}'
+
+</details>
+
+    // 2022-3-18根据脚本完成任务来看，还没发现是做的啥任务
+
+
+
+## 2022-3-17更新
 
 
 ### 源火星球 yhxq.js
