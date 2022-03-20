@@ -27,8 +27,105 @@
 
 
 
+## :fire: 2022-3-20更新
 
-## :fire: 2022-3-18更新
+
+### 广汽三菱 gqsl.js
+
+cron 0 7 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+抓GET包，打开APP即可获取数据，只要请求头Authorization的值
+
+比如：https://mspace.gmmc.com.cn/user-soa/customer/check/user-token
+
+多账号@隔开，多账户请多开应用，退出会使Authorization失效
+
+    export slCookies='xxxxx@xxxxxx'
+
+</details>
+
+    // 2022-3-20积分换实物，反正商城确实没什么好东西，而且积分过程也很漫长，玩不玩随意
+
+
+
+
+### 快手 ks.js
+
+cron 22 10-20 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+普通版的快手，非极速版，CK可以通用
+
+注意现在多一个did的设备参数，必填！多账户@隔开
+
+> 由于我IOS端找不到入口，我就用的极速版抓的CK里提取了did数值，粘贴在后面，任务一样跑
+
+    export ksCookie='kuaishou.api_st=***;did=***;'
+
+默认每天0点自动兑换金币，14点提现，不想提现设置成99，提到微信把`ksPayType=WECHAT;`，提到支付宝把`ksPayType=ALIPAY;`，写到对应账号ck后面
+
+    export ksWithdrawTime='14'
+
+默认提现2块，要改的话把提现金额填到变量。如提现失败，手动接验证码提现一次，自动检测绑定了微信还是支付宝提现账号，都绑定了的话默认提现到微信
+
+>手动提现入口：头像-更多-我的钱包-天降红包提现，默认从高到低提现，固定金额用以下变量
+
+    export ksCash='100'
+
+默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
+
+    export ksNotify='0'
+
+</details>
+
+    // 2022-3-20修复签到异常的错误和获取不到提现列表的问题，增加指定提现渠道
+
+
+
+
+### 快手极速版 ksjsb.js (leaf版)
+
+cron 38 7-22 * * * (每天15次)
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+抓POST包，进入积分换好礼页面即可获取数据，只要有Cookie就行
+
+https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
+
+把Cookie中的kuaishou.api_st复制出来，包括分号，多账号换行隔开
+
+    export ksjsbCookie='kuaishou.api_st=***;'
+
+默认每天0点自动兑换金币，15点提现，要改的话把提现时间填到变量，不想提现设置成99，提到微信把`ksPayType=WECHAT;`，提到支付宝把`ksPayType=ALIPAY;`，写到对应账号ck后面
+
+    export ksjsbWithdrawTime='15'
+
+默认从高到低提现，固定金额用以下变量。如提现失败，手动接验证码提现一次，自动检测绑定了微信还是支付宝提现账号，都绑定了的话默认提现到微信
+
+    export ksjsbCash='100'
+
+默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
+
+    export ksjsbNotify='0'
+
+</details>
+
+    // // 2022-3-20增加指定提现渠道
+
+
+
+
+
+
+## 2022-3-18更新
 
 
 ### 海尔智家 haier.js
@@ -102,72 +199,6 @@ module.exports = {"code":200,"yhxq_variable_data":{
 
 
 
-
-### 快手极速版 ksjsb.js (leaf版)
-
-cron 38 7-22 * * * (每天15次)
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-抓POST包，进入积分换好礼页面即可获取数据，只要有Cookie就行
-
-https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
-
-把Cookie中的kuaishou.api_st复制出来，包括分号，多账号换行隔开
-
-    export ksjsbCookie='kuaishou.api_st=***;'
-
-默认每天0点自动兑换金币，15点提现，要改的话把提现时间填到变量，不想提现设置成99
-
-    export ksjsbWithdrawTime='15'
-
-默认从高到低提现，固定金额用以下变量
-
-    export ksjsbCash='100'
-
-默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
-
-    export ksjsbNotify='0'
-
-</details>
-
-    // 2022-3-17修复绑定提现问题，抽奖无金币也能看视频bug，减低黑号风险
-
-
-
-### 快手 ks.js
-
-cron 22 10-20 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-普通版的快手，非极速版，CK可以通用
-
-注意现在多一个did的设备参数，必填！多账户@隔开
-
-> 由于我IOS端找不到入口，我就用的极速版抓的CK里提取了did数值，粘贴在后面，任务一样跑
-
-    export ksCookie='kuaishou.api_st=***;did=***;'
-
-默认每天0点自动兑换金币，14点提现，不想提现设置成99
-
-    export ksWithdrawTime='14'
-
-默认提现2块，要改的话把提现金额填到变量。如提现失败，手动接验证码提现一次，自动检测绑定了微信还是支付宝提现账号，都绑定了的话默认提现到支付宝
-
->手动提现入口：头像-更多-我的钱包-天降红包提现，默认从高到低提现，固定金额用以下变量
-
-    export ksCash='100'
-
-默认提现时间会触发通知，可以把ksjsbNotify设置成2，每次运行都通知；为0，则不通知
-
-    export ksNotify='0'
-
-</details>
-
-    // 2022-3-9 修复不做直播任务，更换提现接口
 
 
 
@@ -461,7 +492,7 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
     export TxStockAppUrl='https://wzq.ten....#https://wzq.ten....'
 
 
-请求头header，转换一下格式 https://tooltt.com/header2json/
+请求头header，转换成JSON格式；需要包含pgv_pvid、ts_sid以及ts_uid等关键数据，跑不起来的根据网友 @Anima-No 热心反馈，在zqact.tenpay.com域名下的请求头可以使用
 
     export TxStockAppHeader='{"Host":"...","Accept":"..."}#{"Host":"...","Accept":"..."}'
 
@@ -471,7 +502,7 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
 https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
-请求头header，转换一下格式 https://tooltt.com/header2json/
+请求头header，转换成JSON格式；需要包含pgv_pvid、ts_sid以及ts_uid等关键数据，跑不起来的根据网友 @Anima-No 热心反馈，在zqact.tenpay.com域名下的请求头可以使用
 
     export TxStockWxHeader='{"Host":"...","Accept":"..."}#{"Host":"...","Accept":"..."}'
 
@@ -938,7 +969,7 @@ cron 随意，一天一次即可
 
 https://api.ys7.com/v3/users/login/v2
 
-把header转成JSON：https://tooltt.com/header2json/
+把header转成JSON格式
 
     export ysyhd=''
 
