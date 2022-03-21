@@ -1,27 +1,24 @@
 /*
 腾讯自选股V2
 
-更新了一下脚本，精简了需要的CK，多账户用换行(\n)或者@隔开
+更新了一下脚本，精简了需要的CK，多账户用换行(\n)或者@或者#隔开，尽量用换行隔开因为我没测试其他
 一天跑两次就够了，10点到13点之间运行一次猜涨跌做任务，16点半之后运行一次领猜涨跌奖励
 提现设置：默认提现5元，需要改的话自己设置TxStockCash变量，0代表不提现，1代表提现1元，5代表提现5元
 新手任务设置：默认不做新手任务，需要做的话设置TxStockNewbie为1
 分享任务设置：默认会做互助任务，需要多账号。不想做的话设置TxStockHelp为0
 
 青龙：
-两种捉包方法，任选一种去捉就行，安卓应该捉微信小程序比较简单(fskey和qlskey是同一类东西，数值不同但可以通用)：
-1. 直接打开APP，捉wzq.tenpay.com包，把url里的openid和fskey用&连起来填到TxStockCookie
-2. 点公众号 腾讯自选股微信版->右下角好福利->福利中心，捉wzq.tenpay.com包，把Cookie里的zxg_openid和qlskey用&连起来填到TxStockCookie
+公众号 腾讯自选股微信版->右下角好福利->福利中心，捉wzq.tenpay.com包，把Cookie里的zxg_openid，wzq_qlskey和wzq_qluin用&连起来填到TxStockCookie
 
-export TxStockCookie='openid&fskey'
+export TxStockCookie='openid&wzq_qlskey&wzq_qluin'
 
 V2P，圈X重写：
-捉APP或者小程序，点开就能捉到，不需要都捉
 小程序入口：公众号 腾讯自选股微信版->右下角好福利->福利中心
 [task_local]
 #腾讯自选股
 35 11,16 * * * https://raw.githubusercontent.com/leafxcy/JavaScript/main/txstockV2.js, tag=腾讯自选股, enabled=true
 [rewrite_local]
-https://wzq.tenpay.com/cgi-bin/.*user.*.fcgi url script-request-header https://raw.githubusercontent.com/leafxcy/JavaScript/main/txstockV2.js
+https://wzq.tenpay.com/cgi-bin/userinfo.fcgi url script-request-header https://raw.githubusercontent.com/leafxcy/JavaScript/main/txstockV2.js
 [MITM]
 hostname = wzq.tenpay.com
 */
@@ -31,7 +28,7 @@ const $ = new Env(jsname);
 const notifyFlag = 1; //0为关闭通知，1为打开通知,默认为1
 let notifyStr = ''
 
-let envSplitor = ['\n','@']
+let envSplitor = ['\n','@','#']
 let httpResult //global buffer
 
 let withdrawCash = ($.isNode() ? (process.env.TxStockCash) : ($.getval('TxStockCash'))) || 5; //0为不自动提现,1为自动提现1元,5为自动提现5元
@@ -43,13 +40,25 @@ let userList = []
 let userIdx = 0
 let userCount = 0
 
+let test_taskList = []
 let todayDate = formatDateTime();
 let SCI_code = '000001' //上证指数
 let signType = {task:'welfare_sign', sign:'signdone', award:'award'}
-let dailyTaskList = [1100, 1110, 1101, 1103, 1104, 1105, 1109, 1111, 1112, 1113]
-let newbieTaskList = [1023, 1032, 1033]
-let dailyShareTask = ["news_share", "task_50_1111", "task_51_1111", "task_50_1100", "task_51_1100", "task_66_1110", "task_50_1110", "task_51_1110", "task_51_1112", "task_51_1113"/*, "task_72_1113", "task_74_1113"*/]
-let newbieShareTask = ["task_50_1032", "task_51_1032"]
+
+let taskList = {
+    app: {
+        daily: [1105, 1101, 1111, 1113],
+        newbie: [1023, 1033],
+        dailyShare: ["news_share", "task_50_1111", "task_51_1111", "task_72_1113", "task_74_1113"],
+        newbieShare: [],
+    },
+    wx: {
+        daily: [1100, 1110, 1112],
+        newbie: [1032],
+        dailyShare: ["task_50_1100", "task_51_1100", "task_66_1110", "task_50_1110", "task_51_1110", "task_51_1112", "task_51_1113"],
+        newbieShare: ["task_50_1032", "task_51_1032"],
+    },
+}
 
 let bullTaskArray = { 
     "rock_bullish":{"taskName":"戳牛任务", "action":"rock_bullish", "actid":1105}, 
@@ -69,16 +78,18 @@ class UserInfo {
         this.coin = -1
         let info = str.split('&')
         this.openid = info[0]
-        this.fskey = info[1]
+        this.qlskey = info[1]
+        this.qluin = info[2]
+        this.cookie = `wzq_qlskey=${this.qlskey}; wzq_qluin=${this.qluin};`
         this.shareCodes = {task:{}, newbie:{}, bull:{}, guess:{}}
         this.bullStatusFlag = false
     }
     
     async getUserInfo(isWithdraw=false) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/shop.fcgi?action=home_v2&type=2&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/shop.fcgi?action=home_v2&type=2&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -101,7 +112,7 @@ class UserInfo {
                             if(cashItem.item_desc == cashStr){
                                 if(parseInt(this.coin) >= parseInt(cashItem.coins)){
                                     logAndNotify(`账号[${this.name}]金币余额多于${cashItem.coins}，开始提现${cashStr}`);
-                                    await $.wait(100);
+                                    await $.wait(200);
                                     await this.getWithdrawTicket(cashItem.item_id);
                                 } else {
                                     console.log(`账号[${this.name}]金币余额不足${cashItem.coins}，不提现`);
@@ -121,9 +132,9 @@ class UserInfo {
     
     async signTask(actid,type,ticket='') {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_sign_task.fcgi?actid=${actid}&channel=1&type=welfare_sign&action=home&date=${todayDate}&openid=${this.openid}&fskey=${this.fskey}&reward_ticket=${ticket}`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_sign_task.fcgi?actid=${actid}&channel=1&type=welfare_sign&action=home&date=${todayDate}&openid=${this.openid}&fskey=${this.qlskey}&reward_ticket=${ticket}`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -137,7 +148,7 @@ class UserInfo {
                             if(item.date == todayDate){
                                 if(item.status == 0){
                                     //今天未签到，去签到
-                                    await $.wait(100);
+                                    await $.wait(200);
                                     await this.signtask(actid,signType.sign);
                                 } else {
                                     //今天已签到
@@ -146,7 +157,7 @@ class UserInfo {
                             }
                         }
                         if(result.lotto_chance > 0 && result.lotto_ticket) {
-                            await $.wait(100);
+                            await $.wait(200);
                             await this.signTask(actid,signType.award,result.lotto_ticket);
                         }
                     } else if(type == signType.sign) {
@@ -165,9 +176,9 @@ class UserInfo {
     
     async guessHome() {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/guess_home.fcgi?channel=1&source=2&new_version=3&openid=${this.openid}&fskey=${this.fskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/guess_home.fcgi?channel=1&source=2&new_version=3&openid=${this.openid}&fskey=${this.qlskey}`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -245,9 +256,9 @@ class UserInfo {
     
     async getGuessAward(guessDate) {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/activity.fcgi?channel=1&activity=guess_new&guess_act_id=3&guess_date=${guessDate}&guess_reward_type=1&openid=${this.openid}&fskey=${this.fskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/activity.fcgi?channel=1&activity=guess_new&guess_act_id=3&guess_date=${guessDate}&guess_reward_type=1&openid=${this.openid}&fskey=${this.qlskey}`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -264,9 +275,9 @@ class UserInfo {
     
     async getGuessStockAward(guessDate) {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/activity/activity.fcgi?activity=guess_new&action=guess_stock_reward&guess_date=${guessDate}&channel=1&openid=${this.openid}&fskey=${this.fskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/activity/activity.fcgi?activity=guess_new&action=guess_stock_reward&guess_date=${guessDate}&channel=1&openid=${this.openid}&fskey=${this.qlskey}`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -288,9 +299,9 @@ class UserInfo {
     
     async getStockInfo(scode,markets) {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/open_stockinfo.fcgi?scode=${scode}&markets=${markets}&needfive=0&needquote=1&needfollow=0&type=0&channel=1&openid=${this.openid}&fskey=${this.fskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/open_stockinfo.fcgi?scode=${scode}&markets=${markets}&needfive=0&needquote=1&needfollow=0&type=0&channel=1&openid=${this.openid}&fskey=${this.qlskey}`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -316,9 +327,9 @@ class UserInfo {
     
     async guessRiseFall(answer) {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/guess_op.fcgi?action=2&act_id=3&user_answer=${answer}&date=${todayDate}&channel=1&openid=${this.openid}&fskey=${this.fskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/guess_op.fcgi?action=2&act_id=3&user_answer=${answer}&date=${todayDate}&channel=1&openid=${this.openid}&fskey=${this.qlskey}`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -336,9 +347,9 @@ class UserInfo {
     
     async guessStockRiseFall(stockItem,answer) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/guess_op.fcgi?openid=${this.openid}&fskey=${this.fskey}&check=11`
-            let body = `source=3&channel=1&outer_src=0&new_version=3&symbol=${stockItem.symbol}&date=${todayDate}&action=2&user_answer=${answer}&openid=${this.openid}&fskey=${this.fskey}&check=11`
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let url = `https://wzq.tenpay.com/cgi-bin/guess_op.fcgi?openid=${this.openid}&fskey=${this.qlskey}&check=11`
+            let body = `source=3&channel=1&outer_src=0&new_version=3&symbol=${stockItem.symbol}&date=${todayDate}&action=2&user_answer=${answer}&openid=${this.openid}&fskey=${this.qlskey}&check=11`
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('post',urlObject)
             let result = httpResult;
             if(!result) return
@@ -356,9 +367,9 @@ class UserInfo {
     
     async guessStockStatus(stockItem) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/guess_home.fcgi?openid=${this.openid}&fskey=${this.fskey}&check=11&source=3&channel=1&symbol=${stockItem.symbol}&new_version=3`
+            let url = `https://wzq.tenpay.com/cgi-bin/guess_home.fcgi?openid=${this.openid}&fskey=${this.qlskey}&check=11&source=3&channel=1&symbol=${stockItem.symbol}&new_version=3`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -388,37 +399,22 @@ class UserInfo {
         } finally {}
     }
     
-    async getTaskList(taskItem) {
+    async queryTaskList(taskItem) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_${taskItem.activity}.fcgi?action=home&type=${taskItem.type}&actid=${taskItem.actid}&invite_code=&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_${taskItem.activity}.fcgi?action=home&type=${taskItem.type}&actid=${taskItem.actid}&invite_code=&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
             //console.log(result)
             if(result.retcode==0) {
                 if(result.task_pkg && result.task_pkg.length > 0){
-                    for(let item of result.task_pkg) {
-                        if(item.lotto_ticket) {
-                            //可领取新手奖励
-                            await this.getNewbieAward(taskItem.actid,item.lotto_ticket)
-                            continue;
-                        }
-                        if(item.reward_type > 0) {
-                            //已领取过新手奖励
-                            continue;
-                        }
-                        if(item.tasks && item.tasks.length > 0) {
-                            for(let task of item.tasks) {
-                                await $.wait(100);
-                                await this.getTaskStatus(taskItem,task.id,task.tid);
-                            }
-                        }
-                    }
+                    console.log(`[${taskItem.actid}]有${result.task_pkg.length}个任务`)
+                    test_taskList.push(taskItem.actid)
                 }
             } else {
-                console.log(`查询[${taskItem.actid}]列表失败: ${result.retmsg}`)
+                //console.log(`查询[${taskItem.actid}]列表失败: ${result.retmsg}`)
             }
         } catch(e) {
             console.log(e)
@@ -427,9 +423,9 @@ class UserInfo {
     
     async getNewbieAward(actid,ticket) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=award&channel=1&actid=${actid}&reward_ticket=${ticket}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=award&channel=1&actid=${actid}&reward_ticket=${ticket}&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -444,19 +440,61 @@ class UserInfo {
         } finally {}
     }
     
-    async getTaskStatus(taskItem,id,tid) {
+    async appGetTaskList(taskItem) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?id=${id}&tid=${tid}&actid=${taskItem.actid}&channel=1&action=taskstatus&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_${taskItem.activity}.fcgi?action=home&type=${taskItem.type}&actid=${taskItem.actid}&invite_code=&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('get',urlObject)
+            let result = httpResult;
+            if(!result) return
+            //console.log(result)
+            if(result.retcode==0) {
+                if(result.forbidden_code) {
+                    console.log(`获取${taskItem.taskName}[${taskItem.actid}]列表失败: ${result.forbidden_reason}`)
+                } else {
+                    if(result.task_pkg && result.task_pkg.length > 0){
+                        for(let item of result.task_pkg) {
+                            if(item.lotto_ticket) {
+                                //可领取新手奖励
+                                await this.getNewbieAward(taskItem.actid,item.lotto_ticket)
+                                continue;
+                            }
+                            if(item.reward_type > 0) {
+                                //已领取过新手奖励
+                                continue;
+                            }
+                            if(item.tasks && item.tasks.length > 0) {
+                                for(let task of item.tasks) {
+                                    await $.wait(200);
+                                    await this.appGetTaskStatus(taskItem,task.id,task.tid);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                console.log(`获取${taskItem.taskName}[${taskItem.actid}]列表失败: ${result.retmsg}`)
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {}
+    }
+    
+    async appGetTaskStatus(taskItem,id,tid) {
+        try {
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?id=${id}&tid=${tid}&actid=${taskItem.actid}&channel=1&action=taskstatus&openid=${this.openid}&fskey=${this.qlskey}`
+            let body = ``
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
             //console.log(result)
             if(result.retcode==0) {
                 if(result.done == 0) {
-                    await $.wait(100);
-                    await this.getTaskTicket(taskItem,id,tid);
+                    await $.wait(200);
+                    await this.appGetTaskTicket(taskItem,id,tid);
+                    
                 } else {
                     console.log(`${taskItem.taskName}[${taskItem.actid}-${id}]已完成`);
                 }
@@ -468,22 +506,18 @@ class UserInfo {
         } finally {}
     }
     
-    async getTaskTicket(taskItem,id,tid) {
+    async appGetTaskTicket(taskItem,id,tid) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=taskticket&channel=1&actid=${taskItem.actid}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=taskticket&channel=1&actid=${taskItem.actid}&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
             //console.log(result)
             if(result.retcode==0) {
-                if(result.task_ticket) {
-                    await $.wait(100);
-                    await this.taskDone(taskItem,result.task_ticket,id,tid);
-                } else {
-                    console.log(`申请任务票据失败`);
-                }
+                await $.wait(200);
+                await this.appTaskDone(taskItem,result.task_ticket,id,tid);
             } else {
                 console.log(`申请任务票据失败: ${result.retmsg}`)
             }
@@ -492,12 +526,117 @@ class UserInfo {
         } finally {}
     }
     
-    async taskDone(taskItem,ticket,id,tid) {
+    async appTaskDone(taskItem,ticket,id,tid) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=taskdone&channel=1&actid=${taskItem.actid}&id=${id}&tid=${tid}&task_ticket=${ticket}&openid=${this.openid}&fskey=${this.fskey}`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=taskdone&channel=1&actid=${taskItem.actid}&id=${id}&tid=${tid}&task_ticket=${ticket}&openid=${this.openid}&fskey=${this.qlskey}`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
+            let result = httpResult;
+            if(!result) return
+            //console.log(result)
+            if(result.retcode==0) {
+                console.log(`完成${taskItem.taskName}[${taskItem.actid}-${id}]:获得 ${result.reward_desc}`);
+            } else {
+                console.log(`${taskItem.taskName}[${taskItem.actid}-${id}]未完成：${result.retmsg}`);
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {}
+    }
+    
+    async wxGetTaskList(taskItem) {
+        try {
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_${taskItem.activity}.fcgi?action=home&type=${taskItem.type}&actid=${taskItem.actid}&invite_code=`
+            let body = ``
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('get',urlObject)
+            let result = httpResult;
+            if(!result) return
+            //console.log(result)
+            if(result.retcode==0) {
+                if(result.forbidden_code) {
+                    console.log(`获取${taskItem.taskName}[${taskItem.actid}]列表失败: ${result.forbidden_reason}`)
+                } else {
+                    if(result.task_pkg && result.task_pkg.length > 0){
+                        for(let item of result.task_pkg) {
+                            if(item.lotto_ticket) {
+                                //可领取新手奖励
+                                await this.getNewbieAward(taskItem.actid,item.lotto_ticket)
+                                continue;
+                            }
+                            if(item.reward_type > 0) {
+                                //已领取过新手奖励
+                                continue;
+                            }
+                            if(item.tasks && item.tasks.length > 0) {
+                                for(let task of item.tasks) {
+                                    await $.wait(200);
+                                    await this.wxGetTaskStatus(taskItem,task.id,task.tid);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                console.log(`获取${taskItem.taskName}[${taskItem.actid}]列表失败: ${result.retmsg}`)
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {}
+    }
+    
+    async wxGetTaskStatus(taskItem,id,tid,task_ticket='') {
+        try {
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi`
+            let body = `actid=${taskItem.actid}&id=${id}&tid=${tid}&action=taskstatus`
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('post',urlObject)
+            let result = httpResult;
+            if(!result) return
+            //console.log(result)
+            if(result.retcode==0) {
+                if(result.done == 0) {
+                    await $.wait(200);
+                    await this.wxGetTaskTicket(taskItem,id,tid);
+                } else {
+                    console.log(`${taskItem.taskName}[${taskItem.actid}-${id}]已完成`);
+                }
+            } else {
+                console.log(`查询[${taskItem.actid}-${id}]状态失败: ${result.retmsg}`)
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {}
+    }
+    
+    async wxGetTaskTicket(taskItem,id,tid) {
+        try {
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi`
+            let body = `actid=${taskItem.actid}&action=taskticket`
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('post',urlObject)
+            let result = httpResult;
+            if(!result) return
+            //console.log(result)
+            if(result.retcode==0) {
+                await $.wait(200);
+                await this.wxTaskDone(taskItem,result.task_ticket,id,tid);
+            } else {
+                console.log(`申请任务票据失败: ${result.retmsg}`)
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {}
+    }
+    
+    async wxTaskDone(taskItem,ticket,id,tid) {
+        try {
+            
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi`
+            let body = `actid=${taskItem.actid}&id=${id}&tid=${tid}&action=taskdone&task_ticket=${ticket}`
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('post',urlObject)
             let result = httpResult;
             if(!result) return
             //console.log(result)
@@ -513,16 +652,16 @@ class UserInfo {
     
     async getWithdrawTicket(item_id) {
         try {
-            let url = `https://zqact03.tenpay.com/cgi-bin/shop.fcgi?action=order_ticket&type=2&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://zqact03.tenpay.com/cgi-bin/shop.fcgi?action=order_ticket&type=2&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
             //console.log(result)
             if(result.retcode==0) {
                 if(result.ticket) {
-                    await $.wait(100);
+                    await $.wait(200);
                     await this.withdraw(result.ticket,item_id);
                 } else {
                     console.log(`申请提现票据失败`);
@@ -537,9 +676,9 @@ class UserInfo {
     
     async withdraw(ticket,item_id) {
         try {
-            let url = `https://zqact03.tenpay.com/cgi-bin/shop.fcgi?action=order&type=2&ticket=${ticket}&item_id=${item_id}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://zqact03.tenpay.com/cgi-bin/shop.fcgi?action=order&type=2&ticket=${ticket}&item_id=${item_id}&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -556,9 +695,9 @@ class UserInfo {
     
     async bullStatus() {
         try {
-            let url = `https://zqact03.tenpay.com/cgi-bin/activity_year_party.fcgi?invite_code=&help_code=&share_date=&type=bullish&action=home&actid=1105&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://zqact03.tenpay.com/cgi-bin/activity_year_party.fcgi?invite_code=&help_code=&share_date=&type=bullish&action=home&actid=1105&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -586,9 +725,9 @@ class UserInfo {
     
     async bullTaskDone(taskItem,extra='') {
         try {
-            let url = `https://zqact03.tenpay.com/cgi-bin/activity_year_party.fcgi?type=bullish&action=${taskItem.action}&actid=${taskItem.actid}${extra}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let url = `https://zqact03.tenpay.com/cgi-bin/activity_year_party.fcgi?type=bullish&action=${taskItem.action}&actid=${taskItem.actid}${extra}&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
@@ -598,15 +737,15 @@ class UserInfo {
                     console.log(`结束${taskItem.taskName}：${result.forbidden_reason}\n`);
                 } else if(result.reward_info) {
                     console.log(`${taskItem.taskName}获得: ${result.reward_info[0].reward_desc}\n`);
-                    await $.wait(100);
+                    await $.wait(1000);
                     await this.bullTaskDone(taskItem)
                 } else if(result.award_desc) {
                     console.log(`${taskItem.taskName}获得: ${result.award_desc}\n`);
-                    await $.wait(100);
+                    await $.wait(1000);
                     await this.bullTaskDone(taskItem,extra)
                 } else if(result.skin_info) {
                     console.log(`${taskItem.taskName}获得: ${result.skin_info.skin_desc}\n`);
-                    await $.wait(100);
+                    await $.wait(1000);
                     await this.bullTaskDone(taskItem)
                 } else if(result.skin_list && result.skin_list.length > 0) {
                     for(let skinItem of result.skin_list) {
@@ -619,7 +758,7 @@ class UserInfo {
                     if(result.level_up_status == 1) {
                         console.log(`长牛升级到等级${result.update_new_level}，获得: ${result.level_reward_info.reward_desc}\n`);
                     }
-                    await $.wait(100);
+                    await $.wait(2000);
                     await this.bullTaskDone(taskItem)
                 } else {
                     console.log(result)
@@ -636,30 +775,56 @@ class UserInfo {
         try {
             await this.bullStatus();
             if(!this.bullStatusFlag) return;
-            await $.wait(100);
+            await $.wait(200);
             await this.bullTaskDone(bullTaskArray["rock_bullish"])
+            await $.wait(200);
             for(let i=0; i<10; i++){
-                await $.wait(100);
                 await this.bullTaskDone(bullTaskArray["open_box"])
+                if(i < 9) await $.wait(2500)
             }
-            await $.wait(100);
+            await $.wait(200);
             await this.bullTaskDone(bullTaskArray["open_blindbox"])
-            await $.wait(100);
+            await $.wait(200);
             await this.bullTaskDone(bullTaskArray["query_blindbox"])
-            await $.wait(100);
+            await $.wait(200);
             await this.bullTaskDone(bullTaskArray["feed"])
-            await $.wait(100);
+            await $.wait(200);
         } catch(e) {
             console.log(e)
         } finally {}
     }
     
-    async getShareCode(share_type,type='daily') {
+    async appGetShareCode(share_type,type='daily') {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity/activity_share.fcgi?channel=1&action=query_share_code&share_type=${share_type}&openid=${this.openid}&fskey=${this.fskey}&buildType=store&check=11&_idfa=&lang=zh_CN`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity/activity_share.fcgi?channel=1&action=query_share_code&share_type=${share_type}&openid=${this.openid}&fskey=${this.qlskey}&buildType=store&check=11&_idfa=&lang=zh_CN`
             let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
+            let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
+            let result = httpResult;
+            if(!result) return
+            //console.log(result)
+            if(result.retcode==0) {
+                if(type == 'newbie') {
+                    this.shareCodes.newbie[share_type] = result.share_code
+                    console.log(`获取新手任务[${share_type}]互助码：${result.share_code}`)
+                } else {
+                    this.shareCodes.task[share_type] = result.share_code
+                    console.log(`获取日常任务[${share_type}]互助码：${result.share_code}`)
+                }
+            } else {
+                console.log(`获取[${share_type}]互助码失败：${result.retmsg}`);
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {}
+    }
+    
+    async wxGetShareCode(share_type,type='daily') {
+        try {
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_share.fcgi`
+            let body = `action=query_share_code&share_type=${share_type}`
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('post',urlObject)
             let result = httpResult;
             if(!result) return
             //console.log(result)
@@ -681,10 +846,10 @@ class UserInfo {
     
     async doShare(share_type,share_code) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_share.fcgi?action=share_code_info&share_type=${share_type}&share_code=${share_code}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
-            let body = ``
-            let urlObject = populateUrlObject(url,this.auth,body)
-            await httpRequest('get',urlObject)
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_share.fcgi`
+            let body = `action=share_code_info&share_type=${share_type}&share_code=${share_code}`
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('post',urlObject)
             let result = httpResult;
             if(!result) return
             //console.log(result)
@@ -714,7 +879,7 @@ class UserInfo {
         console.log('\n=================== 用户信息 ===================')
         for(let user of userList) {
             await user.getUserInfo(); 
-            await $.wait(100);
+            await $.wait(200);
         }
         
         let validUserList = userList.filter(x => x.valid)
@@ -724,30 +889,44 @@ class UserInfo {
         for(let user of validUserList) {
             console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
             await user.signTask(2002,signType.task); 
-            await $.wait(100);
+            await $.wait(200);
             await user.guessHome(); 
-            await $.wait(100);
-            for(let id of dailyTaskList) {
-                taskItem = {"taskName":"日常任务","activity":"task_daily","type":"routine","actid":id}
-                await user.getTaskList(taskItem); 
-                await $.wait(100);
+            await $.wait(200);
+            for(let id of taskList.app.daily) {
+                let taskItem = {"taskName":"APP任务","activity":"task_daily","type":"routine","actid":id}
+                await user.appGetTaskList(taskItem,'app'); 
+                await $.wait(200);
             }
-            for(let task of dailyShareTask) {
-                await user.getShareCode(task); 
-                await $.wait(100);
+            for(let id of taskList.wx.daily) {
+                let taskItem = {"taskName":"微信任务","activity":"task_daily","type":"routine","actid":id}
+                await user.wxGetTaskList(taskItem,'wx'); 
+                await $.wait(200);
+            }
+            for(let task of taskList.app.dailyShare) {
+                await user.appGetShareCode(task); 
+                await $.wait(200);
+            }
+            for(let task of taskList.wx.dailyShare) {
+                await user.wxGetShareCode(task); 
+                await $.wait(200);
             }
             await user.userBullTask(); 
-            await $.wait(100);
+            await $.wait(200);
         }
         
         console.log('\n=================== 新手任务 ===================')
         if(newbieFlag) {
             for(let user of validUserList) {
                 console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
-                for(let id of newbieTaskList) {
-                    taskItem = {"taskName":"新手任务","activity":"task_continue","type":"app_new_user","actid":id}
-                    await user.getTaskList(taskItem); 
-                    await $.wait(100);
+                for(let id of taskList.app.newbie) {
+                    let taskItem = {"taskName":"APP新手任务","activity":"task_continue","type":"app_new_user","actid":id}
+                    await user.appGetTaskList(taskItem,'app'); 
+                    await $.wait(200);
+                }
+                for(let id of taskList.wx.newbie) {
+                    let taskItem = {"taskName":"微信新手任务","activity":"task_continue","type":"wzq_welfare_growth","actid":id}
+                    await user.wxGetTaskList(taskItem,'wx'); 
+                    await $.wait(200);
                 }
             }
             
@@ -755,9 +934,9 @@ class UserInfo {
             if(validUserCount > 1) {
                 for(let user of validUserList) {
                     console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
-                    for(let task of newbieShareTask) {
-                        await user.getShareCode(task,'newbie'); 
-                        await $.wait(100);
+                    for(let task of taskList.wx.newbieShare) {
+                        await user.wxGetShareCode(task,'newbie'); 
+                        await $.wait(200);
                     }
                 }
                 for(let idx=0; idx < validUserCount; idx++) {
@@ -766,7 +945,7 @@ class UserInfo {
                     console.log(`\n--> 账号${helper.index}[${helper.name}] 去助力 账号${helpee.index}[${helpee.name}]:`)
                     for(let type in helpee.shareCodes.newbie) {
                         await helper.doShare(type,helpee.shareCodes.newbie[type]); 
-                        await $.wait(100);
+                        await $.wait(200);
                     }
                 }
             } else {
@@ -787,7 +966,7 @@ class UserInfo {
                     console.log(`\n--> 账号${helper.index}[${helper.name}] 去助力 账号${helpee.index}[${helpee.name}]:`)
                     for(let type in helpee.shareCodes.task) {
                         await helper.doShare(type,helpee.shareCodes.task[type]); 
-                        await $.wait(100);
+                        await $.wait(200);
                     }
                 }
             } else {
@@ -800,7 +979,7 @@ class UserInfo {
         console.log('\n=================== 提现 ===================')
         for(let user of validUserList) {
             await user.getUserInfo(true); 
-            await $.wait(100);
+            await $.wait(200);
         }
         
         await showmsg();
@@ -811,16 +990,11 @@ class UserInfo {
 
 ///////////////////////////////////////////////////////////////////
 async function GetRewrite() {
-    if($request.url.indexOf(`cgi-bin/userinfo.fcgi`) > -1 || $request.url.indexOf(`cgi-bin/activity_usercenter.fcgi`) > -1) {
-        let openid, qlskey;
-        if($request.url.indexOf('openid') > -1) {
-            openid = $request.url.match(/openid=([\w\-]+)/)[1]
-            qlskey = $request.url.match(/fskey=([\w\-]+)/)[1]
-        } else {
-            openid = $request.headers.Cookie.match(/openid=([\w\-]+)/)[1]
-            qlskey = $request.headers.Cookie.match(/qlskey=([\w\-]+)/)[1]
-        }
-        let ck = `${openid}&${qlskey}`
+    if($request.url.indexOf(`cgi-bin/userinfo.fcgi`) > -1 && $request.headers.Cookie) {
+        let openid = $request.headers.Cookie.match(/zxg_openid=([\w\-]+)/)[1]
+        let qlskey = $request.headers.Cookie.match(/wzq_qlskey=([\w\-]+)/)[1]
+        let qluin = $request.headers.Cookie.match(/wzq_qluin=([\w\-]+)/)[1]
+        let ck = `${openid}&${qlskey}&${qluin}`
         
         if(userCookie) {
             if(userCookie.indexOf(openid) == -1) {
@@ -918,17 +1092,18 @@ async function pushDear(str) {
     console.log(`\n========== PushDear 通知发送${retStr} ==========\n`)
 }
 ////////////////////////////////////////////////////////////////////
-function populateUrlObject(url,auth,body=''){
+function populateUrlObject(url,cookie,body=''){
     let host = url.replace('//','/').split('/')[1]
     let urlObject = {
         url: url,
         headers: {
             'Host': host,
+            'Cookie': cookie,
         },
     }
     if(body) {
         urlObject.body = body
-        urlObject.headers['Content-Type'] =  'application/json'
+        urlObject.headers['Content-Type'] =  'application/x-www-form-urlencoded'
         urlObject.headers['Content-Length'] = urlObject.body ? urlObject.body.length : 0
     }
     return urlObject;
