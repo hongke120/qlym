@@ -26,8 +26,69 @@
 * [wejson](https://wejson.cn/header2json/)
 
 
-
 ## :fire: 2022-3-20更新
+
+
+### 腾讯自选股V2 txstockV2.js
+
+cron 35 11,16 * * *
+
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+简化了抓包，适合新版的，老版的能跑就不用动！
+
+APP和公众号选一个抓就可以了，数据通用，多账户用@隔开
+
+1.APP：抓wzq.tenpay.com包，把url里的openid和fskey用&连起来填到TxStockCookie
+
+    export TxStockCookie='openid&fskey'
+
+2.公众号：腾讯自选股微信版->右下角好福利->福利中心，抓wzq.tenpay.com包，把Cookie里的zxg_openid和qlskey用&连起来填到TxStockCookie
+
+    export TxStockCookie='openid&fskey'
+
+
+提现设置：默认提现5元，需要改的话自己设置TxStockCash变量，0代表不提现，1代表提现1元，5代表提现5元
+
+    export TxStockCash='5'
+
+新手任务设置：默认不做新手任务，需要做的话设置TxStockNewbie为1
+
+    export TxStockNewbie='1'
+
+分享任务设置：默认会做互助任务，需要多账号。不想做的话设置TxStockHelp为0
+
+    export TxStockHelp='0'
+
+
+</details>
+
+    // 2022-3-21使用了new版的看过来，现在的脚本比较好抓了
+
+
+
+
+### ~删除沃邮箱 公众号 wx_wyx.js~
+
+cron 11 10 * * *
+
+    // 公众号连续几次系统维护，跑不动了
+
+
+
+### ~删除亿享云 yxyapp.js~
+
+
+cron 随意，一天一次即可
+
+    // 凉了
+
+
+
+## 2022-3-20更新
 
 
 ### 广汽三菱 gqsl.js
@@ -348,7 +409,7 @@ https://api.yd.ihaoqu.com/?r=api2&apiAction=SignIn
 
 </details>
 
-    //2022-3-2签到兑换京东E卡
+    //2022-3-2签到兑换京东E卡，失效了再抓
 
 
 
@@ -472,6 +533,8 @@ module.exports = {"code":200,
     //2022-2-22更新：报错的重新拉
 
 
+
+
 ### 腾讯自选股 txstock.js
 
 cron 35 11,16 * * *
@@ -527,8 +590,7 @@ https://wzq.tenpay.com/cgi-bin/activity_task_daily.fcgi?
 
 </details>
 
-    // 新增一个新版的，老版能跑的请禁用！！！
-    新抓包的用new版，不然可能报错，老版的不用管
+    // 老版本，刚看到的请看新脚本
 
 
 
@@ -897,29 +959,6 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
 
 
 
-### 沃邮箱 公众号 wx_wyx.js
-
-cron 11 10 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-关注公众号:联通沃邮箱-进入邮箱，不知道密码的重置
-
-重置密码：https://user.mail.wo.cn/m/reset?mobile
-
-
-抓Get包，福利中心-签到领话费，多账号@隔开
-
-https://nyan.mail.wo.cn/cn/sign/index/index?mobile=***&userName=&openId=***
-
-    export soy_wyx_data="手机号#密码#抓包链接https://nyan.mail.wo.cn/cn/sign/index/index?mobile=***&userName=&openId=***"
-    
-    export soy_wyx_UA="Mozilla/5.0***"
-
-</details>
-
-    // 目前公众号系统在维护，跑不动
 
 
 
@@ -996,23 +1035,7 @@ https://api.ys7.com/v3/integral/yd/pay
     // 要攒到1块钱是个无比漫长的过程
 
 
-### 亿享云 yxyapp.js
 
-
-cron 随意，一天一次即可
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-注册地址：https://ystzwz.com/h6/#/
-
-就是个网页，没有APP的
-
-    export yxyPhone='手机号#密码'
-
-</details>
-
-    // 不知道靠不靠谱，反正一直活着
 
 
 ## 晶彩看点 jckd
