@@ -5,14 +5,26 @@
  * 广汽三菱App 
  * 任务：签到、分享动态、回答问题、分享咨询、发布评论、分享活动
  * 没什么卵用 一天才50积分 一个月1500 加上签到累计奖励 随便挂着一、二个月也能兑换点东西 积分到账会有延迟
- * export slCookies='xxxxx@xxxxxx' 多个账号用 @分割 请求头Authorization的值 多账户请多开应用 退出会使Authorization失效
+ * export slCookies='xxxxx@xxxxxx' 多个账号用 @分割 Authorization的值 多账户请多开APP 退出会使Authorization失效
  * 频道：https://t.me/FengYun27
+ * 
+ * V2P，QX重写
+ * 广汽三菱APP-->我的-->右上角签到
+ * [task_local]
+ * #腾讯自选股
+ * 0 0 7 * * ? https://raw.githubusercontent.com/FengYun27/YunFeng_Repo/main/other/gqsl.js, tag=广汽三菱, enabled=true
+ * [rewrite_local]
+ * https://mspace.gmmc.com.cn/customer-app/task-mapi/sign-count url script-request-header https://raw.githubusercontent.com/FengYun27/YunFeng_Repo/main/other/gqsl.js
+ * [MITM]
+ * hostname = mspace.gmmc.com.cn
  */
 const $ = new Env("广汽三菱");
-const notify = $.isNode() ? require("./sendNotify") : "";
-slCookies = $.isNode() ? process.env.slCookies : "";
-slCookiesArr = [];
-body = {
+const Notify = 1; //0为关闭通知，1为打开通知,默认为1
+
+let slCookies = ($.isNode() ? process.env.slCookies : $.getdata('slCookies')) || "";
+let slCookiesArr = [];
+let msg = '';
+let body = {
     url: 'https://mspace.gmmc.com.cn/',
     headers: {
         'Authorization': '',
@@ -20,94 +32,179 @@ body = {
     },
     body: ''
 }
-msg = '';
+let UserId = ''
+
+const CommentArr = ['文章很不错', '赞赞赞', '三菱汽车真不错', '真好看', '👍👍👍']
+const QA_Arr = ['是', '没错', '百度可以找得到', '专业人士来解答一下,我也有这个问题']
 
 !(async () => {
-    if ($.isNode()) {
-        if (slCookies) {
-            if (slCookies.indexOf("@") != -1) {
-                slCookies.split("@").forEach((item) => {
-                    slCookiesArr.push(item);
-                });
-            } else {
-                slCookiesArr.push(slCookies);
-            }
-        } else {
-            $.log(`\n【${$.name}】：未填写变量 slCookies`)
+    if (typeof $request !== "undefined") {
+        await GetRewrite()
+    } else {
+        if (!(await Envs()))
             return;
+        else {
+            $.log(`=================== 共找到 ${slCookiesArr.length} 个账号 ===================`)
+            //$.log(slCookiesArr)
+
+            for (let index = 0; index < slCookiesArr.length; index++) {
+                let cookie = slCookiesArr[index]
+                body.headers = {
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 DSApp/2.2.5 StatusBarHeight/44 BottomBarHeight/34',
+                    'Authorization': `${cookie}`,
+                    'Content-Type': 'application/json;charset=utf-8'
+                }
+                await $.wait(1 * 1000);
+                var num = index + 1
+                $.log(`\n========= 开始【第 ${num} 个账号】=========`)
+                msg += `\n【第 ${num} 个账号】`
+                $.log(cookie)
+                //await Update_Info();
+
+                var status = await Query_UserInfo(slCookiesArr[index]);
+                if (!status) continue;
+
+                await Query_Balance(true);
+                await $.wait(1 * 1000);
+
+                $.log('开始 【签到】...')
+                await Sign_In();
+                await $.wait(2 * 1000);
+
+                $.log('开始 【分享动态】...')
+                await Share_4();
+                await $.wait(2 * 1000);
+
+                $.log('开始 【分享资讯】...')
+                await Share_5();
+                await $.wait(2 * 1000);
+
+                $.log('开始 【分享活动】...')
+                await Share_6();
+                await $.wait(2 * 1000);
+
+                $.log('开始 【发布评论】...')
+                await Add_Comment();
+                await $.wait(2 * 1000);
+
+                $.log('开始 【回答问题】...')
+                await Add_Answer();
+                await $.wait(2 * 1000);
+
+                $.log('开始 【发布动态】...')
+                await Add_Dynamic();
+                await $.wait(2 * 1000);
+
+                $.log('开始删除所有动态、回答、评论...')
+                await Remove_Dynamic()
+                await AnswerDelete()
+                await DeleteMyComment();
+
+                await $.wait(10 * 1000);
+                await Query_Balance();
+
+                await SendMsg(msg);
+            }
         }
     }
-    $.log(`=================== 共找到 ${slCookiesArr.length} 个账号 ===================`)
-    $.log(slCookiesArr)
-    await $.wait(1 * 1000);
-
-    for (let index = 0; index < slCookiesArr.length; index++) {
-        let cookie = slCookiesArr[index]
-        body.headers = {
-            'Authorization': `${cookie}`,
-            'Content-Type': 'application/json;charset=utf-8'
-        }
-        await $.wait(1 * 1000);
-        var num = index + 1
-        $.log(`\n========= 开始【第 ${num} 个账号】=========`)
-        msg += `【第 ${num} 个账号】\n`
-        $.log(cookie)
-        //await Update_Info();
-
-        await Query_UserInfo(slCookiesArr[index]);
-        await Query_Balance(true);
-        await $.wait(1 * 1000);
-
-        $.log('开始 【签到】')
-        await Sign_In();
-        await $.wait(2 * 1000);
-
-        $.log('开始 【分享动态】')
-        await Share_4();
-        await $.wait(2 * 1000);
-
-        $.log('开始 【分享资讯】')
-        await Share_5();
-        await $.wait(2 * 1000);
-
-        $.log('开始 【分享活动】')
-        await Share_6();
-        await $.wait(2 * 1000);
-
-        $.log('开始 【发布评论】')
-        await Add_Comment();
-        await $.wait(2 * 1000);
-
-        $.log('开始 【回答问题】')
-        await Add_Answer();
-        await $.wait(2 * 1000);
-
-        $.log('开始 【发布动态】')
-        await Add_Dynamic();
-        await $.wait(2 * 1000);
-        await Remove_Dynamic()
-
-        await $.wait(10 * 1000);
-        await Query_Balance();
-    }
-    await notify.sendNotify($.name, msg, 'https://t.me/FengYun27');
 })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done())
+
+//#region 固定代码
+// ============================================变量检查============================================ \\
+async function Envs () {
+    if (slCookies) {
+        if (slCookies.indexOf("@") != -1) {
+            slCookies.split("@").forEach((item) => {
+                slCookiesArr.push(item);
+            });
+        } else {
+            slCookiesArr.push(slCookies);
+        }
+    } else {
+        $.log(`\n【${$.name}】：未填写变量 slCookies`)
+        return;
+    }
+
+    return true;
+}
+// ============================================ 重写 ============================================ \\
+async function GetRewrite () {
+    if ($request.url.indexOf(`sign-count`) > -1 && $request.headers.Authorization) {
+        let Authorization = $request.headers.Authorization
+        if (Authorization == 'Authorization=anonymous')
+            return;
+        let cookie = Authorization
+
+        if (slCookies != '') {
+            if (slCookies.indexOf(cookie) == -1) {
+                slCookies = slCookies + '@' + cookie
+                let List = slCookies.split('@')
+
+                $.setdata(slCookies, 'slCookies');
+                $.msg(`【${$.name}】 获取第${List.length}个CK成功: ${cookie}`)
+            } else {
+                //$.msg($.name + ` 该账号CK已存在`)
+            }
+        } else {
+            $.setdata(cookie, 'slCookies');
+            $.msg(`【${$.name}】 获取第1个CK成功: ${cookie}`)
+        }
+    }
+}
+// ============================================发送消息============================================ \\
+async function SendMsg (message) {
+    if (!message)
+        return;
+
+    if (Notify > 0) {
+        if ($.isNode()) {
+            var notify = require('./sendNotify');
+            await notify.sendNotify($.name, message);
+        } else {
+            $.msg(message);
+        }
+    } else {
+        console.log(message);
+    }
+}
+
+/**
+ * 随机数生成
+ */
+function randomString (e) {
+    e = e || 32;
+    var t = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890",
+        a = t.length,
+        n = "";
+    for (i = 0; i < e; i++)
+        n += t.charAt(Math.floor(Math.random() * a));
+    return n
+}
+
+/**
+ * 随机整数生成
+ */
+function randomInt (min, max) {
+    return Math.round(Math.random() * (max - min) + min)
+}
+//#endregion
 
 /**
  * 签到
  */
 function Sign_In () {
     body.url = 'https://mspace.gmmc.com.cn/customer-app/task-mapi/sign-in?noLoad=true'
-    body.body = `{"taskTypeCode": "TASK-INTEGRAL-SIGN-IN","step": 1,"sign": "4b2d8ddcb9e2968778c58d131d7b30ff","timestamp": "","appVersion": "2.2.5","operateSystem": "iOS"}`;
+    body.body = `{"taskTypeCode": "TASK-INTEGRAL-SIGN-IN","step": 1,"sign": "${randomString(32)}","timestamp": "","appVersion": "2.2.5","operateSystem": "iOS"}`;
 
     return new Promise((resolve) => {
         $.post(body, async (err, resp, data) => {
             try {
                 results = JSON.parse(data);
                 if (results.code == 0000) {
-                    console.log(`【签到状态】:${results.data.isSignIn == true ? '签到成功' : '未签到'}`)
+                    console.log(`【签到状态】:${results.data.isSignIn == true ? '签到成功' : '未签到'}\n已连续签到:${results.data.days}天\n(30,60,100,180,365)可以领取连签奖励`)
+                    msg += `\n【已连续签到】${results.data.days}天   (30,60,100,180,365)可以领取连签奖励`
                 } else {
                     $.log(results.msg)
                 }
@@ -196,11 +293,76 @@ function Share_6 () {
 }
 
 /**
- * 发表评论
+ * 查询文章列表
  */
-function Add_Comment () {
+async function Article_QueryByPage () {
+    body.url = `https://mspace.gmmc.com.cn/platform-cms-app/frontend/article/queryByPage?pageNo=${randomInt(10, 300)}&pageSize=${randomInt(0, 18)}&source=1`
+
+    return new Promise((resolve) => {
+        $.get(body, async (err, resp, data) => {
+            try {
+                results = JSON.parse(data);
+                if (results.code == 0000) {
+                    let IdArr = [];
+                    for (i = 0; i < results.data.list.length; i++) {
+                        IdArr.push(results.data.list[i].articleId)
+                    }
+                    //$.log(`共有${IdArr.length}条动态`);
+                    resolve(IdArr);
+                } else {
+                    $.log(results.msg)
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve()
+            }
+        })
+    })
+}
+
+/**
+ * 查询评论列表
+ */
+async function CommentQueryByPage () {
+    body.url = `https://mspace.gmmc.com.cn/social-cms-app/frontend/comment/my/queryByPage`
+    body.body = `{"pageSize":50,"pageNo":1}`
+
+    return new Promise((resolve) => {
+        $.post(body, async (err, resp, data) => {
+            try {
+                results = JSON.parse(data);
+                if (results.code == '0000') {
+                    let IdArr = [];
+                    for (i = 0; i < results.data.list.length; i++) {
+                        IdArr.push(results.data.list[i].commentId)
+                    }
+                    $.log(`共有${IdArr.length}条评论`);
+                    resolve(IdArr);
+                } else {
+                    $.log(results.msg)
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve()
+            }
+        })
+    })
+}
+
+/**
+ * 发表文章评论
+ */
+async function Add_Comment () {
+    //var IdArr = await Article_QueryByPage();
+
     body.url = `https://mspace.gmmc.com.cn/social-cms-app/frontend/comment/add`
-    body.body = '{"commentContent": "很不错","commentType": 6,"commentTypeBusinessId": 2622012}'
+    body.body = `{
+        "commentContent": "${CommentArr[randomInt(0, CommentArr.length)]}",
+        "commentType": 1,
+        "commentTypeBusinessId": ${randomInt(701, 1103)}
+    }`
 
     return new Promise((resolve) => {
         $.post(body, async (err, resp, data) => {
@@ -221,11 +383,100 @@ function Add_Comment () {
 }
 
 /**
+ * 删除评论
+ */
+async function DeleteMyComment () {
+    let IdArr = await CommentQueryByPage();
+    if (IdArr) {
+        if (IdArr.length > 0) {
+            $.log(`开始 【删除评论】`);
+            for (let i = 0; i < IdArr.length; i++) {
+                body.url = `https://mspace.gmmc.com.cn/social-cms-app/frontend/comment/delete`
+                body.body = `{"commentId":${IdArr[i]}}`
+                await $.post(body, async (err, resp, data) => {
+                    try {
+                        if (results.code == '0000') {
+                            $.log(`【评论(${IdArr[i]})】:删除成功`);
+                        } else {
+                            $.log(results.msg)
+                        }
+                    } catch (e) {
+                        $.logErr(e, resp);
+                    } finally {
+                    }
+                })
+                await $.wait(1 * 1000);
+            }
+        }
+    }
+}
+
+/**
+ * 查询回答列表
+ */
+async function AnswerList () {
+    body.url = `https://mspace.gmmc.com.cn/social-cms-app/frontend/qa/my-answer-list`
+    body.body = `{"pageSize": 50,"fansId": ${UserId},"pageNo": 1}`
+
+    return new Promise((resolve) => {
+        $.post(body, async (err, resp, data) => {
+            try {
+                results = JSON.parse(data);
+                if (results.code == 0000) {
+                    let IdArr = [];
+                    for (i = 0; i < results.data.list.length; i++) {
+                        IdArr.push(results.data.list[i].answerId)
+                    }
+                    $.log(`共有${IdArr.length}条回答`);
+                    resolve(IdArr);
+                } else {
+                    $.log(results.msg)
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve()
+            }
+        })
+    })
+}
+
+/**
+ * 查询问题列表
+ */
+async function QA_List () {
+    body.url = `https://mspace.gmmc.com.cn/social-cms-app/frontend/qa/list`
+    body.body = `{"pageSize":30,"pageNo":1}`
+
+    return new Promise((resolve) => {
+        $.post(body, async (err, resp, data) => {
+            try {
+                results = JSON.parse(data);
+                if (results.code == 0000) {
+                    let IdArr = [];
+                    for (i = 0; i < results.data.list.length; i++) {
+                        IdArr.push(results.data.list[i].questionId)
+                    }
+                    resolve(IdArr);
+                } else {
+                    $.log(results.msg)
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve()
+            }
+        })
+    })
+}
+
+/**
  * 回答问题
  */
-function Add_Answer () {
+async function Add_Answer () {
+    let IdArr = await QA_List();
     body.url = `https://mspace.gmmc.com.cn/social-cms-app/frontend/qa/addAnswer`
-    body.body = '{"content": "可以","pics": [],"questionId": 28176}'
+    body.body = `{"content": "${QA_Arr[randomInt(0, QA_Arr.length)]}","pics": [],"questionId": ${IdArr[randomInt(0, IdArr.length)]}}`
 
     return new Promise((resolve) => {
         $.post(body, async (err, resp, data) => {
@@ -246,9 +497,38 @@ function Add_Answer () {
 }
 
 /**
+ * 删除回答
+ */
+async function AnswerDelete () {
+    let IdArr = await AnswerList();
+    if (IdArr) {
+        if (IdArr.length > 0) {
+            $.log(`开始 【删除回答】`);
+            for (let i = 0; i < IdArr.length; i++) {
+                body.url = `https://mspace.gmmc.com.cn/social-cms-app/frontend/qa/answer-delete`
+                body.body = `{"answerId": ${IdArr[i]}}`
+                await $.post(body, async (err, resp, data) => {
+                    try {
+                        if (results.code == '0000') {
+                            $.log(`【回答(${IdArr[i]})】:删除成功`);
+                        } else {
+                            $.log(results.msg)
+                        }
+                    } catch (e) {
+                        $.logErr(e, resp);
+                    } finally {
+                    }
+                })
+                await $.wait(1 * 1000);
+            }
+        }
+    }
+}
+
+/**
  * 发布动态
  */
-function Add_Dynamic () {
+async function Add_Dynamic () {
     body.url = `https://mspace.gmmc.com.cn/social-cms-app/frontend/dynamic/add`
     body.body = '{"province":"广东省","content":"hello啊","btype":0,"backgroundContent":"hello啊","area":"白云区","city":"广州市","lat":116.397128,"lng":39.916527,"dynamicFileList":[],"topicList":[]}'
 
@@ -273,7 +553,7 @@ function Add_Dynamic () {
 /**
  * 更改资料
  */
-function Update_Info () {
+async function Update_Info () {
     var int = Math.ceil(Math.random() * 9999)
     body.url = 'https://mspace.gmmc.com.cn/user-soa/user/account/update'
     body.body = `{"city":"1101","nickname":"MFans_FengYun${int}","signature":"TG频道：@FengYun27","realname":"FENGYUN${int}","thumb":"https://mspace-static.gmmc.com.cn/upload/prod/image/avatar/2022-02-18/47A9C99C-36D7-4AC2-A5FB-E40FAC0A4B18.jpg","sex":1,"dateBirth":"2022/03/19","province":"110000"}`
@@ -298,7 +578,7 @@ async function Remove_Dynamic () {
     if (IdArr) {
         if (IdArr.length > 0) {
             $.log(`开始 【删除动态】`);
-            for (i = 0; i < IdArr.length; i++) {
+            for (let i = 0; i < IdArr.length; i++) {
                 body.url = 'https://mspace.gmmc.com.cn/social-cms-app/frontend/dynamic/delete'
                 body.body = `{"dynamicId": ${IdArr[i]}}`
                 await $.post(body, async (err, resp, data) => {
@@ -323,7 +603,7 @@ async function Remove_Dynamic () {
  * 查询所有动态
  * @returns 所有动态id
  */
-function Query_Dynamic () {
+async function Query_Dynamic () {
     body.url = 'https://mspace.gmmc.com.cn/social-cms-app/frontend/dynamic/my/queryByPage'
     body.body = '{"fansUserId": "","pageSize": 50,"queryType": 0,"pageNo": 1}'
 
@@ -353,7 +633,7 @@ function Query_Dynamic () {
 /**
  * 查询用户资料
  */
-function Query_UserInfo (authorization) {
+async function Query_UserInfo (authorization) {
     let url = {
         url: 'https://mspace.gmmc.com.cn/social-cms-app/frontend/userFollowers/userHomePage',
         headers: {
@@ -367,16 +647,20 @@ function Query_UserInfo (authorization) {
                 results = JSON.parse(data);
                 if (results.code == 0000) {
                     $.log(`
-用户Id:${results.data.userId}
-用户昵称:${results.data.nickname}
-手机号:${results.data.mobile}`)
+【用户Id】 ${results.data.userId}
+【用户昵称】 ${results.data.nickname}
+【手机号】 ${results.data.mobile}`)
 
                     msg += `
-用户昵称:${results.data.nickname}
-手机号:${results.data.mobile}`
+【用户昵称】 ${results.data.nickname}
+【手机号】 ${results.data.mobile}`
+
+                    UserId = results.data.code
+                    resolve(true)
                 } else {
                     $.log(results.msg)
-                    msg += '账号已过期\n'
+                    SendMsg(`${authorization}该CK已过期`)
+                    resolve(false)
                 }
             } catch (e) {
                 $.logErr(e, resp);
@@ -390,7 +674,7 @@ function Query_UserInfo (authorization) {
 /**
  * 查询总积分
  */
-function Query_Balance (frist) {
+async function Query_Balance (frist) {
     body.url = 'https://mspace.gmmc.com.cn/life-main-app/frontend/integral/queryBalance'
 
     return new Promise((resolve) => {
@@ -399,11 +683,11 @@ function Query_Balance (frist) {
                 results = JSON.parse(data);
                 if (results.code == 0000) {
                     if (frist) {
-                        msg += `\n【任务前总积分】:${results.data}`
-                        console.log(`【任务前总积分】:${results.data}`)
+                        msg += `\n【任务前总积分】: ${results.data}`
+                        console.log(`【任务前总积分】 ${results.data}`)
                     } else {
-                        msg += `【任务后总积分】:${results.data}\n`
-                        console.log(`【任务后总积分】:${results.data}\n`)
+                        msg += `\n【任务后总积分】 ${results.data}\n`
+                        console.log(`\n【任务后总积分】 ${results.data}\n`)
                     }
                 } else {
                     $.log(results.msg)
