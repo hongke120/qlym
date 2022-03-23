@@ -5,20 +5,24 @@
 一天跑两次就够了，10点到13点之间运行一次猜涨跌做任务，16点半之后运行一次领猜涨跌奖励
 提现设置：默认提现5元，需要改的话自己设置TxStockCash变量，0代表不提现，1代表提现1元，5代表提现5元
 新手任务设置：默认不做新手任务，需要做的话设置TxStockNewbie为1
-分享任务设置：默认会做互助任务，需要多账号。不想做的话设置TxStockHelp为0
+分享任务设置：默认会做互助任务，需要多账号，黑号也能完成分享任务。不想做的话设置TxStockHelp为0
+可以设置某些号只助力别的号不做任务(没资格的小号可以助力大号)，在对应的ck后面加&task=0
+没有捉到微信CK的也可以跑脚本，删掉wzq_qlskey和wzq_qluin就行，会尝试用APP的CK去完成微信任务，出现做任务失败是正常现象
 
-青龙：
-公众号 腾讯自选股微信版->右下角好福利->福利中心，捉wzq.tenpay.com包，把Cookie里的zxg_openid，wzq_qlskey和wzq_qluin用&连起来填到TxStockCookie
-
-export TxStockCookie='openid&wzq_qlskey&wzq_qluin'
+青龙捉包，需要捉APP和公众号里面的小程序
+1. 打开APP，捉wzq.tenpay.com包，把url里的openid和fskey用&连起来填到TxStockCookie
+2. 公众号 腾讯自选股微信版->右下角好福利->福利中心，捉wzq.tenpay.com包，把Cookie里的wzq_qlskey和wzq_qluin用&连起来填到TxStockCookie
+格式如下：
+export TxStockCookie='openid=xx&fskey=yy&wzq_qlskey=zz&wzq_qluin=aa'
 
 V2P，圈X重写：
+打开APP和小程序自动获取
 小程序入口：公众号 腾讯自选股微信版->右下角好福利->福利中心
 [task_local]
 #腾讯自选股
 35 11,16 * * * https://raw.githubusercontent.com/leafxcy/JavaScript/main/txstockV2.js, tag=腾讯自选股, enabled=true
 [rewrite_local]
-https://wzq.tenpay.com/cgi-bin/userinfo.fcgi url script-request-header https://raw.githubusercontent.com/leafxcy/JavaScript/main/txstockV2.js
+https://wzq.tenpay.com/cgi-bin/.*user.*.fcgi url script-request-header https://raw.githubusercontent.com/leafxcy/JavaScript/main/txstockV2.js
 [MITM]
 hostname = wzq.tenpay.com
 */
@@ -40,23 +44,27 @@ let userList = []
 let userIdx = 0
 let userCount = 0
 
+let TASK_WAITTIME = 100
+let BULL_WAITTIME = 5000
+
 let test_taskList = []
 let todayDate = formatDateTime();
 let SCI_code = '000001' //上证指数
-let signType = {task:'welfare_sign', sign:'signdone', award:'award'}
+let marketCode = {'sz':0, 'sh':1, 'hk':2, }
+let signType = {task:'home', sign:'signdone', award:'award'}
 
 let taskList = {
     app: {
         daily: [1105, 1101, 1111, 1113],
         newbie: [1023, 1033],
-        dailyShare: ["news_share", "task_50_1111", "task_51_1111", "task_72_1113", "task_74_1113"],
+        dailyShare: ["news_share", "task_50_1101", "task_51_1101", "task_50_1111", "task_51_1111", "task_51_1113", "task_72_1113", "task_74_1113", "task_75_1113", "task_76_1113"],
         newbieShare: [],
     },
     wx: {
         daily: [1100, 1110, 1112],
         newbie: [1032],
-        dailyShare: ["task_50_1100", "task_51_1100", "task_66_1110", "task_50_1110", "task_51_1110", "task_51_1112", "task_51_1113"],
-        newbieShare: ["task_50_1032", "task_51_1032"],
+        dailyShare: ["task_50_1100", "task_51_1100", "task_50_1110", "task_51_1110", "task_66_1110", "task_51_1112", "task_75_1112"],
+        newbieShare: ["task_50_1032", "task_51_1032", "task_50_1033", "task_51_1033"],
     },
 }
 
@@ -74,20 +82,62 @@ class UserInfo {
     constructor(str) {
         this.index = ++userIdx
         this.name = this.index
+        this.canRun = true
+        this.hasWxCookie = true
         this.valid = false
         this.coin = -1
-        let info = str.split('&')
-        this.openid = info[0]
-        this.qlskey = info[1]
-        this.qluin = info[2]
-        this.cookie = `wzq_qlskey=${this.qlskey}; wzq_qluin=${this.qluin};`
         this.shareCodes = {task:{}, newbie:{}, bull:{}, guess:{}}
         this.bullStatusFlag = false
+        
+        let info = str2json(str)
+        this.openid = info['openid'] || ''
+        this.fskey = info['fskey'] || ''
+        this.wzq_qlskey = info['wzq_qlskey'] || ''
+        this.wzq_qluin = info['wzq_qluin'] || ''
+        this.task = info['task'] || 1
+        this.cookie = `wzq_qlskey=${this.wzq_qlskey}; wzq_qluin=${this.wzq_qluin}; zxg_openid=${this.openid};`
+        
+        let checkParam = ['openid','fskey','wzq_qlskey','wzq_qluin']
+        let missEnv = []
+        for(let param of checkParam) {
+            if(!this[param]) missEnv.push(param);
+        }
+        if(missEnv.length > 0) {
+            let missStr = missEnv.join(', ')
+            let notiStr = `账号[${this.index}]缺少参数：${missStr}`
+            if(missStr.indexOf('openid') > -1 || missStr.indexOf('fskey') > -1 ) {
+                notiStr += '，无法运行脚本'
+                this.canRun = false
+            } else if(missStr.indexOf('wzq_qlskey') > -1 || missStr.indexOf('wzq_qluin') > -1) {
+                notiStr += '，尝试用APP的CK去完成微信任务和助力，可能出现失败情况'
+                this.hasWxCookie = false
+            }
+            console.log(notiStr)
+        }
+    }
+    
+    async getUserName() {
+        try {
+            let url = `https://proxy.finance.qq.com/group/newstockgroup/RssService/getSightByUser2?g_openid=${this.openid}&openid=${this.openid}&fskey=${this.fskey}`
+            let body = `g_openid=${this.openid}&search_openid=${this.openid}`
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('post',urlObject)
+            let result = httpResult;
+            if(!result) return
+            //console.log(result)
+            if(result.code==0) {
+                this.name = result.data.user_name
+            } else {
+                console.log(`账号[${this.name}]查询账户昵称失败: ${result.msg}`)
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {}
     }
     
     async getUserInfo(isWithdraw=false) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/shop.fcgi?action=home_v2&type=2&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/shop.fcgi?action=home_v2&type=2&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -98,7 +148,6 @@ class UserInfo {
                 this.valid = true
                 let lastCoin = this.coin
                 this.coin = result.shop_asset ? result.shop_asset.amount : 0
-                this.name = result.shop_asset ? result.shop_asset.nickname : this.index
                 if(lastCoin > -1) {
                     logAndNotify(`账号[${this.name}]金币余额：${this.coin}，本次运行共获得${this.coin-lastCoin}金币`)
                 } else {
@@ -112,7 +161,7 @@ class UserInfo {
                             if(cashItem.item_desc == cashStr){
                                 if(parseInt(this.coin) >= parseInt(cashItem.coins)){
                                     logAndNotify(`账号[${this.name}]金币余额多于${cashItem.coins}，开始提现${cashStr}`);
-                                    await $.wait(200);
+                                    await $.wait(TASK_WAITTIME);
                                     await this.getWithdrawTicket(cashItem.item_id);
                                 } else {
                                     console.log(`账号[${this.name}]金币余额不足${cashItem.coins}，不提现`);
@@ -130,9 +179,16 @@ class UserInfo {
         } finally {}
     }
     
-    async signTask(actid,type,ticket='') {
+    async signTask(actid,action,ticket='') {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_sign_task.fcgi?actid=${actid}&channel=1&type=welfare_sign&action=home&date=${todayDate}&openid=${this.openid}&fskey=${this.qlskey}&reward_ticket=${ticket}`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_sign_task.fcgi?actid=${actid}&channel=1&action=${action}&openid=${this.openid}&fskey=${this.fskey}`
+            if(action == signType.task) {
+                url += `&type=welfare_sign`
+            } else if(action == signType.sign) {
+                url += `&date=${todayDate}`
+            } else if (action == signType.award) {
+                url += `&reward_ticket=${ticket}`
+            }
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -143,13 +199,14 @@ class UserInfo {
                 if(result.forbidden_code) {
                     console.log(`查询签到任务失败，可能已黑号: ${result.forbidden_reason}`)
                 } else {
-                    if(type == signType.task) {
+                    if(action == signType.task) {
+                        console.log(`已连续签到${result.task_pkg.continue_sign_days}天，总签到天数${result.task_pkg.total_sign_days}天`)
                         for(let item of result.task_pkg.tasks) {
                             if(item.date == todayDate){
                                 if(item.status == 0){
                                     //今天未签到，去签到
-                                    await $.wait(200);
-                                    await this.signtask(actid,signType.sign);
+                                    await $.wait(TASK_WAITTIME);
+                                    await this.signTask(actid,signType.sign);
                                 } else {
                                     //今天已签到
                                     console.log(`今天已签到`);
@@ -157,12 +214,12 @@ class UserInfo {
                             }
                         }
                         if(result.lotto_chance > 0 && result.lotto_ticket) {
-                            await $.wait(200);
+                            await $.wait(TASK_WAITTIME);
                             await this.signTask(actid,signType.award,result.lotto_ticket);
                         }
-                    } else if(type == signType.sign) {
+                    } else if(action == signType.sign) {
                         console.log(`签到获得${result.reward_desc}`);
-                    } else if(type == signType.sign) {
+                    } else if(action == signType.award) {
                         console.log(`领取连续签到奖励获得${result.reward_desc}`);
                     }
                 }
@@ -176,7 +233,7 @@ class UserInfo {
     
     async guessHome() {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/guess_home.fcgi?channel=1&source=2&new_version=3&openid=${this.openid}&fskey=${this.qlskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/guess_home.fcgi?channel=1&source=2&new_version=3&openid=${this.openid}&fskey=${this.fskey}`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -193,7 +250,7 @@ class UserInfo {
                 if(result.notice_info && result.notice_info[0]) {
                     if(result.notice_info[0].answer_status == 1) {
                         console.log(`上期猜上证指数涨跌回答正确，准备领取奖励...`)
-                        await $.wait(100)
+                        await $.wait(TASK_WAITTIME);
                         await this.getGuessAward(result.notice_info[0].date)
                     } else {
                         console.log(`上期猜上证指数涨跌回答错误`)
@@ -204,7 +261,7 @@ class UserInfo {
                 if(result.stock_notice_info && result.stock_notice_info[0]) {
                     if(result.stock_notice_info[0].guess_correct == 1) {
                         console.log(`上期猜个股涨跌回答正确，准备领取奖励...`)
-                        await $.wait(100)
+                        await $.wait(TASK_WAITTIME);
                         await this.getGuessStockAward(result.stock_notice_info[0].date)
                     } else {
                         console.log(`上期猜个股涨跌回答错误`)
@@ -218,10 +275,10 @@ class UserInfo {
                         if(result.date_list) {
                             for(let item of result.date_list) {
                                 if(item.status == 3 && item.date == todayDate) {
-                                    await $.wait(100)
+                                    await $.wait(TASK_WAITTIME);
                                     await this.getStockInfo(SCI_code,marketCode['sh'])
-                                    await $.wait(100)
-                                    await this.guessRiseFall(this.guessOption[SCI_code])
+                                    await $.wait(TASK_WAITTIME);
+                                    await this.guessRiseFall(this.guessOption)
                                 }
                             }
                         }
@@ -233,7 +290,7 @@ class UserInfo {
                     if(result.recommend && result.recommend.length > 0) {
                         this.guessStockFlag = true
                         for(let item of result.recommend.sort(function(a,b){return Math.abs(b["zdf"])-Math.abs(a["zdf"])})) {
-                            await $.wait(100)
+                            await $.wait(TASK_WAITTIME);
                             await this.guessStockStatus(item)
                             if(this.guessStockFlag==false) break;
                         }
@@ -256,7 +313,7 @@ class UserInfo {
     
     async getGuessAward(guessDate) {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/activity.fcgi?channel=1&activity=guess_new&guess_act_id=3&guess_date=${guessDate}&guess_reward_type=1&openid=${this.openid}&fskey=${this.qlskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/activity.fcgi?channel=1&activity=guess_new&guess_act_id=3&guess_date=${guessDate}&guess_reward_type=1&openid=${this.openid}&fskey=${this.fskey}`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -275,7 +332,7 @@ class UserInfo {
     
     async getGuessStockAward(guessDate) {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/activity/activity.fcgi?activity=guess_new&action=guess_stock_reward&guess_date=${guessDate}&channel=1&openid=${this.openid}&fskey=${this.qlskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/activity/activity.fcgi?activity=guess_new&action=guess_stock_reward&guess_date=${guessDate}&channel=1&openid=${this.openid}&fskey=${this.fskey}`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -299,13 +356,16 @@ class UserInfo {
     
     async getStockInfo(scode,markets) {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/open_stockinfo.fcgi?scode=${scode}&markets=${markets}&needfive=0&needquote=1&needfollow=0&type=0&channel=1&openid=${this.openid}&fskey=${this.qlskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/open_stockinfo.fcgi?scode=${scode}&markets=${markets}&needfive=0&needquote=1&needfollow=0&type=0&channel=1&openid=${this.openid}&fskey=${this.fskey}`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
             let result = httpResult;
             if(!result) return
             //console.log(result)
+            if(result.body) {
+                result = JSON.parse(result.body.replace(/\\x/g,''))
+            }
             if(result.retcode==0) {
                 let stockName = result.secu_info.secu_name || ''
                 if(stockName) {
@@ -314,7 +374,7 @@ class UserInfo {
                     let raise = dqj - zsj
                     let ratio = raise/zsj*100
                     let guessStr = (raise < 0) ? '跌' : '涨'
-                    this.guessOption[scode] = (raise < 0) ? 2 : 1
+                    this.guessOption = (raise < 0) ? 2 : 1
                     console.log(`${stockName}：当前价格${dqj}，前天收市价${zsj}，涨幅${Math.floor(ratio*100)/100}% (${Math.floor(raise*100)/100})，猜${guessStr}`);
                 }
             } else {
@@ -327,7 +387,7 @@ class UserInfo {
     
     async guessRiseFall(answer) {
         try {
-            let url = `https://zqact.tenpay.com/cgi-bin/guess_op.fcgi?action=2&act_id=3&user_answer=${answer}&date=${todayDate}&channel=1&openid=${this.openid}&fskey=${this.qlskey}`
+            let url = `https://zqact.tenpay.com/cgi-bin/guess_op.fcgi?action=2&act_id=3&user_answer=${answer}&date=${todayDate}&channel=1&openid=${this.openid}&fskey=${this.fskey}`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -336,9 +396,9 @@ class UserInfo {
             //console.log(result)
             let guessStr = (answer==1) ? "猜涨" : "猜跌"
             if(result.retcode==0) {
-                console.log(`${guessStr}成功`)
+                console.log(`竞猜上证指数${guessStr}成功`)
             } else {
-                console.log(`${guessStr}失败: ${guessStr}`)
+                console.log(`竞猜上证指数${guessStr}失败: ${result.retmsg}`)
             }
         } catch(e) {
             console.log(e)
@@ -347,8 +407,8 @@ class UserInfo {
     
     async guessStockRiseFall(stockItem,answer) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/guess_op.fcgi?openid=${this.openid}&fskey=${this.qlskey}&check=11`
-            let body = `source=3&channel=1&outer_src=0&new_version=3&symbol=${stockItem.symbol}&date=${todayDate}&action=2&user_answer=${answer}&openid=${this.openid}&fskey=${this.qlskey}&check=11`
+            let url = `https://wzq.tenpay.com/cgi-bin/guess_op.fcgi?openid=${this.openid}&fskey=${this.fskey}&check=11`
+            let body = `source=3&channel=1&outer_src=0&new_version=3&symbol=${stockItem.symbol}&date=${todayDate}&action=2&user_answer=${answer}&openid=${this.openid}&fskey=${this.fskey}&check=11`
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('post',urlObject)
             let result = httpResult;
@@ -356,9 +416,9 @@ class UserInfo {
             //console.log(result)
             let guessStr = (answer==1) ? "猜涨" : "猜跌"
             if(result.retcode==0) {
-                console.log(`${guessStr}成功`)
+                console.log(`竞猜个股${guessStr}成功`)
             } else {
-                console.log(`${guessStr}失败: ${guessStr}`)
+                console.log(`竞猜个股${guessStr}失败: ${result.retmsg}`)
             }
         } catch(e) {
             console.log(e)
@@ -367,7 +427,7 @@ class UserInfo {
     
     async guessStockStatus(stockItem) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/guess_home.fcgi?openid=${this.openid}&fskey=${this.qlskey}&check=11&source=3&channel=1&symbol=${stockItem.symbol}&new_version=3`
+            let url = `https://wzq.tenpay.com/cgi-bin/guess_home.fcgi?openid=${this.openid}&fskey=${this.fskey}&check=11&source=3&channel=1&symbol=${stockItem.symbol}&new_version=3`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -383,7 +443,7 @@ class UserInfo {
                         let guessStr = (stockItem.zdf < 0) ? '跌' : '涨'
                         let answer = (stockItem.zdf < 0) ? 2 : 1
                         console.log(`${stockItem.stockname}今天涨幅为${stockItem.zdf}%，猜${guessStr}`)
-                        await $.wait(100)
+                        await $.wait(TASK_WAITTIME);
                         await this.guessStockRiseFall(stockItem,answer)
                     }
                 } else {
@@ -401,7 +461,7 @@ class UserInfo {
     
     async queryTaskList(taskItem) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_${taskItem.activity}.fcgi?action=home&type=${taskItem.type}&actid=${taskItem.actid}&invite_code=&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_${taskItem.activity}.fcgi?action=home&type=${taskItem.type}&actid=${taskItem.actid}&invite_code=&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -423,7 +483,7 @@ class UserInfo {
     
     async getNewbieAward(actid,ticket) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=award&channel=1&actid=${actid}&reward_ticket=${ticket}&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=award&channel=1&actid=${actid}&reward_ticket=${ticket}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -442,7 +502,7 @@ class UserInfo {
     
     async appGetTaskList(taskItem) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_${taskItem.activity}.fcgi?action=home&type=${taskItem.type}&actid=${taskItem.actid}&invite_code=&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_${taskItem.activity}.fcgi?action=home&type=${taskItem.type}&actid=${taskItem.actid}&invite_code=&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -466,7 +526,7 @@ class UserInfo {
                             }
                             if(item.tasks && item.tasks.length > 0) {
                                 for(let task of item.tasks) {
-                                    await $.wait(200);
+                                    await $.wait(TASK_WAITTIME);
                                     await this.appGetTaskStatus(taskItem,task.id,task.tid);
                                 }
                             }
@@ -483,7 +543,7 @@ class UserInfo {
     
     async appGetTaskStatus(taskItem,id,tid) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?id=${id}&tid=${tid}&actid=${taskItem.actid}&channel=1&action=taskstatus&openid=${this.openid}&fskey=${this.qlskey}`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?id=${id}&tid=${tid}&actid=${taskItem.actid}&channel=1&action=taskstatus&openid=${this.openid}&fskey=${this.fskey}`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -492,14 +552,14 @@ class UserInfo {
             //console.log(result)
             if(result.retcode==0) {
                 if(result.done == 0) {
-                    await $.wait(200);
+                    await $.wait(TASK_WAITTIME);
                     await this.appGetTaskTicket(taskItem,id,tid);
                     
                 } else {
-                    console.log(`${taskItem.taskName}[${taskItem.actid}-${id}]已完成`);
+                    console.log(`${taskItem.taskName}[${taskItem.actid}-${id}-${tid}]已完成`);
                 }
             } else {
-                console.log(`查询[${taskItem.actid}-${id}]状态失败: ${result.retmsg}`)
+                console.log(`查询[${taskItem.actid}-${id}-${tid}]状态失败: ${result.retmsg}`)
             }
         } catch(e) {
             console.log(e)
@@ -508,7 +568,7 @@ class UserInfo {
     
     async appGetTaskTicket(taskItem,id,tid) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=taskticket&channel=1&actid=${taskItem.actid}&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=taskticket&channel=1&actid=${taskItem.actid}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -516,7 +576,7 @@ class UserInfo {
             if(!result) return
             //console.log(result)
             if(result.retcode==0) {
-                await $.wait(200);
+                await $.wait(TASK_WAITTIME);
                 await this.appTaskDone(taskItem,result.task_ticket,id,tid);
             } else {
                 console.log(`申请任务票据失败: ${result.retmsg}`)
@@ -528,7 +588,7 @@ class UserInfo {
     
     async appTaskDone(taskItem,ticket,id,tid) {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=taskdone&channel=1&actid=${taskItem.actid}&id=${id}&tid=${tid}&task_ticket=${ticket}&openid=${this.openid}&fskey=${this.qlskey}`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_task.fcgi?action=taskdone&channel=1&actid=${taskItem.actid}&id=${id}&tid=${tid}&task_ticket=${ticket}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -536,9 +596,9 @@ class UserInfo {
             if(!result) return
             //console.log(result)
             if(result.retcode==0) {
-                console.log(`完成${taskItem.taskName}[${taskItem.actid}-${id}]:获得 ${result.reward_desc}`);
+                console.log(`完成${taskItem.taskName}[${taskItem.actid}-${id}-${tid}]:获得 ${result.reward_desc}`);
             } else {
-                console.log(`${taskItem.taskName}[${taskItem.actid}-${id}]未完成：${result.retmsg}`);
+                console.log(`${taskItem.taskName}[${taskItem.actid}-${id}-${tid}]未完成：${result.retmsg}`);
             }
         } catch(e) {
             console.log(e)
@@ -571,7 +631,7 @@ class UserInfo {
                             }
                             if(item.tasks && item.tasks.length > 0) {
                                 for(let task of item.tasks) {
-                                    await $.wait(200);
+                                    await $.wait(TASK_WAITTIME);
                                     await this.wxGetTaskStatus(taskItem,task.id,task.tid);
                                 }
                             }
@@ -597,13 +657,13 @@ class UserInfo {
             //console.log(result)
             if(result.retcode==0) {
                 if(result.done == 0) {
-                    await $.wait(200);
+                    await $.wait(TASK_WAITTIME);
                     await this.wxGetTaskTicket(taskItem,id,tid);
                 } else {
-                    console.log(`${taskItem.taskName}[${taskItem.actid}-${id}]已完成`);
+                    console.log(`${taskItem.taskName}[${taskItem.actid}-${id}-${tid}]已完成`);
                 }
             } else {
-                console.log(`查询[${taskItem.actid}-${id}]状态失败: ${result.retmsg}`)
+                console.log(`查询[${taskItem.actid}-${id}-${tid}]状态失败: ${result.retmsg}`)
             }
         } catch(e) {
             console.log(e)
@@ -620,7 +680,7 @@ class UserInfo {
             if(!result) return
             //console.log(result)
             if(result.retcode==0) {
-                await $.wait(200);
+                await $.wait(TASK_WAITTIME);
                 await this.wxTaskDone(taskItem,result.task_ticket,id,tid);
             } else {
                 console.log(`申请任务票据失败: ${result.retmsg}`)
@@ -641,9 +701,9 @@ class UserInfo {
             if(!result) return
             //console.log(result)
             if(result.retcode==0) {
-                console.log(`完成${taskItem.taskName}[${taskItem.actid}-${id}]:获得 ${result.reward_desc}`);
+                console.log(`完成${taskItem.taskName}[${taskItem.actid}-${id}-${tid}]:获得 ${result.reward_desc}`);
             } else {
-                console.log(`${taskItem.taskName}[${taskItem.actid}-${id}]未完成：${result.retmsg}`);
+                console.log(`${taskItem.taskName}[${taskItem.actid}-${id}-${tid}]未完成：${result.retmsg}`);
             }
         } catch(e) {
             console.log(e)
@@ -652,7 +712,7 @@ class UserInfo {
     
     async getWithdrawTicket(item_id) {
         try {
-            let url = `https://zqact03.tenpay.com/cgi-bin/shop.fcgi?action=order_ticket&type=2&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://zqact03.tenpay.com/cgi-bin/shop.fcgi?action=order_ticket&type=2&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -661,7 +721,7 @@ class UserInfo {
             //console.log(result)
             if(result.retcode==0) {
                 if(result.ticket) {
-                    await $.wait(200);
+                    await $.wait(TASK_WAITTIME);
                     await this.withdraw(result.ticket,item_id);
                 } else {
                     console.log(`申请提现票据失败`);
@@ -676,7 +736,7 @@ class UserInfo {
     
     async withdraw(ticket,item_id) {
         try {
-            let url = `https://zqact03.tenpay.com/cgi-bin/shop.fcgi?action=order&type=2&ticket=${ticket}&item_id=${item_id}&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://zqact03.tenpay.com/cgi-bin/shop.fcgi?action=order&type=2&ticket=${ticket}&item_id=${item_id}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -695,7 +755,7 @@ class UserInfo {
     
     async bullStatus() {
         try {
-            let url = `https://zqact03.tenpay.com/cgi-bin/activity_year_party.fcgi?invite_code=&help_code=&share_date=&type=bullish&action=home&actid=1105&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://zqact03.tenpay.com/cgi-bin/activity_year_party.fcgi?invite_code=&help_code=&share_date=&type=bullish&action=home&actid=1105&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -725,7 +785,7 @@ class UserInfo {
     
     async bullTaskDone(taskItem,extra='') {
         try {
-            let url = `https://zqact03.tenpay.com/cgi-bin/activity_year_party.fcgi?type=bullish&action=${taskItem.action}&actid=${taskItem.actid}${extra}&openid=${this.openid}&fskey=${this.qlskey}&channel=1`
+            let url = `https://zqact03.tenpay.com/cgi-bin/activity_year_party.fcgi?type=bullish&action=${taskItem.action}&actid=${taskItem.actid}${extra}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -734,31 +794,32 @@ class UserInfo {
             //console.log(result)
             if(result.retcode==0) {
                 if(result.forbidden_code > 0) {
-                    console.log(`结束${taskItem.taskName}：${result.forbidden_reason}\n`);
+                    console.log(`结束${taskItem.taskName}：${result.forbidden_reason}`);
                 } else if(result.reward_info) {
-                    console.log(`${taskItem.taskName}获得: ${result.reward_info[0].reward_desc}\n`);
-                    await $.wait(1000);
+                    console.log(`${taskItem.taskName}获得: ${result.reward_info[0].reward_desc}`);
+                    await $.wait(BULL_WAITTIME);
                     await this.bullTaskDone(taskItem)
                 } else if(result.award_desc) {
-                    console.log(`${taskItem.taskName}获得: ${result.award_desc}\n`);
-                    await $.wait(1000);
+                    console.log(`${taskItem.taskName}获得: ${result.award_desc}`);
+                    await $.wait(BULL_WAITTIME);
                     await this.bullTaskDone(taskItem,extra)
                 } else if(result.skin_info) {
-                    console.log(`${taskItem.taskName}获得: ${result.skin_info.skin_desc}\n`);
-                    await $.wait(1000);
+                    console.log(`${taskItem.taskName}获得: ${result.skin_info.skin_desc}`);
+                    await $.wait(BULL_WAITTIME);
                     await this.bullTaskDone(taskItem)
                 } else if(result.skin_list && result.skin_list.length > 0) {
                     for(let skinItem of result.skin_list) {
                         if(skinItem.skin_num > 1) {
+                            await $.wait(BULL_WAITTIME);
                             await this.bullTaskDone(bullTaskArray["sell_skin"],`&skin_type=${skinItem.skin_type}`)
                         }
                     }
                 } else if(result.feed_reward_info) {
-                    console.log(`${taskItem.taskName}获得: ${result.feed_reward_info.reward_desc}\n`);
+                    console.log(`${taskItem.taskName}获得: ${result.feed_reward_info.reward_desc}`);
                     if(result.level_up_status == 1) {
-                        console.log(`长牛升级到等级${result.update_new_level}，获得: ${result.level_reward_info.reward_desc}\n`);
+                        console.log(`长牛升级到等级${result.update_new_level}，获得: ${result.level_reward_info.reward_desc}`);
                     }
-                    await $.wait(2000);
+                    await $.wait(BULL_WAITTIME);
                     await this.bullTaskDone(taskItem)
                 } else {
                     console.log(result)
@@ -775,20 +836,20 @@ class UserInfo {
         try {
             await this.bullStatus();
             if(!this.bullStatusFlag) return;
-            await $.wait(200);
+            await $.wait(TASK_WAITTIME);
             await this.bullTaskDone(bullTaskArray["rock_bullish"])
-            await $.wait(200);
+            await $.wait(TASK_WAITTIME);
             for(let i=0; i<10; i++){
                 await this.bullTaskDone(bullTaskArray["open_box"])
-                if(i < 9) await $.wait(2500)
+                if(i < 9) await $.wait(BULL_WAITTIME)
             }
-            await $.wait(200);
+            await $.wait(TASK_WAITTIME);
             await this.bullTaskDone(bullTaskArray["open_blindbox"])
-            await $.wait(200);
+            await $.wait(TASK_WAITTIME);
             await this.bullTaskDone(bullTaskArray["query_blindbox"])
-            await $.wait(200);
+            await $.wait(TASK_WAITTIME);
             await this.bullTaskDone(bullTaskArray["feed"])
-            await $.wait(200);
+            await $.wait(TASK_WAITTIME);
         } catch(e) {
             console.log(e)
         } finally {}
@@ -796,7 +857,7 @@ class UserInfo {
     
     async appGetShareCode(share_type,type='daily') {
         try {
-            let url = `https://wzq.tenpay.com/cgi-bin/activity/activity_share.fcgi?channel=1&action=query_share_code&share_type=${share_type}&openid=${this.openid}&fskey=${this.qlskey}&buildType=store&check=11&_idfa=&lang=zh_CN`
+            let url = `https://wzq.tenpay.com/cgi-bin/activity/activity_share.fcgi?channel=1&action=query_share_code&share_type=${share_type}&openid=${this.openid}&fskey=${this.fskey}&buildType=store&check=11&_idfa=&lang=zh_CN`
             let body = ``
             let urlObject = populateUrlObject(url,this.cookie,body)
             await httpRequest('get',urlObject)
@@ -831,10 +892,10 @@ class UserInfo {
             if(result.retcode==0) {
                 if(type == 'newbie') {
                     this.shareCodes.newbie[share_type] = result.share_code
-                    console.log(`获取到新手任务[${share_type}]互助码：${result.share_code}`)
+                    console.log(`获取新手任务[${share_type}]互助码：${result.share_code}`)
                 } else {
                     this.shareCodes.task[share_type] = result.share_code
-                    console.log(`获取到日常任务[${share_type}]互助码：${result.share_code}`)
+                    console.log(`获取日常任务[${share_type}]互助码：${result.share_code}`)
                 }
             } else {
                 console.log(`获取[${share_type}]互助码失败：${result.retmsg}`);
@@ -844,7 +905,32 @@ class UserInfo {
         } finally {}
     }
     
-    async doShare(share_type,share_code) {
+    async appDoShare(share_type,share_code) {
+        try {
+            let url = `https://wzq.tenpay.com/cgi-bin/activity_share.fcgi?action=share_code_info&share_type=${share_type}&share_code=${share_code}&openid=${this.openid}&fskey=${this.fskey}&channel=1`
+            let body = ``
+            let urlObject = populateUrlObject(url,this.cookie,body)
+            await httpRequest('get',urlObject)
+            let result = httpResult;
+            if(!result) return
+            //console.log(result)
+            if(result.retcode==0) {
+                if(result.share_code_info && result.share_code_info.status == 1) {
+                    console.log(`[${share_type}]助力成功，对方昵称：[${result.share_code_info.nickname}]`);
+                } else if(result.retmsg == "OK") {
+                    console.log(`[${share_type}]已经助力过了`);
+                } else {
+                    console.log(result)
+                }
+            } else {
+                console.log(`[${share_type}]助力失败：${result.retmsg}`);
+            }
+        } catch(e) {
+            console.log(e)
+        } finally {}
+    }
+    
+    async wxDoShare(share_type,share_code) {
         try {
             let url = `https://wzq.tenpay.com/cgi-bin/activity_share.fcgi`
             let body = `action=share_code_info&share_type=${share_type}&share_code=${share_code}`
@@ -874,69 +960,107 @@ class UserInfo {
     if (typeof $request !== "undefined") {
         await GetRewrite()
     }else {
+        console.log('\n变量填写格式，多账号用换行(\\n)或者@或者#隔开:\nopenid=xx&fskey=yy&wzq_qlskey=zz&wzq_qluin=aa\n')
         if(!(await checkEnv())) return;
         
         console.log('\n=================== 用户信息 ===================')
-        for(let user of userList) {
+        for(let user of userList.filter(x => x.canRun)) {
+            await user.getUserName();
+            await $.wait(TASK_WAITTIME);
             await user.getUserInfo(); 
-            await $.wait(200);
+            await $.wait(TASK_WAITTIME);
         }
         
         let validUserList = userList.filter(x => x.valid)
         if(validUserList.length == 0) return;
         let validUserCount = validUserList.length;
         
+        console.log('\n=================== 互助设置 ===================')
+        let doHelp = false;
+        if(helpFlag) {
+            if(validUserCount < 2) {
+                console.log('有效用户少于2个，不做互助任务')
+            } else {
+                console.log('有效用户大于等于2个，且设置了互助开关，开启互助')
+                doHelp = true;
+            }
+        } else {
+            console.log('当前设置为不互助，要做互助任务请设置TxStockHelp为1')
+        }
+        
         for(let user of validUserList) {
-            console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
-            await user.signTask(2002,signType.task); 
-            await $.wait(200);
-            await user.guessHome(); 
-            await $.wait(200);
-            for(let id of taskList.app.daily) {
-                let taskItem = {"taskName":"APP任务","activity":"task_daily","type":"routine","actid":id}
-                await user.appGetTaskList(taskItem,'app'); 
-                await $.wait(200);
+            if(user.task == 1) {
+                console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
+                await user.signTask(2002,signType.task); 
+                await $.wait(TASK_WAITTIME);
+                await user.guessHome(); 
+                await $.wait(TASK_WAITTIME);
+                for(let id of taskList.app.daily) {
+                    let taskItem = {"taskName":"APP任务","activity":"task_daily","type":"routine","actid":id}
+                    await user.appGetTaskList(taskItem); 
+                    await $.wait(TASK_WAITTIME);
+                }
+                for(let id of taskList.wx.daily) {
+                    let taskItem = {"taskName":"微信任务","activity":"task_daily","type":"routine","actid":id}
+                    if(user.hasWxCookie) {
+                        await user.wxGetTaskList(taskItem); 
+                    } else {
+                        await user.appGetTaskList(taskItem); 
+                    }
+                    await $.wait(TASK_WAITTIME);
+                }
+                if(doHelp) {
+                    for(let task of taskList.app.dailyShare) {
+                        await user.appGetShareCode(task); 
+                        await $.wait(TASK_WAITTIME);
+                    }
+                    for(let task of taskList.wx.dailyShare) {
+                        if(user.hasWxCookie) {
+                            await user.wxGetShareCode(task); 
+                        } else {
+                            await user.appGetShareCode(task); 
+                        }
+                        await $.wait(TASK_WAITTIME);
+                    }
+                }
             }
-            for(let id of taskList.wx.daily) {
-                let taskItem = {"taskName":"微信任务","activity":"task_daily","type":"routine","actid":id}
-                await user.wxGetTaskList(taskItem,'wx'); 
-                await $.wait(200);
-            }
-            for(let task of taskList.app.dailyShare) {
-                await user.appGetShareCode(task); 
-                await $.wait(200);
-            }
-            for(let task of taskList.wx.dailyShare) {
-                await user.wxGetShareCode(task); 
-                await $.wait(200);
-            }
-            await user.userBullTask(); 
-            await $.wait(200);
         }
         
         console.log('\n=================== 新手任务 ===================')
         if(newbieFlag) {
             for(let user of validUserList) {
-                console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
-                for(let id of taskList.app.newbie) {
-                    let taskItem = {"taskName":"APP新手任务","activity":"task_continue","type":"app_new_user","actid":id}
-                    await user.appGetTaskList(taskItem,'app'); 
-                    await $.wait(200);
-                }
-                for(let id of taskList.wx.newbie) {
-                    let taskItem = {"taskName":"微信新手任务","activity":"task_continue","type":"wzq_welfare_growth","actid":id}
-                    await user.wxGetTaskList(taskItem,'wx'); 
-                    await $.wait(200);
+                if(user.task == 1) {
+                    console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
+                    for(let id of taskList.app.newbie) {
+                        let taskItem = {"taskName":"APP新手任务","activity":"task_continue","type":"app_new_user","actid":id}
+                        await user.appGetTaskList(taskItem); 
+                        await $.wait(TASK_WAITTIME);
+                    }
+                    for(let id of taskList.wx.newbie) {
+                        let taskItem = {"taskName":"微信新手任务","activity":"task_continue","type":"wzq_welfare_growth","actid":id}
+                        if(user.hasWxCookie) {
+                            await user.wxGetTaskList(taskItem); 
+                        } else {
+                            await user.appGetTaskList(taskItem); 
+                        }
+                        await $.wait(TASK_WAITTIME);
+                    }
                 }
             }
             
             console.log('\n=================== 新手互助任务 ===================')
             if(validUserCount > 1) {
                 for(let user of validUserList) {
-                    console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
-                    for(let task of taskList.wx.newbieShare) {
-                        await user.wxGetShareCode(task,'newbie'); 
-                        await $.wait(200);
+                    if(user.task == 1) {
+                        console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
+                        for(let task of taskList.wx.newbieShare) {
+                            if(user.hasWxCookie) {
+                                await user.wxGetShareCode(task,'newbie'); 
+                            } else {
+                                await user.appGetShareCode(task,'newbie'); 
+                            }
+                            await $.wait(TASK_WAITTIME);
+                        }
                     }
                 }
                 for(let idx=0; idx < validUserCount; idx++) {
@@ -944,8 +1068,12 @@ class UserInfo {
                     let helpee = validUserList[(idx+1)%validUserCount]
                     console.log(`\n--> 账号${helper.index}[${helper.name}] 去助力 账号${helpee.index}[${helpee.name}]:`)
                     for(let type in helpee.shareCodes.newbie) {
-                        await helper.doShare(type,helpee.shareCodes.newbie[type]); 
-                        await $.wait(200);
+                        if(helper.hasWxCookie) {
+                            await helper.wxDoShare(type,helpee.shareCodes.newbie[type]); 
+                        } else {
+                            await helper.appDoShare(type,helpee.shareCodes.newbie[type]); 
+                        }
+                        await $.wait(TASK_WAITTIME);
                     }
                 }
             } else {
@@ -957,29 +1085,42 @@ class UserInfo {
             console.log('当前设置为不做新手任务，要做新手任务请设置TxStockNewbie为1')
         }
         
-        console.log('\n=================== 互助 ===================')
-        if(helpFlag) {
-            if(validUserCount > 1) {
-                for(let idx=0; idx < validUserCount; idx++) {
-                    let helper = validUserList[idx]
-                    let helpee = validUserList[(idx+1)%validUserCount]
+        
+        if(doHelp) {
+            console.log('\n=================== 互助 ===================')
+            for(let idx=0; idx < validUserCount; idx++) {
+                let helper = validUserList[idx]
+                for(let helpIdx=1; helpIdx < validUserCount; helpIdx++) {
+                    let helpee = validUserList[(helpIdx+idx)%validUserCount]
+                    if(helpee.task == 0) continue;
                     console.log(`\n--> 账号${helper.index}[${helper.name}] 去助力 账号${helpee.index}[${helpee.name}]:`)
                     for(let type in helpee.shareCodes.task) {
-                        await helper.doShare(type,helpee.shareCodes.task[type]); 
-                        await $.wait(200);
+                        if(helper.hasWxCookie) {
+                            await helper.wxDoShare(type,helpee.shareCodes.task[type]); 
+                        } else {
+                            await helper.appDoShare(type,helpee.shareCodes.task[type]); 
+                        }
+                        await $.wait(TASK_WAITTIME);
                     }
                 }
-            } else {
-                console.log('有效用户少于2个，不做互助任务')
             }
-        } else {
-            console.log('当前设置为不互助，要做互助任务请设置TxStockHelp为1')
+        }
+        
+        console.log('\n=================== 长牛 ===================')
+        for(let user of validUserList) {
+            if(user.task == 1) {
+                console.log(`\n----------- 账号${user.index}[${user.name}] -----------`)
+                await user.userBullTask(); 
+                await $.wait(TASK_WAITTIME);
+            }
         }
         
         console.log('\n=================== 提现 ===================')
         for(let user of validUserList) {
-            await user.getUserInfo(true); 
-            await $.wait(200);
+            if(user.task == 1) {
+                await user.getUserInfo(true); 
+                await $.wait(TASK_WAITTIME);
+            }
         }
         
         await showmsg();
@@ -991,10 +1132,12 @@ class UserInfo {
 ///////////////////////////////////////////////////////////////////
 async function GetRewrite() {
     if($request.url.indexOf(`cgi-bin/userinfo.fcgi`) > -1 && $request.headers.Cookie) {
-        let openid = $request.headers.Cookie.match(/zxg_openid=([\w\-]+)/)[1]
-        let qlskey = $request.headers.Cookie.match(/wzq_qlskey=([\w\-]+)/)[1]
-        let qluin = $request.headers.Cookie.match(/wzq_qluin=([\w\-]+)/)[1]
-        let ck = `${openid}&${qlskey}&${qluin}`
+        let openid = $request.headers.Cookie.match(/zxg_(openid=[\w\-]+)/)[1]
+        if(openid == 'openid=anonymous') return;
+        let fskey = 'fskey='
+        let qlskey = $request.headers.Cookie.match(/(wzq_qlskey=[\w\-]+)/)[1]
+        let qluin = $request.headers.Cookie.match(/(wzq_qluin=[\w\-]+)/)[1]
+        let ck = `${openid}&${fskey}&${qlskey}&${qluin}`
         
         if(userCookie) {
             if(userCookie.indexOf(openid) == -1) {
@@ -1003,17 +1146,54 @@ async function GetRewrite() {
                 let ckList = userCookie.split('\n')
                 $.msg(jsname+` 获取第${ckList.length}个ck成功: ${ck}`)
             } else {
-                if(userCookie.indexOf(ck) > -1) return;
+                if(userCookie.indexOf(openid) > -1 && userCookie.indexOf(qlskey) > -1 && userCookie.indexOf(qluin) > -1) return;
                 let ckList = userCookie.split('\n')
                 let idx = 0
                 for(idx in ckList) {
-                    if(ckList[idx].indexOf(openid) < -1) {
+                    if(ckList[idx].indexOf(openid) > -1) {
+                        fskey = ckList[idx].match(/(fskey=[\w-]*)/)[1] 
+                        ck = `${openid}&${fskey}&${qlskey}&${qluin}`
                         ckList[idx] = ck
                         break;
                     }
                 }
                 userCookie = ckList.join('\n')
-                $.setdata(ck, 'TxStockCookie');
+                $.setdata(userCookie, 'TxStockCookie');
+                $.msg(jsname+` 更新第${parseInt(idx)+1}个ck成功: ${ck}`)
+            }
+        } else {
+            $.setdata(ck, 'TxStockCookie');
+            $.msg(jsname+` 获取第1个ck成功: ${ck}`)
+        }
+    } else if($request.url.indexOf(`cgi-bin/activity_usercenter.fcgi`) > -1) {
+        let openid = $request.url.match(/(openid=[\w\-]*)/)[1]
+        if(openid == 'openid=anonymous') return;
+        let fskey = $request.url.match(/(fskey=[\w\-]*)/)[1]
+        let qlskey = 'wzq_qlskey='
+        let qluin = 'wzq_qluin='
+        let ck = `${openid}&${fskey}&${qlskey}&${qluin}`
+        
+        if(userCookie) {
+            if(userCookie.indexOf(openid) == -1) {
+                userCookie = userCookie + '\n' + ck
+                $.setdata(userCookie, 'TxStockCookie');
+                let ckList = userCookie.split('\n')
+                $.msg(jsname+` 获取第${ckList.length}个ck成功: ${ck}`)
+            } else {
+                if(userCookie.indexOf(openid) > -1 && userCookie.indexOf(fskey) > -1) return;
+                let ckList = userCookie.split('\n')
+                let idx = 0
+                for(idx in ckList) {
+                    if(ckList[idx].indexOf(openid) > -1) {
+                        qlskey = ckList[idx].match(/(wzq_qlskey=[\w-]*)/)[1]
+                        qluin = ckList[idx].match(/(wzq_qluin=[\w-]*)/)[1]
+                        ck = `${openid}&${fskey}&${qlskey}&${qluin}`
+                        ckList[idx] = ck
+                        break;
+                    }
+                }
+                userCookie = ckList.join('\n')
+                $.setdata(userCookie, 'TxStockCookie');
                 $.msg(jsname+` 更新第${parseInt(idx)+1}个ck成功: ${ck}`)
             }
         } else {
@@ -1035,13 +1215,13 @@ async function checkEnv() {
         for(let userCookies of userCookie.split(splitor)) {
             if(userCookies) userList.push(new UserInfo(userCookies))
         }
-        userCount = userList.length
+        userCount = userList.filter(x => x.canRun).length
     } else {
         console.log('未找到CK')
         return;
     }
     
-    console.log(`共找到${userCount}个账号`)
+    console.log(`共找到${userCount}个有效账号`)
     return true
 }
 
@@ -1061,11 +1241,11 @@ async function showmsg() {
     }
 }
 
-function formatDateTime(inputTime='') {
-    var date = new Date(inputTime);
+function formatDateTime() {
+    var date = new Date();
     var y = date.getFullYear();
     var m = padStr(date.getMonth()+1,2);
-    var d = padStr(date.getDate()+1,2);
+    var d = padStr(date.getDate(),2);
     return `${y}${m}${d}`;
 };
 
@@ -1099,6 +1279,8 @@ function populateUrlObject(url,cookie,body=''){
         headers: {
             'Host': host,
             'Cookie': cookie,
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.16(0x18001028) NetType/WIFI Language/zh_CN',
+            'Connection': 'keep-alive',
         },
     }
     if(body) {
@@ -1172,7 +1354,7 @@ function json2str(obj,encodeUrl=false) {
     let ret = []
     for(let keys of Object.keys(obj).sort()) {
         let v = obj[keys]
-        if(encodeUrl) v = encodeURIComponent(v)
+        if(v && encodeUrl) v = encodeURIComponent(v)
         ret.push(keys+'='+v)
     }
     return ret.join('&');
@@ -1181,9 +1363,14 @@ function json2str(obj,encodeUrl=false) {
 function str2json(str,decodeUrl=false) {
     let ret = {}
     for(let item of str.split('&')) {
+        if(!item) continue;
         let kv = item.split('=')
-        if(decodeUrl) ret[kv[0]] = decodeURIComponent(kv[1])
-        else ret[kv[0]] = kv[1]
+        if(kv.length < 2) continue;
+        if(decodeUrl) {
+            ret[kv[0]] = decodeURIComponent(kv[1])
+        } else {
+            ret[kv[0]] = kv[1]
+        }
     }
     return ret;
 }
