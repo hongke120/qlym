@@ -26,7 +26,51 @@
 * [wejson](https://wejson.cn/header2json/)
 
 
-## :fire: 2022-3-20更新
+## :fire: 2022-3-23更新
+
+
+### 顺丰·乘丰寻宝记 cfxbj.js
+
+cron 一天一次
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+抓POST包，打开顺丰速运+（小程序）-乘风寻宝记即可获取数据
+
+https://mcs-mimp-web.sf-express.com/mcs-mimp/share/weChat/buildP3
+
+只要有cookie就行的任意链接
+
+    export cfxbjck='JSESSIONID=***'
+
+</details>
+
+    // 2022-3-23活动截止4月3号
+
+
+
+### 科勒优选 klyx.js
+
+cron 一天一次
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+抓POST包，找不到入口的从公众号推文进
+
+https://mp.weixin.qq.com/s/Ar5oqSOq1STvABR2AlWxLw
+
+需要请求头里的xcx_openid，参考链接
+
+https://kohler-mini.brandsh.cn/mini.php/fissionCustom/getTaskList
+
+    export klyxtk='***'
+
+</details>
+
+    // 2022-3-23每天2毛
+
 
 
 ### 腾讯自选股V2 txstockV2.js
@@ -40,16 +84,15 @@ cron 35 11,16 * * *
 
 简化了抓包，适合新版的，老版的能跑就不用动！
 
-APP和公众号选一个抓就可以了，数据通用，多账户用@隔开
+需要APP和公众号2个数据，多账户用@隔开
 
-1.APP：抓wzq.tenpay.com包，把url里的openid和fskey用&连起来填到TxStockCookie
+1.APP端：抓wzq.tenpay.com包，把url里的openid和fskey用&连起来
 
-    export TxStockCookie='openid&fskey'
+2.公众号端：腾讯自选股微信版->右下角好福利->福利中心，抓wzq.tenpay.com包，把Cookie里的wzq_qlskey和wzq_qluin用&连起来
 
-2.公众号：腾讯自选股微信版->右下角好福利->福利中心，抓wzq.tenpay.com包，把Cookie里的zxg_openid和qlskey用&连起来填到TxStockCookie
+    export TxStockCookie='openid=xx&fskey=yy&wzq_qlskey=zz&wzq_qluin=aa'
 
-    export TxStockCookie='openid&fskey'
-
+> 没有公众号的CK删掉微信的变量，也可以跑
 
 提现设置：默认提现5元，需要改的话自己设置TxStockCash变量，0代表不提现，1代表提现1元，5代表提现5元
 
@@ -66,7 +109,32 @@ APP和公众号选一个抓就可以了，数据通用，多账户用@隔开
 
 </details>
 
-    // 2022-3-21使用了new版的看过来，现在的脚本比较好抓了
+    // 2022-3-23使用了new版的看过来，现在的脚本比较好抓了
+
+
+
+
+### 广汽三菱 gqsl.js
+
+cron 0 7 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+抓GET包，打开APP即可获取数据，只要请求头Authorization的值
+
+比如：https://mspace.gmmc.com.cn/user-soa/customer/check/user-token
+
+多账号@隔开，多账户请多开应用，退出会使Authorization失效
+
+    export slCookies='xxxxx@xxxxxx'
+
+</details>
+
+    // 2022-3-23更新评论不加积分
+
+
 
 
 
@@ -89,27 +157,6 @@ cron 随意，一天一次即可
 
 
 ## 2022-3-20更新
-
-
-### 广汽三菱 gqsl.js
-
-cron 0 7 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-
-抓GET包，打开APP即可获取数据，只要请求头Authorization的值
-
-比如：https://mspace.gmmc.com.cn/user-soa/customer/check/user-token
-
-多账号@隔开，多账户请多开应用，退出会使Authorization失效
-
-    export slCookies='xxxxx@xxxxxx'
-
-</details>
-
-    // 2022-3-20积分换实物，反正商城确实没什么好东西，而且积分过程也很漫长，玩不玩随意
 
 
 
