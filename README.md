@@ -73,6 +73,32 @@ https://kohler-mini.brandsh.cn/mini.php/fissionCustom/getTaskList
 
 
 
+### 闲趣赚 xqz.js
+
+cron 10 12 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+下载链接：http://i.hbymcm.cn/down
+
+新人可直接领2个0.3，大佬建议做了新人再跑，收益多点，我懒！
+
+抓get包，找到cookie数据即可，就是做的分红的浏览任务
+
+https://wap.quxianzhuan.com/
+
+    export xqzck='***'
+
+</details>
+
+    // 2022-3-23每天0.1-0.3，嫌少的可以不玩
+
+
+
+
+
 ### 腾讯自选股V2 txstockV2.js
 
 cron 35 11,16 * * *
