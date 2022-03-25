@@ -26,7 +26,180 @@
 * [wejson](https://wejson.cn/header2json/)
 
 
-## :fire: 2022-3-23更新
+
+
+## :fire: 2022-3-25更新
+
+
+### 百世乐元 bsly.js
+
+cron 一天一次
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+百世乐元微信小程序，积分换肥宅快乐水
+
+抓POST包，获取token值即可，作者说找doSignIn，我没找到用了下面链接的token
+
+https://pepcoin.pepsico.com.cn/api/wxapp/doGetUserInfo
+
+    export yml_bsly_data='token值'
+
+UA可选变量，填不填自己看
+
+    export yml_bsly_UA='Mozilla/5.0***android'
+
+</details>
+
+    // 2022-3-25只有签到
+
+
+### 可推 kt.js
+
+cron 25 6-15 * * * 
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+应用商店下载注册-赚金币，抓带有 https://api.ketui.cn/ 链接，只需要请求头上的Authorization值 
+
+    export soy_kt_data='Authorization的值'
+
+</details>
+
+    // 2022-3-25目前看收益也不高
+
+
+
+
+### 联想商城签到 lx.js
+
+cron 一天一次
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+我没有账号，懒得注册，有的自己测试吧
+
+注册链接：https://mclub.lenovo.com.cn
+
+    export lxzh='账号#密码@账号密码'
+
+</details>
+
+    // 2022-3-25积分和乐豆
+
+
+
+### 渤海宣传员 bhxcy.js
+
+cron 一天一次
+
+渤海宣传员 微信搜索小程序，电子账户随意，反正我不注册
+
+抓POST包，有uid和token值即可
+
+https://api.yd.ihaoqu.com/?r=api2&apiAction=SignIn
+
+    export bhxcytoken='uid=***&token=***'
+
+</details>
+
+    // 2022-3-25更新加入用户信息和余额显示，自动兑换e卡兑换码会发到绑定的手机号
+
+
+
+### 闲趣赚 xqz.js
+
+cron 10 12 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+下载链接：http://i.hbymcm.cn/down
+
+新人可直接领2个0.3，大佬建议做了新人再跑，收益多点，我懒！
+
+抓get包，找到cookie数据即可，就是做的分红的浏览任务
+
+https://wap.quxianzhuan.com/
+
+    export xqzck='***'
+
+</details>
+
+    // 2022-3-25更新加入用户余额和信息
+
+
+
+
+### 源火星球 yhxq.js
+
+cron 13 0-23/4 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+注册好后下载app并登录
+
+地址：http://reg.yuanhuoxingqiu.com/
+
+抓get包，登录app即可获取数据，只有Authorization值就行,删掉Bearer和空格，只要纯数字的组合
+
+http://api.yuanhuojisuban.com/user/account
+
+由于依赖每次拉库会被覆盖，请在脚本同目录手动新建空白文件`raw_master_yhxq_variable.js`
+
+复制下列内容，删掉括号和中文字符，填上token和UA变量后，保存即可
+
+```
+module.exports = {"code":200,"yhxq_variable_data":{
+    "config":[{
+        "url":"https://gitee.com/soy-tool/app-script/raw/master/app_yhxq.js",
+        "update":false,
+        "notice":false
+    }],
+    "user_data":[{
+        "token":"请求头上的Authorization值",
+        "Withdrawal":(是否提现,true代表提现,false反之),
+        "Withdrawal_Time":(提现的时间,请配合自己设定的cron填写),
+        "Feed":(喂养,true代表喂养,false反之),
+        "Hoe":(拔萝卜次数,每天可免费一次,默认填1),
+        "UA":"请求UA头,请求头的User-Agent值(选填)"
+    },{
+        "token":"多号如上,没有就删除,否则报错",
+        "Withdrawal":多号如上,没有就删除,否则报错,
+        "Withdrawal_Time":多号如上,没有就删除,否则报错,
+        "Feed":多号如上,没有就删除,否则报错,
+        "Hoe":(拔萝卜次数,每天可免费一次,默认填1),
+        "UA":"多号如上,没有就删除,否则报错"
+    },{
+        "token":"多号如上,没有就删除,否则报错",
+        "Withdrawal":多号如上,没有就删除,否则报错,
+        "Withdrawal_Time":多号如上,没有就删除,否则报错,
+        "Feed":多号如上,没有就删除,否则报错,
+        "Hoe":(拔萝卜次数,每天可免费一次,默认填1),
+        "UA":"多号如上,没有就删除,否则报错"
+    }
+    
+]}}
+```
+
+</details>
+
+    // 2022-3-17更新提现、拔萝卜，请更新配置文件
+
+
+
+
+
+
+
+
+## 2022-3-23更新
 
 
 ### 顺丰·乘丰寻宝记 cfxbj.js
@@ -73,27 +246,6 @@ https://kohler-mini.brandsh.cn/mini.php/fissionCustom/getTaskList
 
 
 
-### 闲趣赚 xqz.js
-
-cron 10 12 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-
-下载链接：http://i.hbymcm.cn/down
-
-新人可直接领2个0.3，大佬建议做了新人再跑，收益多点，我懒！
-
-抓get包，找到cookie数据即可，就是做的分红的浏览任务
-
-https://wap.quxianzhuan.com/
-
-    export xqzck='***'
-
-</details>
-
-    // 2022-3-23每天0.1-0.3，嫌少的可以不玩
 
 
 
@@ -287,54 +439,6 @@ body复制出来就可以了
 
 
 
-## 2022-3-17更新
-
-
-### 源火星球 yhxq.js
-
-cron 13 0-23/4 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-注册好后下载app并登录
-
-地址：http://reg.yuanhuoxingqiu.com/
-
-抓get包，登录app即可获取数据，只有Authorization值就行,删掉Bearer和空格，只要纯数字的组合
-
-http://api.yuanhuojisuban.com/user/account
-
-由于依赖每次拉库会被覆盖，请在脚本同目录手动新建空白文件`raw_master_yhxq_variable.js`
-
-复制下列内容，删掉括号和中文字符，填上token和UA变量后，保存即可
-
-```
-module.exports = {"code":200,"yhxq_variable_data":{
-    "config":[{
-        "url":"https://gitee.com/soy-tool/app-script/raw/master/app_yhxq.js",
-        "update":false,
-        "notice":true
-    }],
-    "user_data":[{
-        "token":"请求头上的Authorization值",
-        "Withdrawal":false,
-        "Withdrawal_Time":8,
-        "Feed":false,
-        "UA":"请求头的User-Agent值选填"
-    }
-    
-]}}
-```
-
-</details>
-
-    // 2022-3-17新增了依赖文件,请重新配置
-
-
-
-
-
 
 
 
@@ -356,7 +460,7 @@ https://gateway.kugou.com/mstc/musicsymbol/v1/user/info?userid=***"
 
 </details>
 
-    // 2022-3-12 每天7毛
+    // 2022-3-12 提现需要实名+人脸，介意不玩
 
 
 
