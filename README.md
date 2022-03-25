@@ -1249,4 +1249,4 @@ https://api.ys7.com/v3/integral/yd/pay
 * [@ziye888](https://github.com/ziye888/JavaScript)「ziye」
 * [@soy](https://gitee.com/soy-tool/app-script)「soy」
 * [@passerby-b](https://github.com/passerby-b/didi_fruit)「passerby-b」
-* [@passerby-b](https://github.com/yml2213/javascript)「yml2213」
+* [@yml2213](https://github.com/yml2213/javascript)「yml2213」
