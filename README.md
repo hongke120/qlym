@@ -31,6 +31,26 @@
 ## :fire: 2022-3-25更新
 
 
+
+### 快手果园 ks_fruit.js
+
+Cron 随意，一天一次
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+抓get包，进app-左上角三横-快手果园，获取Cookie
+
+https://ug-fission.kuaishou.com/rest/n/darwin/orchard/water/watering
+
+    export KS_COOKIE='client_key=***;did=***;kuaishou.api_st=***;ud=***;ver=***;'
+
+</details>
+
+    // 2022-3-25新增连续7天签到
+
+
+
 ### 百世乐元 bsly.js
 
 cron 一天一次
@@ -1061,24 +1081,6 @@ cron 随意，一天一次即可
 
 
 
-### 快手果园 ks_fruit.js
-
-Cron 随意，一天一次
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-抓get包，进app-左上角三横-快手果园，获取Cookie
-
-https://ug-fission.kuaishou.com/rest/n/darwin/orchard/water/watering
-
-    export KS_COOKIE='client_key=***;did=***;kuaishou.api_st=***;ud=***;ver=***;'
-
-</details>
-
-    // 默认会助力作者，介意勿玩，代码加密的
-
-
 
 
 ### 美团赚米粒 meituan.js
@@ -1247,4 +1249,4 @@ https://api.ys7.com/v3/integral/yd/pay
 * [@ziye888](https://github.com/ziye888/JavaScript)「ziye」
 * [@soy](https://gitee.com/soy-tool/app-script)「soy」
 * [@passerby-b](https://github.com/passerby-b/didi_fruit)「passerby-b」
-
+* [@passerby-b](https://github.com/yml2213/javascript)「yml2213」
