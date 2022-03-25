@@ -117,6 +117,9 @@ cron 一天一次
 
 cron 一天一次
 
+<details>
+<summary>食用步骤：</summary>
+<br />
 渤海宣传员 微信搜索小程序，电子账户随意，反正我不注册
 
 抓POST包，有uid和token值即可
@@ -335,25 +338,6 @@ cron 0 7 * * *
 
 
 
-
-
-### ~删除沃邮箱 公众号 wx_wyx.js~
-
-cron 11 10 * * *
-
-    // 公众号连续几次系统维护，跑不动了
-
-
-
-### ~删除亿享云 yxyapp.js~
-
-
-cron 随意，一天一次即可
-
-    // 凉了
-
-
-
 ## 2022-3-20更新
 
 
@@ -489,34 +473,6 @@ https://gateway.kugou.com/mstc/musicsymbol/v1/user/info?userid=***"
 
 ## 2022-3-6更新
 
-心态好一点，别总觉得毛小，抖音/快手大公司也没让人薅的飞起啊，毛小可以账号多啊，只要你爱折腾，别老等着喂饭
-
-
-
-
-### ~趣躺赚 wx_qtz.js~
-
-cron 一天3-4次
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-微信小程序，新人直领0.3
-
-抓POST包，只要请求头包含openid、userToken、userKey、apmat的值，参考链接
-
-https://wx.17u.cn/platformflowpool/homepage/info
-
-复制全部请求头，使用顶部链接把请求头转换成json格式
-
-    export qtzhd='{"Host":"wx.17u.cn",***"html"}'
-
-</details>
-
-    //报错了，有点难修
-
-
-
 
 
 
@@ -582,33 +538,6 @@ https://lm.wy.run/api/sign/index
 
 
 ## 2022-3-2更新
-
-有点忙，几天没看了，又来整理下，撸个毛还要学很多
-
-
-
-
-
-### 渤海宣传员 wx_bhxcy.js
-
-cron 40 10 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-微信小程序，需要注册，电子账户看你们，反正我不注册
-
-抓POST包，点天天签到 最高领88元红包，拆，即可获取数据
-
-https://api.yd.ihaoqu.com/?r=api2&apiAction=SignIn
-
-    export bhxcytoken='uid=***&token=***&signure=***'
-
-</details>
-
-    //2022-3-2签到兑换京东E卡，失效了再抓
-
-
 
 
 ### 康师傅畅饮社wx_ksfcys.js
@@ -823,6 +752,9 @@ https://api.st615.com/v2/user/info
     // 2022-1-12更新：修复文章、提现
 
 
+
+
+
 ### 滴滴果园 dd_fruit.js
 
 cron 10 0,8,12,18 * * *
@@ -852,66 +784,10 @@ cron */30 * * * *
 
 
 
-## 2022-1-8更新
-
-
-### 闪辆 sl.js
-
-cron 5 0 * * *
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-抓get包，进app-来玩获取url即可
-
-https://newvideo.autohome.com.cn/openapi/activity-api/switch/get_user_switch_info
-
-    export slurl="https://newvideo.autohome.com.cn/openapi/activity-api/switch/get_user_switch_info?_appid=***"
-
-</details>
-
-    // 不知道是我黑号了，看视频没有加积分，手动可以
-
-
-
-
 
 
 
 ## 2022-1-3更新
-
-
-
-### 快手极速版 ks_js.js
-
-Cron 11 8 * * *（一天一次即可，仅供参考）
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-抓get包，进app-点红包进去，获取Cookie
-
-https://nebula.kuaishou.com/rest/n/nebula/activity/earn/overview/basicInfo
-
-    export kshd="Cookie1@Cookie2"
-
-0为不自动提现,0.3为提现3毛，默认自动提现3元
-
-    export kscash="3"
-
-提现时间变量，默认20点提现和金币兑换
-
-    export kstxtime=""
-
-通知变量，默认开启，2为关闭通知
-
-    export kstz=""
-
-</details>
-
-    // 2022-1-3更新：修复报错bug 注意：不刷视频，只挂脚本容易黑号！
-
-
 
 
 ### 高佣金(更名：佣金帝) gyj.js
@@ -932,6 +808,8 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
 </details>
 
     // 记得金币要手动去商城兑换，然后再提现
+
+
 
 
 
@@ -1174,6 +1052,10 @@ step = str(random.randint(20000, 21000))
 </details>
 
     // 推送通知好像是微信企业微信，我改过其他推送但也没成功，算了
+
+
+
+
 
 
 ### 萤石云视频 ysy.js
