@@ -8,7 +8,7 @@
 
 必要变量:
 
-cron 13 0-23/4 * * *
+cron 13 0-23/4 * * * https://gitee.com/soy-tool/app-script/raw/master/app_yhxq.js
 
 配置文件地址:https://gitee.com/soy-tool/app-script/raw/master/yhxq_variable.js
 脚本地址:https://gitee.com/soy-tool/app-script/raw/master/app_yhxq.js
@@ -16,7 +16,7 @@ cron 13 0-23/4 * * *
 */
 
 
-const $ = new Env('【源火星球】版本:22/03/25_0');
+const $ = new Env('源火星球版本22/03/25_0');
 const notify = $.isNode() ? require('./sendNotify') : '';
 
 
