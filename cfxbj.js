@@ -7,7 +7,7 @@ cookie会过期，本有方法可以取新的cookie，但是无法禁止该请�
 一天2000积分。。。--短期活动。。
 
 变量名：cfxbjck @分割多账户
-
+cron 20 9 * * * cfxbj.js
 */
 const $ = new Env('乘风寻宝记');
 let status;
