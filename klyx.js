@@ -1,17 +1,18 @@
 /*
-@肥皂 3.23 科勒优选
-抓取 kohler-mini.brandsh.cn 域名请求体的openid
-有自动提现，等提现就好了。一天跑一次。
+@肥皂 3.23 科勒优选（小程序）
+抓取 
+https://kohler-mini.brandsh.cn/mini.php/fissionCustom/lotteryPage
+接口的全部请求体 ：样式  ：xcx_openid=xxxxxxxxx&activeId=xxxx&city=xxxxx
 一天两毛。。
-变量名：klyxtk @分割多账号
-cron 20 9 * * * klyx.js
+变量名：klyxtk @分割多账户
+cron 20 13 * * * klyx.js
 */
-const $ = new Env('科勒优选');
+const $ = new Env('科勒优选·小程序');
 let status;
 status = (status = ($.getval("klyxstatus") || "1")) > 1 ? `${status}` : ""; // 账号扩展字符
 let klyxtkArr = [], klyxcount = ''
 let klyxtk = ($.isNode() ? process.env.klyxtk : $.getdata('klyxtk')) || '';
-let taskCode = '',taskName='',flightStoneNum = ''
+let xcx_openid = '',activeId='',city = ''
 let cookie = ''
 
 
@@ -28,6 +29,11 @@ let cookie = ''
 
             $.index = i + 1;
             console.log(`\n开始【科勒优选${$.index}】`)
+            xcx_openid = klyxtk.match(/xcx_openid=(.+?)&/)[1]
+            activeId = klyxtk.match(/activeId=(.+?)&/)[1]
+            city = klyxtk.match(/city=(.*)/)[1]
+
+            
             await finishShare()
             await $.wait(10000)
             await receiveAward()
@@ -50,7 +56,7 @@ function finishShare(timeout = 0) {
         let url = {
             url: `https://kohler-mini.brandsh.cn/mini.php/fissionCustom/finishBrowse`,
             headers: {"Host":"kohler-mini.brandsh.cn","Connection":"keep-alive","Content-Length":"85","content-type":"application/x-www-form-urlencoded","Accept-Encoding":"gzip,compress,br,deflate","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.17(0x1800112e) NetType/WIFI Language/zh_CN","Referer":"https://servicewechat.com/wxfae640908f0d46b5/620/page-frame.html"},
-            body: `xcx_openid=${klyxtk}&activeId=165&city=%E6%96%B0%E4%BD%99%E5%B8%82`
+            body: `xcx_openid=${xcx_openid}&activeId=${activeId}&city=${city}`
         }
         $.post(url, async (err, resp, data) => {
             try {
@@ -80,7 +86,7 @@ function receiveAward(timeout = 0) {
         let url = {
             url: `https://kohler-mini.brandsh.cn/mini.php/fissionCustom/receiveAward`,
             headers: {"Host":"kohler-mini.brandsh.cn","Connection":"keep-alive","Content-Length":"85","content-type":"application/x-www-form-urlencoded","Accept-Encoding":"gzip,compress,br,deflate","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.17(0x1800112e) NetType/WIFI Language/zh_CN","Referer":"https://servicewechat.com/wxfae640908f0d46b5/620/page-frame.html"},
-            body: `xcx_openid=${klyxtk}&activeId=165&task_no=browse_page&city=%E6%96%B0%E4%BD%99%E5%B8%82`
+            body: `xcx_openid=${xcx_openid}&activeId=${activeId}&task_no=browse_page&city=${city}`
         }
         $.post(url, async (err, resp, data) => {
             try {
@@ -110,7 +116,7 @@ function getReawrd(timeout = 0) {
         let url = {
             url: `https://kohler-mini.brandsh.cn/mini.php/fission/getReawrd`,
             headers: {"Host":"kohler-mini.brandsh.cn","Connection":"keep-alive","Content-Length":"85","content-type":"application/x-www-form-urlencoded","Accept-Encoding":"gzip,compress,br,deflate","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.17(0x1800112e) NetType/WIFI Language/zh_CN","Referer":"https://servicewechat.com/wxfae640908f0d46b5/620/page-frame.html"},
-            body: `xcx_openid=${klyxtk}&activeId=165`
+            body: `xcx_openid=${xcx_openid}&activeId=${activeId}`
         }
         $.post(url, async (err, resp, data) => {
             try {
@@ -141,7 +147,7 @@ function klyxrw(timeout = 0) {
         let url = {
             url: `https://kohler-mini.brandsh.cn/mini.php/fissionCustom/finishShare`,
             headers: {"Host":"kohler-mini.brandsh.cn","Connection":"keep-alive","Content-Length":"85","content-type":"application/x-www-form-urlencoded","Accept-Encoding":"gzip,compress,br,deflate","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.17(0x1800112e) NetType/WIFI Language/zh_CN","Referer":"https://servicewechat.com/wxfae640908f0d46b5/620/page-frame.html"},
-            body: `xcx_openid=${klyxtk}&activeId=165&city=%E6%96%B0%E4%BD%99%E5%B8%82`
+            body: `xcx_openid=${xcx_openid}&activeId=${activeId}&city=${city}`
         }
         $.post(url, async (err, resp, data) => {
             try {
@@ -171,7 +177,7 @@ function klyxtj(timeout = 0) {
         let url = {
             url: `https://kohler-mini.brandsh.cn/mini.php/fissionCustom/receiveAward`,
             headers: {"Host":"kohler-mini.brandsh.cn","Connection":"keep-alive","Content-Length":"85","content-type":"application/x-www-form-urlencoded","Accept-Encoding":"gzip,compress,br,deflate","User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.17(0x1800112e) NetType/WIFI Language/zh_CN","Referer":"https://servicewechat.com/wxfae640908f0d46b5/620/page-frame.html"},
-            body: `xcx_openid=${klyxtk}&activeId=165&task_no=share_page&city=%E6%96%B0%E4%BD%99%E5%B8%82`
+            body: `xcx_openid=${xcx_openid}&activeId=${activeId}&task_no=share_page&city=${city}`
         }
         $.post(url, async (err, resp, data) => {
             try {
