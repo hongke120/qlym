@@ -4,7 +4,7 @@
 有自动提现，等提现就好了。一天跑一次。
 一天两毛。。
 变量名：klyxtk @分割多账号
-
+cron 20 9 * * * klyx.js
 */
 const $ = new Env('科勒优选');
 let status;
