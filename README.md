@@ -39,11 +39,80 @@
 脚本一会弄，耽误一天时间了
 
 
-### 科勒优选 klyxV2.js
 
-旧版能用的不要用，禁用，不能用的使用此版本
+
+### 足乐商城 zlsc.js（APP）
+
+cron 5 0,12,20 * * *
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+* [x] 收益：预估1+，新人送10，首提0.3，之后是23.8...
+
+* [x] 限制端：IOS(足乐商城)、安卓(足乐星球)
+
+下载链接
+
+https://app.sjdhwu.com/h5/#/pages/others/download_blade
+
+手机注册后，密码设置好，一会要用，多账号@隔开
+
+注意：跑脚本会挤掉手机登录状态！
+
+    export zlzh='手机号#密码'
+
+提现金额是固定的，首次0.3可以自己提
+
+    export balance='23.8'
+
+就是提现页面你的真实姓名
+
+    export zlname='张三'
+
+
+
+</details>
+
+    // 2022-3-27更新活动不存在问题
+
+
+
+
+
+
+
+### 科勒优选 klyx.js（小程序）
+
+cron 一天一次
+
+<details>
+<summary>食用步骤：</summary>
+<br />
+
+* [x] 每天收益：0.2
+
+* [x] 限制端：微信·小程序
+
+抓POST包，找不到入口的从公众号推文进
+
+https://mp.weixin.qq.com/s/Ar5oqSOq1STvABR2AlWxLw
+
+需要请求头里的数据
+
+https://kohler-mini.brandsh.cn/mini.php/fissionCustom/lotteryPage
 
     export klyxtk='xcx_openid=xxxxxxxxx&activeId=xxxx&city=xxxxx'
+
+</details>
+
+    // 2022-3-27更新活动不存在问题
+
+
+
+
+
 
 
 ## 2022-3-25更新
@@ -261,29 +330,6 @@ https://mcs-mimp-web.sf-express.com/mcs-mimp/share/weChat/buildP3
 </details>
 
     // 2022-3-23活动截止4月3号
-
-
-
-### 科勒优选 klyx.js
-
-cron 一天一次
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-抓POST包，找不到入口的从公众号推文进
-
-https://mp.weixin.qq.com/s/Ar5oqSOq1STvABR2AlWxLw
-
-需要请求头里的xcx_openid，参考链接
-
-https://kohler-mini.brandsh.cn/mini.php/fissionCustom/getTaskList
-
-    export klyxtk='***'
-
-</details>
-
-    // 2022-3-23每天2毛
 
 
 
