@@ -16,13 +16,11 @@
 多个号用 # 或 @ 或 换行 隔开
 
 一天最少跑8小时,间隔是1小时
-cron 25 6-15 * * *
-
-脚本地址:https://gitee.com/soy-tool/app-script/raw/master/app_kt.js
+cron 25 6-15 * * * https://gitee.com/soy-tool/app-script/raw/master/app_kt.js
 
 */
 
-const $ = new Env('【可推】版本:22/03/23_0');
+const $ = new Env('可推版本22/03/23_0');
 const notify = $.isNode() ? require('./sendNotify') : '';
 
 
