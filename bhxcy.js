@@ -11,7 +11,7 @@ https://api.yd.ihaoqu.com/ 接口链接。
 3.24更新 
 加入用户信息和余额显示。。自动兑换（会兑换到绑定的手机号）
 签到一个星期有1.5元左右的e卡。十元自动兑换
-
+cron 0 12 * * * bhxcy.js
 */
 const $ = new Env('渤海宣传员');
 let status;
