@@ -16,9 +16,7 @@
 
 多个号用 @ 或 换行 隔开
 
-cron "31 0,9,17 * * *"
-
-脚本地址:https://gitee.com/soy-tool/app-script/raw/master/wx_lmyx.js
+cron 31 0,9,17 * * * https://gitee.com/soy-tool/app-script/raw/master/wx_lmyx.js
 
 */
 
