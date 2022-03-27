@@ -14,7 +14,7 @@ https://client.atomsh.com/e00-bee-client/client/act/getGoldCount
     
  青龙环境配置  export gyjhd="token1@token2@token3"
  
-cron 21 15 * * *
+cron 21 15 * * * gyj.js
 
 重写：-------https://client.atomsh.com:10012/e00-bee-client/client/act/getGoldCount
 重写目标 https://raw.githubusercontent.com/liuqi6968/-/main/gyj.js
