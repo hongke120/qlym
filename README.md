@@ -39,6 +39,12 @@
 脚本一会弄，耽误一天时间了
 
 
+### 科勒优选 klyxV2.js
+
+旧版能用的不要用，禁用，不能用的使用此版本
+
+    export klyxtk='xcx_openid=xxxxxxxxx&activeId=xxxx&city=xxxxx'
+
 
 ## 2022-3-25更新
 
