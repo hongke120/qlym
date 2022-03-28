@@ -1,8 +1,8 @@
 ## :world_map: 使用教程
 
-【拉库】
+【拉全部库】
 
-    ql repo https://github.com/Yiov/wool.git "" "COOKIE"
+    ql repo https://github.com/weizuer/qlym.git "" "COOKIE"
 
 ## :loudspeaker: 关于小号
 
@@ -17,28 +17,9 @@
 
 ## :gear: 在线请求头转JSON
 
-我把我已知的都列举出来了，也欢迎投更好用的
-
-* [ToolTT](https://tooltt.com/header2json/)「好像不好用了」
-
 * [uutool](https://uutool.cn/header2json/)
 
 * [wejson](https://wejson.cn/header2json/)
-
-
-
-## :fire: 2022-3-27更新
-
-
-我真是闲的蛋疼，重新拉了最新版镜像，面板任务都没了，好在环境变量都在，又要重新来。
-
-真的没事别瞎更新，同时也发现很多脚本直接复制作者的过来了，定时都没有弄好，顺带一起弄掉吧
-
-
-
-脚本一会弄，耽误一天时间了
-
-
 
 
 ### 足乐商城 zlsc.js（APP）
