@@ -10,7 +10,7 @@ cron 18 7 * * * yml_javascript/bsly.js
 感谢所有测试人员
 
 注意事项 ： 一定要仔细阅读一下内容
-              青龙填写格式
+              
 =============青龙变量格式=============
 必填变量：  export yml_bsly_data='xxxx@xxxx'   
 可选变量    yml_bsly_UA='xxxxxx'
