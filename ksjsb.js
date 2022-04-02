@@ -4,7 +4,6 @@ IOS/安卓： 快手极速版
 已实现的：签到和翻倍，开宝箱和翻倍，看广告任务，逛街任务，抽奖和翻倍，广告任务，分享任务
 金币每天0点自动兑换到现金余额
 
-V2P和圈X配置好重写后，应该打开APP就能获取到CK，获取不到的话升级下app或者手动捉包
 青龙把任意包里的kuaishou.api_st=xxxxxxxxxxxx;这一串东西放到变量ksjsbCookie里，多账户换行或者用@隔开
 export ksjsbCookie='kuaishou.api_st=xxxxxxxxxxxx;
 kuaishou.api_st=yyyyyyyyy;'
