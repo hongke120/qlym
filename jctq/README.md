@@ -17,16 +17,9 @@
 
 
 
-
 ## 水果天气cookie适用
 
 福利视频/看看赚/转盘抽奖/每日收益/看看赚，都是通用的，抓一次即可
-
-
-
-
-
-
 
 
 
@@ -42,7 +35,6 @@ cron：15 6,12,18 * * *
 https://tq.xunsl.com/v17/NewTask/getTaskListByWeather.json
 
     export jctqCookie="zqkey=***&zqkey_id=***&uid=***"
-
 
 
 
