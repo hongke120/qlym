@@ -16,8 +16,6 @@
 
 
 
-
-
 ## 福利视频 jc_Adv_video.js
 
 
@@ -66,9 +64,6 @@ https://ant.xunsl.com/v17/NewTask/getTaskList.josn
 https://ant.xunsl.com/v5/nameless/adlickstart/
 
     export lookStartbody='p=***@p=***'
-
-
-
 
 
 
