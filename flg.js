@@ -12,7 +12,6 @@
 export flgReferer='抓取的Referer1@抓取的Referer2'
 请务必在早上7-9点之间运行脚本
 
-
 圈X配置如下，其他自行测试，运行一次即可
 
 [task_local]
