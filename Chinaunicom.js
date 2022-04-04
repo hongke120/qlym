@@ -4,7 +4,6 @@
 变量 ltphone 值：手机号
 变量 ltpwd 值：密码
 多账号用 @ 分隔
-
 ql raw https://gitee.com/xiecoll/radish-script/raw/master/Chinaunicom.js
 cron 5 9,11,18 * * * Chinaunicom.js
 */
