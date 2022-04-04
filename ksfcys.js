@@ -5,7 +5,7 @@
 脚本自动签到，默认不会抽奖
 如果需要自动抽奖，请设置变量ksfcysDraw为true
 
-青龙捉club.biqr.cn的任意包，把Token值填到变量ksfcysToken里，多账号@隔开
+青龙捉 club.biqr.cn的任意包，把Token值填到变量ksfcysToken里，多账号@隔开
 
 V2P/圈X 重写：
 点击签到或者我的自动获取
