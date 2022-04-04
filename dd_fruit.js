@@ -7,7 +7,6 @@ docker环境变量名:DD_TOKEN,多账号用换行或者应为逗号(,)隔开
 
 [task_local]
 10 0,8,12,18 * * * https://raw.githubusercontent.com/passerby-b/didi_fruit/main/dd_fruit.js
-
 */
 
 let tokens = [];
