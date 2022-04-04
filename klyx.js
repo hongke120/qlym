@@ -3,7 +3,8 @@
 抓取 
 https://kohler-mini.brandsh.cn/mini.php/fissionCustom/lotteryPage
 接口的全部请求体 ：样式  ：xcx_openid=xxxxxxxxx&activeId=xxxx&city=xxxxx
-一天两毛。。
+
+一天两毛。
 变量名：klyxtk @分割多账户
 cron 20 13 * * * klyx.js
 */
