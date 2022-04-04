@@ -9,7 +9,7 @@
 可以设置某些号只助力别的号不做任务(没资格的小号可以助力大号)，在对应的ck后面加&task=0
 没有捉到微信CK的也可以跑脚本，删掉wzq_qlskey和wzq_qluin就行，会尝试用APP的CK去完成微信任务，出现做任务失败是正常现象
 
-青龙捉包，需要捉APP和公众号里面的小程序
+青龙捉包，需要捉APP和公众号里面的小程序，
 1. 打开APP，捉wzq.tenpay.com包，把url里的openid和fskey用&连起来填到TxStockCookie
 2. 公众号 腾讯自选股微信版->右下角好福利->福利中心，捉wzq.tenpay.com包，把Cookie里的wzq_qlskey和wzq_qluin用&连起来填到TxStockCookie
 格式如下：
