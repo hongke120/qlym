@@ -4,7 +4,6 @@
 // 手动抓包获取token,手机在boxjs里填写
 // boxjs订阅地址:https://gitee.com/passerby-b/javascript/raw/master/JD/passerby-b.boxjs.json
 // docker环境变量名:DD_TOKEN,多账号用换行或者应为逗号(,)隔开
-
 // [task_local]
 // */30 * * * * https://raw.githubusercontent.com/passerby-b/didi_fruit/main/dd_bucketWater.js
 
