@@ -4,7 +4,6 @@
 
 项目注册地址(微信识别):https://gitee.com/soy-tool/app-script/raw/master/picture/wytk.jpg
 
-
 必要变量:
 
 变量名 soy_wytk_data
