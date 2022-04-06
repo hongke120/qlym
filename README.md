@@ -2,7 +2,7 @@
 
 【拉全部库】
 
-    ql repo https://github.com/weizuer/qlym.git "" "COOKIE"
+    ql repo https://github.com/hongke120/qlym.git "" "COOKIE"
 
 ## :loudspeaker: 关于小号
 
@@ -54,12 +54,6 @@ https://app.sjdhwu.com/h5/#/pages/others/download_blade
 
 
 
-</details>
-
-    // 2022-3-27更新活动不存在问题
-
-
-
 
 ### 科勒优选 klyx.js（小程序）
 
@@ -88,10 +82,7 @@ https://kohler-mini.brandsh.cn/mini.php/fissionCustom/lotteryPage
     // 2022-3-27更新活动不存在问题
 
 
-
-
 ## 2022-3-25更新
-
 
 
 ### 快手果园 ks_fruit.js
@@ -305,9 +296,6 @@ https://mcs-mimp-web.sf-express.com/mcs-mimp/share/weChat/buildP3
 
 
 
-
-
-
 ### 腾讯自选股V2 txstockV2.js
 
 cron 35 11,16 * * *
@@ -370,11 +358,7 @@ cron 0 7 * * *
     // 2022-3-23更新评论不加积分
 
 
-
-
 ## 2022-3-20更新
-
-
 
 
 ### 快手 ks.js
@@ -1054,55 +1038,4 @@ step = str(random.randint(20000, 21000))
     // 推送通知好像是微信企业微信，我改过其他推送但也没成功，算了
 
 
-
-
-
-### 萤石云视频 ysy.js
-
-cron 随意，一天一次即可
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-抓3个数据，重新登录！重新登录才可以抓到数据
-
-https://api.ys7.com/v3/users/login/v2
-
-把header转成JSON格式
-
-    export ysyhd=''
-
-body查看表单即可获取
-
-    export ysybody='account=188********'
-
-
-CK获取
-
-https://api.ys7.com/v3/integral/yd/getUserOpenBoxCd
-
-    export cookie='"ASG_DisplayName=***"'
-
-
-提现body 查看表单获取数据
-
-https://api.ys7.com/v3/integral/yd/pay
-
-    export txbody='payCode=101006&receiverType=2&receiverId=2********'
-
-</details>
-
-    // 要攒到1块钱是个无比漫长的过程
-
-
-
-
-## 晶彩看点 jckd
-
-文件内有教程
-
-
-
-## 水果天气 jctq
-
-文件内有教程
+其他的点开文件看教程。
