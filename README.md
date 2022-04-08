@@ -3,10 +3,12 @@
 【拉全部库】
 
     ql repo https://github.com/hongke120/qlym.git "" "COOKIE"
+    
+  4.7  快手任务作者已经删库不能用，等待新脚本。
 
 ## :loudspeaker: 关于小号
 
-建议：玩毛不要用自己常用手机，不然垃圾短信一堆
+建议：玩羊毛不要用自己常用手机，不然垃圾短信一堆
 
 * 移动：和多号app（5元/月）
 * 联通：沃小号app（5元/月）
@@ -51,7 +53,6 @@ https://app.sjdhwu.com/h5/#/pages/others/download_blade
 就是提现页面你的真实姓名
 
     export zlname='张三'
-
 
 
 
@@ -208,8 +209,6 @@ https://wap.quxianzhuan.com/
 </details>
 
     // 2022-3-25更新加入用户余额和信息
-
-
 
 
 ### 源火星球 yhxq.js
