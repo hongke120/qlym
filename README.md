@@ -1,6 +1,7 @@
 ## :world_map: 使用教程
 
-4月7日快手库停用，等待更新！
+4月10日快手库更新
+
 【拉全部库】
 
     ql repo https://github.com/weizuer/qlym.git "" "COOKIE"
