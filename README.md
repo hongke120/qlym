@@ -4,11 +4,13 @@
 
 【拉全部库】
 
-    ql repo https://github.com/weizuer/qlym.git "" "COOKIE"
+    ql repo https://github.com/hongke120/qlym.git "" "COOKIE"
+    
+  4.7  快手任务作者已经删库不能用，等待新脚本。
 
 ## :loudspeaker: 关于小号
 
-建议：玩毛不要用自己常用手机，不然垃圾短信一堆
+建议：玩羊毛不要用自己常用手机，不然垃圾短信一堆
 
 * 移动：和多号app（5元/月）
 * 联通：沃小号app（5元/月）
@@ -83,7 +85,10 @@ https://kohler-mini.brandsh.cn/mini.php/fissionCustom/lotteryPage
     // 2022-3-27更新活动不存在问题
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cc8a8d0fc5747dc3187e7b8a4ff2ee5b3cb860b5
 ## 2022-3-25更新
 
 
@@ -211,8 +216,6 @@ https://wap.quxianzhuan.com/
     // 2022-3-25更新加入用户余额和信息
 
 
-
-
 ### 源火星球 yhxq.js
 
 cron 13 0-23/4 * * *
@@ -296,6 +299,10 @@ https://mcs-mimp-web.sf-express.com/mcs-mimp/share/weChat/buildP3
     // 2022-3-23活动截止4月3号
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> cc8a8d0fc5747dc3187e7b8a4ff2ee5b3cb860b5
 ### 腾讯自选股V2 txstockV2.js
 
 cron 35 11,16 * * *
@@ -357,7 +364,10 @@ cron 0 7 * * *
     // 2022-3-23更新评论不加积分
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cc8a8d0fc5747dc3187e7b8a4ff2ee5b3cb860b5
 ## 2022-3-20更新
 
 
@@ -477,9 +487,6 @@ https://gateway.kugou.com/mstc/musicsymbol/v1/user/info?userid=***"
 </details>
 
     // 2022-3-12 提现需要实名+人脸，介意不玩
-
-
-
 
 
 ## 2022-3-6更新
@@ -995,13 +1002,21 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
     // token有效期好像只有半月，还是几周的，失效记得抓，攒够200万就可以提现了
 
 
+<<<<<<< HEAD
 ### 萤石云视频 ysy.js
+=======
+
+
+
+### 小米刷步 xmsb.py
+>>>>>>> cc8a8d0fc5747dc3187e7b8a4ff2ee5b3cb860b5
 
 cron 随意，一天一次即可
 
 <details>
 <summary>食用步骤：</summary>
 <br />
+<<<<<<< HEAD
 抓3个数据，重新登录！重新登录才可以抓到数据
 
 https://api.ys7.com/v3/users/login/v2
@@ -1044,3 +1059,8 @@ https://api.ys7.com/v3/integral/yd/pay
 ## 水果天气 jctq
 
 文件内有教程
+=======
+请第1次拉完库，复制一份到scripts目录，不然每次都会覆盖！
+
+例：
+在Yiov_wool/xmsb.py，复制粘贴到scripts目录，青龙task xmsb.py，原本的禁用
