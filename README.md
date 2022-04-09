@@ -1,5 +1,6 @@
 ## :world_map: 使用教程
 
+4月7日快手库停用，等待更新！
 【拉全部库】
 
     ql repo https://github.com/weizuer/qlym.git "" "COOKIE"
@@ -36,7 +37,7 @@ cron 5 0,12,20 * * *
 
 下载链接
 
-https://app.sjdhwu.com/h5/#/pages/others/download_blade
+https://app.sjdhwu.com/share/index?share_code=YgLlr7my
 
 手机注册后，密码设置好，一会要用，多账号@隔开
 
@@ -51,13 +52,6 @@ https://app.sjdhwu.com/h5/#/pages/others/download_blade
 就是提现页面你的真实姓名
 
     export zlname='张三'
-
-
-
-</details>
-
-    // 2022-3-27更新活动不存在问题
-
 
 
 
@@ -89,9 +83,7 @@ https://kohler-mini.brandsh.cn/mini.php/fissionCustom/lotteryPage
 
 
 
-
 ## 2022-3-25更新
-
 
 
 ### 快手果园 ks_fruit.js
@@ -110,7 +102,6 @@ https://ug-fission.kuaishou.com/rest/n/darwin/orchard/water/watering
 </details>
 
     // 2022-3-25新增连续7天签到
-
 
 
 ### 百世乐元 bsly.js
@@ -304,10 +295,6 @@ https://mcs-mimp-web.sf-express.com/mcs-mimp/share/weChat/buildP3
     // 2022-3-23活动截止4月3号
 
 
-
-
-
-
 ### 腾讯自选股V2 txstockV2.js
 
 cron 35 11,16 * * *
@@ -348,7 +335,6 @@ cron 35 11,16 * * *
 
 
 
-
 ### 广汽三菱 gqsl.js
 
 cron 0 7 * * *
@@ -371,10 +357,7 @@ cron 0 7 * * *
 
 
 
-
 ## 2022-3-20更新
-
-
 
 
 ### 快手 ks.js
@@ -412,7 +395,6 @@ cron 22 10-20 * * *
 
 
 
-
 ### 快手极速版 ksjsb.js (leaf版)
 
 cron 38 7-22 * * * (每天15次)
@@ -443,8 +425,6 @@ https://api.kuaishouzt.com/rest/zt/appsupport/yoda/accelerate/info
 </details>
 
     // // 2022-3-20增加指定提现渠道
-
-
 
 
 ## 2022-3-18更新
@@ -1015,46 +995,6 @@ http://mobads.baidu.com/cpro/ui/mads.php?code2=***
 </details>
 
     // token有效期好像只有半月，还是几周的，失效记得抓，攒够200万就可以提现了
-
-
-
-
-
-### 小米刷步 xmsb.py
-
-cron 随意，一天一次即可
-
-<details>
-<summary>食用步骤：</summary>
-<br />
-请第1次拉完库，复制一份到scripts目录，不然每次都会覆盖！
-
-例：
-在Yiov_wool/xmsb.py，复制粘贴到scripts目录，青龙task xmsb.py，原本的禁用
-
-
-### 注册好小米运动账号，绑定第三方微信
-
-手动修改py里面的数据
-
-账号user = "138****8888"
-
-密码passwd = "******"
-
-修改固定步数值，留空为随机步数
-
-step = "23333"
-
-修改随机范围步数值，与固定步数二选一改
-
-step = str(random.randint(20000, 21000))
-
-</details>
-
-    // 推送通知好像是微信企业微信，我改过其他推送但也没成功，算了
-
-
-
 
 
 ### 萤石云视频 ysy.js
