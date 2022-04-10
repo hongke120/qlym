@@ -2,7 +2,9 @@
 
 4月10日快手库更新
 
-【拉全部库】
+【拉全部库
+
+腾讯云服务器45元每年 https://curl.qcloud.com/ZKf3a1jc
 
     ql repo https://github.com/hongke120/qlym.git "" "COOKIE"
     
