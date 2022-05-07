@@ -1,13 +1,12 @@
 ## :world_map: 使用教程
 
-4月10日快手库更新
-
+5.7现在快手任务在服务器运行都出现报错，可以在自己电脑安装或者路由器安装。
+教程+2622632877
 
 腾讯云服务器45元每年 https://curl.qcloud.com/ZKf3a1jc
 
- 拉全部库   ql repo https://github.com/hongke120/qlym.git "" "COOKIE"
+拉全部库   ql repo https://github.com/hongke120/qlym.git
     
- 
 
 ## :loudspeaker: 关于小号
 
