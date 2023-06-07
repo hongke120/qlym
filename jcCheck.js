@@ -5,35 +5,13 @@ https://raw.githubusercontent.com/QiFengg/QuantumultX_Conf/main/Scripts/jcCheck.
 */
 
 /*
-1.好家伙机场，需要付费套餐激活
-付费 便宜3.99 50g  流量每隔31天重置 签到每天1g-4g随机 可看NF 速度快 提供小火箭下载账号 
-注册地址:haojiahuo.live/auth/register?code=FErc
-*/
-let hjh = {
-  email: "",
-  pwd: "",
-};
-
-/*
-2.ikuuu机场，注册直接用
-注册地址:https://ikuuu.co/auth/register?code=Hg2Y
+1.ikuuu机场，注册直接用
+注册地址:https://ikuuu.eu/auth/register?code=Hg2Y
 白嫖版 注册送50g 签到每天1g以内 随机 速度还行
 套餐10元300g 提供小火箭下载账号
 */
 
 let iku = {
-  email: "",
-  pwd: "",
-};
-
-/*
-3.几鸡机场
-注册地址:https://b.luxury/waf/GGWE9QhLsLE74X422
-白嫖版 注册送10g 签到每天1g-4g随机 速度还行
-付费很多套餐 5块钱一个月300G 流量每隔31天重置 控制套餐购买人数
-*/
-
-let jj = {
   email: "",
   pwd: "",
 };
@@ -45,27 +23,17 @@ const notify = $.isNode() ? require("./sendNotify") : "";
   console.log(
     `\n\n=====脚本执行 - 北京时间(UTC+8)：${new Date(
       new Date().getTime() +
-        new Date().getTimezoneOffset() * 60 * 1000 +
-        8 * 60 * 60 * 1000
+      new Date().getTimezoneOffset() * 60 * 1000 +
+      8 * 60 * 60 * 1000
     ).toLocaleString()}=====\n`
   );
-  if (hjh.email == "" && hjh.pwd == "") {
-    console.log("好家伙邮箱密码为空,跳过执行\n\n");
-  } else {
-    await login("好家伙", "https://haojiahuo.live/auth/login", hjh);
-  }
 
   if (iku.email == "" && iku.pwd == "") {
     console.log("ikuuu邮箱密码为空,跳过执行\n\n");
   } else {
-    await login("iku", "https://ikuuu.co/auth/login", iku);
+    await login("iku", "https://ikuuu.eu/auth/login", iku);
   }
 
-  if (jj.email == "" && jj.pwd == "") {
-    console.log("几鸡邮箱密码为空,跳过执行\n\n");
-  } else {
-    await login("几鸡", "https://a.luxury/signin", jj);
-  }
 })()
   .catch((e) => {
     console.log("", `❌失败! 原因: ${e}!`, "");
@@ -100,12 +68,8 @@ function login(name, url, raw, timeout = 0) {
             let cookie = resp.headers["set-cookie"];
             console.log(`${name}机场获取Cookie成功,正在运行签到...`);
             let checkurl;
-            if (name == "好家伙") {
-              checkurl = "https://haojiahuo.live/user/checkin";
-            } else if (name == "iku") {
-              checkurl = "https://ikuuu.co/user/checkin";
-            } else if (name == "几鸡") {
-              checkurl = "https://a.luxury/user/checkin";
+            if (name == "iku") {
+              checkurl = "https://ikuuu.eu/user/checkin";
             }
             await check(name, checkurl, cookie);
           } else {
@@ -141,17 +105,8 @@ function check(name, checkurl, cookie) {
         data = JSON.parse(data);
         var msg;
         if (data.ret == 1) {
-          if (name == "好家伙") {
-            msg =
-              `${name}签到成功` +
-              data.msg +
-              "您的当前流量为" +
-              data.trafficInfo["unUsedTraffic"];
-          } else if (name == "iku") {
+          if (name == "iku") {
             msg = `${name}签到成功` + data.msg;
-          } else if (name == "几鸡") {
-            msg =
-              `${name}签到成功` + data.msg + "您的当前流量为" + data.traffic;
           }
           console.log(`${name}机场 ${msg}\n\n`);
 
@@ -249,7 +204,7 @@ function Env(t, e) {
       if (i)
         try {
           s = JSON.parse(this.getdata(t));
-        } catch {}
+        } catch { }
       return s;
     }
     setjson(t, e) {
@@ -311,8 +266,8 @@ function Env(t, e) {
         s
           ? this.fs.writeFileSync(t, r)
           : i
-          ? this.fs.writeFileSync(e, r)
-          : this.fs.writeFileSync(t, r);
+            ? this.fs.writeFileSync(e, r)
+            : this.fs.writeFileSync(t, r);
       }
     }
     lodash_get(t, e, s) {
@@ -371,107 +326,107 @@ function Env(t, e) {
       return this.isSurge() || this.isLoon()
         ? $persistentStore.read(t)
         : this.isQuanX()
-        ? $prefs.valueForKey(t)
-        : this.isNode()
-        ? ((this.data = this.loaddata()), this.data[t])
-        : (this.data && this.data[t]) || null;
+          ? $prefs.valueForKey(t)
+          : this.isNode()
+            ? ((this.data = this.loaddata()), this.data[t])
+            : (this.data && this.data[t]) || null;
     }
     setval(t, e) {
       return this.isSurge() || this.isLoon()
         ? $persistentStore.write(t, e)
         : this.isQuanX()
-        ? $prefs.setValueForKey(t, e)
-        : this.isNode()
-        ? ((this.data = this.loaddata()),
-          (this.data[e] = t),
-          this.writedata(),
-          !0)
-        : (this.data && this.data[e]) || null;
+          ? $prefs.setValueForKey(t, e)
+          : this.isNode()
+            ? ((this.data = this.loaddata()),
+              (this.data[e] = t),
+              this.writedata(),
+              !0)
+            : (this.data && this.data[e]) || null;
     }
     initGotEnv(t) {
       (this.got = this.got ? this.got : require("got")),
         (this.cktough = this.cktough ? this.cktough : require("tough-cookie")),
         (this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar()),
         t &&
-          ((t.headers = t.headers ? t.headers : {}),
+        ((t.headers = t.headers ? t.headers : {}),
           void 0 === t.headers.Cookie &&
-            void 0 === t.cookieJar &&
-            (t.cookieJar = this.ckjar));
+          void 0 === t.cookieJar &&
+          (t.cookieJar = this.ckjar));
     }
-    get(t, e = () => {}) {
+    get(t, e = () => { }) {
       t.headers &&
         (delete t.headers["Content-Type"], delete t.headers["Content-Length"]),
         this.isSurge() || this.isLoon()
           ? (this.isSurge() &&
-              this.isNeedRewrite &&
-              ((t.headers = t.headers || {}),
+            this.isNeedRewrite &&
+            ((t.headers = t.headers || {}),
               Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })),
             $httpClient.get(t, (t, s, i) => {
               !t && s && ((s.body = i), (s.statusCode = s.status)), e(t, s, i);
             }))
           : this.isQuanX()
-          ? (this.isNeedRewrite &&
+            ? (this.isNeedRewrite &&
               ((t.opts = t.opts || {}), Object.assign(t.opts, { hints: !1 })),
-            $task.fetch(t).then(
-              (t) => {
-                const { statusCode: s, statusCode: i, headers: r, body: o } = t;
-                e(null, { status: s, statusCode: i, headers: r, body: o }, o);
-              },
-              (t) => e(t)
-            ))
-          : this.isNode() &&
-            (this.initGotEnv(t),
-            this.got(t)
-              .on("redirect", (t, e) => {
-                try {
-                  if (t.headers["set-cookie"]) {
-                    const s = t.headers["set-cookie"]
-                      .map(this.cktough.Cookie.parse)
-                      .toString();
-                    s && this.ckjar.setCookieSync(s, null),
-                      (e.cookieJar = this.ckjar);
-                  }
-                } catch (t) {
-                  this.logErr(t);
-                }
-              })
-              .then(
+              $task.fetch(t).then(
                 (t) => {
-                  const {
-                    statusCode: s,
-                    statusCode: i,
-                    headers: r,
-                    body: o,
-                  } = t;
+                  const { statusCode: s, statusCode: i, headers: r, body: o } = t;
                   e(null, { status: s, statusCode: i, headers: r, body: o }, o);
                 },
-                (t) => {
-                  const { message: s, response: i } = t;
-                  e(s, i, i && i.body);
-                }
-              ));
+                (t) => e(t)
+              ))
+            : this.isNode() &&
+            (this.initGotEnv(t),
+              this.got(t)
+                .on("redirect", (t, e) => {
+                  try {
+                    if (t.headers["set-cookie"]) {
+                      const s = t.headers["set-cookie"]
+                        .map(this.cktough.Cookie.parse)
+                        .toString();
+                      s && this.ckjar.setCookieSync(s, null),
+                        (e.cookieJar = this.ckjar);
+                    }
+                  } catch (t) {
+                    this.logErr(t);
+                  }
+                })
+                .then(
+                  (t) => {
+                    const {
+                      statusCode: s,
+                      statusCode: i,
+                      headers: r,
+                      body: o,
+                    } = t;
+                    e(null, { status: s, statusCode: i, headers: r, body: o }, o);
+                  },
+                  (t) => {
+                    const { message: s, response: i } = t;
+                    e(s, i, i && i.body);
+                  }
+                ));
     }
-    post(t, e = () => {}) {
+    post(t, e = () => { }) {
       const s = t.method ? t.method.toLocaleLowerCase() : "post";
       if (
         (t.body &&
           t.headers &&
           !t.headers["Content-Type"] &&
           (t.headers["Content-Type"] = "application/x-www-form-urlencoded"),
-        t.headers && delete t.headers["Content-Length"],
-        this.isSurge() || this.isLoon())
+          t.headers && delete t.headers["Content-Length"],
+          this.isSurge() || this.isLoon())
       )
         this.isSurge() &&
           this.isNeedRewrite &&
           ((t.headers = t.headers || {}),
-          Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })),
+            Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })),
           $httpClient[s](t, (t, s, i) => {
             !t && s && ((s.body = i), (s.statusCode = s.status)), e(t, s, i);
           });
       else if (this.isQuanX())
         (t.method = s),
           this.isNeedRewrite &&
-            ((t.opts = t.opts || {}), Object.assign(t.opts, { hints: !1 })),
+          ((t.opts = t.opts || {}), Object.assign(t.opts, { hints: !1 })),
           $task.fetch(t).then(
             (t) => {
               const { statusCode: s, statusCode: i, headers: r, body: o } = t;
@@ -494,27 +449,27 @@ function Env(t, e) {
         );
       }
     }
-    put(t, e = () => {}) {
+    put(t, e = () => { }) {
       const s = t.method ? t.method.toLocaleLowerCase() : "put";
       if (
         (t.body &&
           t.headers &&
           !t.headers["Content-Type"] &&
           (t.headers["Content-Type"] = "application/x-www-form-urlencoded"),
-        t.headers && delete t.headers["Content-Length"],
-        this.isSurge() || this.isLoon())
+          t.headers && delete t.headers["Content-Length"],
+          this.isSurge() || this.isLoon())
       )
         this.isSurge() &&
           this.isNeedRewrite &&
           ((t.headers = t.headers || {}),
-          Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })),
+            Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })),
           $httpClient[s](t, (t, s, i) => {
             !t && s && ((s.body = i), (s.statusCode = s.status)), e(t, s, i);
           });
       else if (this.isQuanX())
         (t.method = s),
           this.isNeedRewrite &&
-            ((t.opts = t.opts || {}), Object.assign(t.opts, { hints: !1 })),
+          ((t.opts = t.opts || {}), Object.assign(t.opts, { hints: !1 })),
           $task.fetch(t).then(
             (t) => {
               const { statusCode: s, statusCode: i, headers: r, body: o } = t;
@@ -570,10 +525,10 @@ function Env(t, e) {
           return this.isLoon()
             ? t
             : this.isQuanX()
-            ? { "open-url": t }
-            : this.isSurge()
-            ? { url: t }
-            : void 0;
+              ? { "open-url": t }
+              : this.isSurge()
+                ? { url: t }
+                : void 0;
         if ("object" == typeof t) {
           if (this.isLoon()) {
             let e = t.openUrl || t.url || t["open-url"],
@@ -596,7 +551,7 @@ function Env(t, e) {
           (this.isSurge() || this.isLoon()
             ? $notification.post(e, s, i, o(r))
             : this.isQuanX() && $notify(e, s, i, o(r))),
-        !this.isMuteLog)
+          !this.isMuteLog)
       ) {
         let t = [
           "",
