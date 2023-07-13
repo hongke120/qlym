@@ -6,7 +6,7 @@ https://raw.githubusercontent.com/QiFengg/QuantumultX_Conf/main/Scripts/jcCheck.
 
 /*
 1.ikuuu机场，注册直接用
-注册地址:https://ikuuu.eu/auth/register?code=Hg2Y
+注册地址:https://ikuuu.art/auth/register?code=Hg2Y
 白嫖版 注册送50g 签到每天1g以内 随机 速度还行
 套餐10元300g 提供小火箭下载账号
 */
@@ -31,7 +31,7 @@ const notify = $.isNode() ? require("./sendNotify") : "";
   if (iku.email == "" && iku.pwd == "") {
     console.log("ikuuu邮箱密码为空,跳过执行\n\n");
   } else {
-    await login("iku", "https://ikuuu.eu/auth/login", iku);
+    await login("iku", "https://ikuuu.art/auth/login", iku);
   }
 
 })()
@@ -69,7 +69,7 @@ function login(name, url, raw, timeout = 0) {
             console.log(`${name}机场获取Cookie成功,正在运行签到...`);
             let checkurl;
             if (name == "iku") {
-              checkurl = "https://ikuuu.eu/user/checkin";
+              checkurl = "https://ikuuu.art/user/checkin";
             }
             await check(name, checkurl, cookie);
           } else {
